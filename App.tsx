@@ -206,22 +206,22 @@ const App: React.FC = () => {
 
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col landscape:flex-row lg:flex-row gap-1 md:gap-4 p-1 md:p-4 lg:p-6 relative z-10 transition-all duration-500">
+      {/* Main Content Area - RESPONSIVE FIX */}
+      <div className="flex-1 overflow-hidden flex flex-col md:flex-row gap-2 md:gap-4 lg:gap-6 p-2 md:p-4 lg:p-6 relative z-10">
 
-        {/* LEFT STAGE: Wheel & Info (Original 40% on wide) */}
-        <div className="w-full landscape:w-[45%] lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
+        {/* LEFT STAGE: Wheel & Info */}
+        <div className="w-full md:w-[42%] lg:w-[38%] xl:w-[35%] shrink-0 flex flex-col gap-2 md:gap-4 justify-center">
 
-          {/* Wheel Pedestal */}
-          <div className="relative h-[240px] landscape:h-[210px] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
-            <div className="transform scale-[0.45] landscape:scale-[0.45] sm:scale-75 md:scale-95 lg:scale-100 xl:scale-100 origin-center transition-all duration-700 ease-out">
+          {/* Wheel Container - FIXED SCALING */}
+          <div className="relative h-[280px] sm:h-[320px] md:h-[420px] lg:h-[520px] xl:h-[580px] shrink-0 flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
 
-          {/* Information Deck (Hidden on small landscape to save space) */}
-          <div className="hidden lg:flex flex-1 gap-4 min-h-0">
-            <div className="w-16 glass-panel rounded-xl overflow-hidden shadow-lg">
+          {/* Information Deck - Show on tablet+ */}
+          <div className="hidden md:flex flex-1 gap-3 lg:gap-4 min-h-0">
+            <div className="w-14 lg:w-16 glass-panel rounded-xl overflow-hidden shadow-lg">
               <HistoryPanel history={history} />
             </div>
             <div className="flex-1 glass-panel rounded-xl overflow-hidden shadow-lg flex flex-col">
@@ -230,14 +230,17 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* RIGHT STAGE: Betting & Controls (7 0% on wide) */}
-        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-lg md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
+        {/* RIGHT STAGE: Betting & Controls */}
+        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-2xl md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
 
-          {/* Table Surface */}
-          <div className="flex-1 min-h-0 relative overflow-auto scrollbar-hide flex items-center justify-center p-0.5 md:p-6 bg-black/40">
-            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.45] sm:scale-90 md:scale-95 lg:scale-100 xl:scale-100">
+          {/* Table Surface - IMPROVED SCALING */}
+          <div className="flex-1 min-h-0 relative overflow-auto scrollbar-hide flex items-center justify-center p-2 md:p-4 lg:p-6 bg-black/40">
+            <div className="w-full max-w-6xl mx-auto">
               {showRacetrack ? (
-                <Racetrack onBet={handlePlaceBet} onHoverNumbers={setHighlightedNeighbors} />
+                <Racetrack
+                  onBet={handlePlaceBet}
+                  onHoverNumbers={setHighlightedNeighbors}
+                />
               ) : (
                 <BettingTable
                   currentBets={currentBets}
@@ -252,9 +255,8 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Control Dock */}
-          <div className="shrink-0 relative z-20">
-            <div className="absolute inset-x-0 bottom-0 h-4 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
+          {/* Control Dock - RESPONSIVE SIZING */}
+          <div className="shrink-0 relative z-20 pb-2 md:pb-4 lg:pb-6">
             <GameControls
               selectedChip={selectedChip}
               onSelectChip={setSelectedChip}
@@ -277,8 +279,8 @@ const App: React.FC = () => {
 
       </div>
 
-      {/* Mobile Stats Drawer */}
-      <div className="lg:hidden absolute top-16 left-2 z-30 landscape:hidden">
+      {/* Mobile Stats Drawer - Only show in portrait */}
+      <div className="md:hidden absolute top-16 left-2 z-30 max-sm:portrait:block max-sm:landscape:hidden">
         <HistoryPanel history={history.slice(0, 3)} />
       </div>
 
