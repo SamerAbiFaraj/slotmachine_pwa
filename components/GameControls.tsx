@@ -46,8 +46,8 @@ export const GameControls: React.FC<Props> = ({
    );
 
    return (
-      <div className="w-full flex justify-center pb-2 md:pb-6">
-         <div className="glass-panel rounded-2xl md:rounded-3xl p-2 md:p-3 flex flex-row items-center gap-2 md:gap-4 shadow-2xl relative">
+      <div className="w-full flex justify-center pb-1 md:pb-6">
+         <div className="glass-panel rounded-xl md:rounded-3xl p-1 md:p-3 flex flex-row items-center gap-1.5 md:gap-4 shadow-2xl relative">
 
             {/* Pro Tools (Left) */}
             <div className="flex gap-1 md:gap-2">

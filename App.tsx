@@ -207,19 +207,19 @@ const App: React.FC = () => {
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-2 md:gap-4 p-2 md:p-4 lg:p-6 relative z-10">
+      <div className="flex-1 overflow-hidden flex flex-col landscape:flex-row lg:flex-row gap-0.5 md:gap-4 p-0.5 md:p-4 lg:p-6 relative z-10 transition-all duration-500">
 
-        {/* LEFT STAGE: Wheel & Info (30%) */}
-        <div className="w-full lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-2 md:gap-4">
+        {/* LEFT STAGE: Wheel & Info (30% on wide, 40% on landscape) */}
+        <div className="w-full landscape:w-[45%] lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
 
           {/* Wheel Pedestal */}
-          <div className="relative h-[280px] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
-            <div className="transform scale-[0.6] sm:scale-75 md:scale-90 lg:scale-100 origin-center transition-transform duration-700 ease-out">
+          <div className="relative h-[240px] landscape:h-[85vh] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
+            <div className="transform scale-[0.45] landscape:scale-[0.45] sm:scale-70 md:scale-90 lg:scale-100 origin-center transition-all duration-700 ease-out">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
 
-          {/* Information Deck */}
+          {/* Information Deck (Hidden on small landscape to save space) */}
           <div className="hidden lg:flex flex-1 gap-4 min-h-0">
             <div className="w-16 glass-panel rounded-xl overflow-hidden shadow-lg">
               <HistoryPanel history={history} />
@@ -230,12 +230,12 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* RIGHT STAGE: Betting & Controls (70%) */}
-        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-2xl md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
+        {/* RIGHT STAGE: Betting & Controls (7 0% on wide) */}
+        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-lg md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
 
           {/* Table Surface */}
-          <div className="flex-1 relative overflow-auto scrollbar-hide flex items-center justify-center p-2 md:p-6 bg-black/40">
-            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.85] sm:scale-90 md:scale-95 lg:scale-100">
+          <div className="flex-1 relative overflow-auto scrollbar-hide flex items-center justify-center p-0.5 md:p-6 bg-black/40">
+            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.55] sm:scale-90 md:scale-95 lg:scale-100">
               {showRacetrack ? (
                 <Racetrack onBet={handlePlaceBet} onHoverNumbers={setHighlightedNeighbors} />
               ) : (
@@ -253,8 +253,8 @@ const App: React.FC = () => {
           </div>
 
           {/* Control Dock */}
-          <div className="shrink-0 relative z-20">
-            <div className="absolute inset-x-0 bottom-0 h-24 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
+          <div className="shrink-0 relative z-20 landscape:mt-[-10px]">
+            <div className="absolute inset-x-0 bottom-0 h-8 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
             <GameControls
               selectedChip={selectedChip}
               onSelectChip={setSelectedChip}
@@ -278,13 +278,13 @@ const App: React.FC = () => {
       </div>
 
       {/* Mobile Stats Drawer */}
-      <div className="lg:hidden absolute top-20 left-2 z-30">
-        <HistoryPanel history={history.slice(0, 5)} />
+      <div className="lg:hidden absolute top-16 left-2 z-30 landscape:hidden">
+        <HistoryPanel history={history.slice(0, 3)} />
       </div>
 
       {/* Toast Notification System */}
       {notification && (
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 glass-panel px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-3 md:gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
+        <div className="absolute top-10 landscape:top-4 left-1/2 -translate-x-1/2 glass-panel px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-3 md:gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
           <div className={`w-2 md:w-3 h-2 md:h-3 rounded-full ${notification.type === 'error' ? 'bg-red-500 shadow-[0_0_10px_red]' : notification.type === 'success' ? 'bg-green-500 shadow-[0_0_10px_green]' : 'bg-neo-accent shadow-[0_0_10px_blue]'} animate-pulse`}></div>
           <span className="font-display font-bold uppercase tracking-wider text-xs md:text-sm text-white whitespace-nowrap">{notification.msg}</span>
         </div>
