@@ -13,18 +13,132 @@ interface Props {
     onBetPlaced?: (number: string, amount: number) => void;
 }
 
+// PHYSICS CONFIGURATION
+const PHYSICS_CONFIG = {
+    initialVelocity: 18,           // Rotations per second (very fast initial spin)
+    decayConstant: 0.35,           // Controls slowdown rate (higher = faster slowdown)
+    outerRadius: 60,               // Ball radius on outer rim (% of wheel)
+    pocketRadius: 30,              // Ball radius in pocket (% of wheel)
+    deflectorCount: 8,             // Number of diamond deflectors on rim
+    deflectorMagnitude: 4,         // Max deflection angle in degrees
+    rattleCount: 3,                // Number of pocket bounces
+    totalDuration: 8000,           // Total animation duration (ms)
+
+    // Phase timing (as fraction of total duration)
+    outerRimDuration: 0.60,        // 60% of time on outer rim
+    spiralDuration: 0.25,          // 25% of time spiraling inward
+    settleDuration: 0.15,          // 15% of time settling in pocket
+};
+
+// Seeded random number generator for deterministic deflector hits
+class SeededRandom {
+    private seed: number;
+
+    constructor(seed: number) {
+        this.seed = seed;
+    }
+
+    next(): number {
+        this.seed = (this.seed * 9301 + 49297) % 233280;
+        return this.seed / 233280;
+    }
+}
+
+// Calculate velocity at time t using exponential decay
+const calculateVelocity = (t: number, config: typeof PHYSICS_CONFIG): number => {
+    const { initialVelocity, decayConstant, totalDuration } = config;
+    const normalizedTime = t / totalDuration;
+    return initialVelocity * Math.exp(-decayConstant * normalizedTime * 10);
+};
+
+// Calculate total angle traveled from 0 to t
+const calculateAngleTraveled = (t: number, config: typeof PHYSICS_CONFIG): number => {
+    const { initialVelocity, decayConstant, totalDuration } = config;
+    const normalizedTime = t / totalDuration;
+    const k = decayConstant * 10;
+
+    // Integral of v(t) = v₀ × e^(-k×t) is (v₀/k) × (1 - e^(-k×t))
+    const angleInRotations = (initialVelocity / k) * (1 - Math.exp(-k * normalizedTime));
+    return angleInRotations * 360; // Convert rotations to degrees
+};
+
+// Apply deflector hit at specific intervals
+const applyDeflectorHit = (
+    baseAngle: number,
+    time: number,
+    config: typeof PHYSICS_CONFIG,
+    rng: SeededRandom
+): number => {
+    const { deflectorCount, deflectorMagnitude, totalDuration, outerRimDuration } = config;
+
+    // Only apply deflector hits during outer rim phase
+    if (time > totalDuration * outerRimDuration) {
+        return baseAngle;
+    }
+
+    // Calculate which deflector we're near
+    const currentRotations = baseAngle / 360;
+    const deflectorInterval = 1 / deflectorCount;
+    const nearestDeflector = Math.floor(currentRotations / deflectorInterval);
+    const distanceToDeflector = (currentRotations % deflectorInterval) / deflectorInterval;
+
+    // Apply hit when very close to deflector (within 5% of interval)
+    if (distanceToDeflector < 0.05 || distanceToDeflector > 0.95) {
+        const hitStrength = (rng.next() - 0.5) * 2; // -1 to 1
+        const deflection = hitStrength * deflectorMagnitude;
+        return baseAngle + deflection;
+    }
+
+    return baseAngle;
+};
+
+// Apply pocket rattle effect (damped oscillation)
+const applyPocketRattle = (
+    time: number,
+    targetAngle: number,
+    config: typeof PHYSICS_CONFIG
+): number => {
+    const { totalDuration, settleDuration, rattleCount } = config;
+    const settleStartTime = totalDuration * (1 - settleDuration);
+
+    if (time < settleStartTime) {
+        return 0;
+    }
+
+    const settleProgress = (time - settleStartTime) / (totalDuration - settleStartTime);
+    const frequency = rattleCount * Math.PI * 2;
+    const damping = 5;
+
+    // Damped oscillation: A × e^(-ζt) × sin(ωt)
+    const amplitude = 8; // degrees
+    const rattle = amplitude * Math.exp(-damping * settleProgress) * Math.sin(frequency * settleProgress);
+
+    return rattle;
+};
+
+// Calculate ball radius based on current phase
+const calculateBallRadius = (time: number, config: typeof PHYSICS_CONFIG): number => {
+    const { totalDuration, outerRimDuration, spiralDuration, outerRadius, pocketRadius } = config;
+    const outerRimEnd = totalDuration * outerRimDuration;
+    const spiralEnd = totalDuration * (outerRimDuration + spiralDuration);
+
+    if (time < outerRimEnd) {
+        // Stay on outer rim
+        return outerRadius;
+    } else if (time < spiralEnd) {
+        // Spiral inward
+        const spiralProgress = (time - outerRimEnd) / (spiralEnd - outerRimEnd);
+        const easeProgress = 1 - Math.pow(1 - spiralProgress, 3); // Ease out cubic
+        return outerRadius - (outerRadius - pocketRadius) * easeProgress;
+    } else {
+        // In pocket
+        return pocketRadius;
+    }
+};
+
 // CONSTANTS
 const POCKET_COUNT = 38;
-const TOTAL_SPIN_DURATION = 8000;
-const BALL_LANDING_POSITION = 135;
-
-// Custom easing functions
-const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
-const easeOutBack = (t: number): number => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-};
+const BALL_LANDING_POSITION = 90;
 
 export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlaced }) => {
     // State
@@ -87,57 +201,62 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
         }
 
         const anglePerPocket = 360 / POCKET_COUNT;
-        const OFFSET = -10;
-        const adjustedIndex = (targetIndex - OFFSET + POCKET_COUNT) % POCKET_COUNT;
-        const targetWheelAngle = adjustedIndex * anglePerPocket;
+        const targetPocketAngle = (targetIndex + 0.5) * anglePerPocket;
 
+        // Calculate how much the wheel will rotate
         const startWheelAngle = wheelRotation % 360;
-        const ballStartAngle = 0;
-        const isClockwise = direction === 'clockwise';
-        const dirMultiplier = isClockwise ? 1 : -1;
-        const targetFinalAngle = (BALL_LANDING_POSITION - targetWheelAngle + 360) % 360;
+        const wheelIsClockwise = direction === 'clockwise';
+        const wheelDirMultiplier = wheelIsClockwise ? 1 : -1;
 
-        const extraRotations = 5;
-        const totalWheelRotation = 360 * extraRotations;
-        const finalWheelAngle = startWheelAngle + (totalWheelRotation * dirMultiplier) + (targetFinalAngle * dirMultiplier);
+        // Wheel rotates 5 times
+        const wheelExtraRotations = 5;
+        const totalWheelRotation = 360 * wheelExtraRotations * wheelDirMultiplier;
+        const finalWheelAngle = startWheelAngle + totalWheelRotation;
+
+        // Ball rotates in OPPOSITE direction
+        const ballDirMultiplier = -wheelDirMultiplier;
+
+        // Ball needs to land at BALL_LANDING_POSITION (90°) relative to wheel
+        // Calculate total ball travel needed
+        const totalBallAngle = calculateAngleTraveled(PHYSICS_CONFIG.totalDuration, PHYSICS_CONFIG);
+
+        // Adjust ball starting angle so it lands correctly
+        // Final ball angle (absolute) = final wheel angle + target pocket angle + BALL_LANDING_POSITION
+        const desiredFinalBallAngle = finalWheelAngle + targetPocketAngle + BALL_LANDING_POSITION;
+        const ballStartAngle = desiredFinalBallAngle - (totalBallAngle * ballDirMultiplier);
+
+        // Create seeded random for deterministic deflector hits
+        const rng = new SeededRandom(targetIndex * 1000 + Date.now() % 1000);
 
         const animate = (time: number) => {
             const elapsed = time - startTimeRef.current;
-            const progress = Math.min(elapsed / TOTAL_SPIN_DURATION, 1);
+            const progress = Math.min(elapsed / PHYSICS_CONFIG.totalDuration, 1);
 
-            // Wheel rotation
-            const wheelEase = easeOutCubic(progress);
-            const currentWheelAngle = startWheelAngle + (finalWheelAngle - startWheelAngle) * wheelEase;
+            // Animate wheel rotation (simple ease out)
+            const wheelEase = 1 - Math.pow(1 - progress, 3);
+            const currentWheelAngle = startWheelAngle + totalWheelRotation * wheelEase;
             setWheelRotation(currentWheelAngle);
 
-            // Ball animation
-            let ballAngle;
-            let currentBallRadius;
+            // Calculate ball position using physics
+            let ballAngleTraveled = calculateAngleTraveled(elapsed, PHYSICS_CONFIG);
+            let currentBallAngle = ballStartAngle + (ballAngleTraveled * ballDirMultiplier);
 
-            if (progress < 0.5) {
-                const phaseProgress = progress / 0.5;
-                const orbitSpeed = 10;
-                ballAngle = ballStartAngle + (360 * orbitSpeed * phaseProgress * dirMultiplier);
-                currentBallRadius = 60 - (30 * phaseProgress);
-            } else if (progress < 0.85) {
-                const phaseProgress = (progress - 0.5) / 0.35;
-                const ballFollowEase = easeOutBack(phaseProgress);
-                const targetBallAngle = currentWheelAngle + targetWheelAngle;
-                const transitionStart = ballStartAngle + (360 * 10 * dirMultiplier);
-                ballAngle = transitionStart + (targetBallAngle - transitionStart) * ballFollowEase;
-                const wobble = Math.sin(phaseProgress * Math.PI * 6) * 8 * (1 - phaseProgress);
-                ballAngle += wobble;
-                currentBallRadius = 30 + (Math.sin(phaseProgress * Math.PI * 3) * 4);
-            } else {
-                const phaseProgress = (progress - 0.85) / 0.15;
-                const settleEase = 1 - Math.pow(1 - phaseProgress, 3);
-                const targetBallAngle = currentWheelAngle + targetWheelAngle;
-                const finalWobble = Math.sin(phaseProgress * Math.PI * 8) * 3 * (1 - phaseProgress);
-                ballAngle = targetBallAngle + finalWobble;
-                currentBallRadius = 30;
-            }
+            // Apply deflector hits
+            currentBallAngle = applyDeflectorHit(
+                Math.abs(ballAngleTraveled),
+                elapsed,
+                PHYSICS_CONFIG,
+                rng
+            ) * ballDirMultiplier + ballStartAngle;
 
-            setBallRotation(ballAngle);
+            // Apply pocket rattle
+            const rattleOffset = applyPocketRattle(elapsed, desiredFinalBallAngle, PHYSICS_CONFIG);
+            currentBallAngle += rattleOffset;
+
+            // Calculate ball radius
+            const currentBallRadius = calculateBallRadius(elapsed, PHYSICS_CONFIG);
+
+            setBallRotation(currentBallAngle);
             setBallRadius(currentBallRadius);
 
             if (progress < 1) {
@@ -145,7 +264,9 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
             } else {
                 setIsSpinning(false);
                 setSelectedNumber(targetNumber);
-                setAlignmentDebug(`✅ Perfect alignment on ${targetNumber}`);
+                // Final position: ensure perfect alignment
+                setBallRotation(desiredFinalBallAngle);
+                setBallRadius(PHYSICS_CONFIG.pocketRadius);
             }
         };
 
