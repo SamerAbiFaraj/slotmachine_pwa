@@ -209,12 +209,12 @@ const App: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col landscape:flex-row lg:flex-row gap-1 md:gap-4 p-1 md:p-4 lg:p-6 relative z-10 transition-all duration-500">
 
-        {/* LEFT STAGE: Wheel & Info (30% on wide, 40% on landscape) */}
-        <div className="w-full landscape:w-[45%] lg:w-[33%] xl:w-[30%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
+        {/* LEFT STAGE: Wheel & Info (Original 40% on wide) */}
+        <div className="w-full landscape:w-[45%] lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
 
           {/* Wheel Pedestal */}
-          <div className="relative h-[240px] landscape:h-[80vh] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
-            <div className="transform scale-[0.45] landscape:scale-[0.5] sm:scale-75 md:scale-95 lg:scale-100 origin-center transition-all duration-700 ease-out">
+          <div className="relative h-[240px] landscape:h-[210px] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
+            <div className="transform scale-[0.45] landscape:scale-[0.45] sm:scale-75 md:scale-95 lg:scale-100 xl:scale-100 origin-center transition-all duration-700 ease-out">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
@@ -235,7 +235,7 @@ const App: React.FC = () => {
 
           {/* Table Surface */}
           <div className="flex-1 min-h-0 relative overflow-auto scrollbar-hide flex items-center justify-center p-0.5 md:p-6 bg-black/40">
-            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.5] sm:scale-90 md:scale-95 lg:scale-100">
+            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.45] sm:scale-90 md:scale-95 lg:scale-100 xl:scale-100">
               {showRacetrack ? (
                 <Racetrack onBet={handlePlaceBet} onHoverNumbers={setHighlightedNeighbors} />
               ) : (
