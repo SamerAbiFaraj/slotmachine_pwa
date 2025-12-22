@@ -290,10 +290,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
     const numberRadius = imageRadius - 45;
 
     return (
-        <div className="relative flex items-center justify-center p-6">
+        <div className="relative flex items-center justify-center p-2 md:p-6">
             {/* Main Wheel Container with 3D Perspective */}
             <div
-                className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[650px] lg:h-[650px]"
+                className="relative w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] md:w-[550px] md:h-[550px] lg:w-[650px] lg:h-[650px]"
                 style={{
                     perspective: '1200px',
                     perspectiveOrigin: 'center center'
@@ -307,10 +307,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
               radial-gradient(circle at 30% 30%, #453c0540 0%, #53430fff 30%, #352806ff 60%, #3e300dff 100%)
             `,
                         boxShadow: `
-              0 0 0 8px #1a0f00,
-              0 0 0 12px #D4AF37,
-              0 0 0 16px #1a0f00,
-              0 25px 80px rgba(0, 0, 0, 0.8),
+              0 0 0 4px md:0 0 0 8px #1a0f00,
+              0 0 0 6px md:0 0 0 12px #D4AF37,
+              0 0 0 8px md:0 0 0 16px #1a0f00,
+              0 15px 40px md:0 25px 80px rgba(0, 0, 0, 0.8),
               inset 0 -10px 30px rgba(0, 0, 0, 0.6),
               inset 0 10px 30px rgba(255, 255, 255, 0.3)
             `,
@@ -330,7 +330,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                             }}
                         >
                             <Diamond
-                                className="w-6 h-6 text-[#FFE55C]"
+                                className="w-4 h-4 md:w-6 md:h-6 text-[#FFE55C]"
                                 fill="#FFD700"
                                 style={{
                                     filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))'
@@ -341,7 +341,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                     {/* Inner Bowl Shadow */}
                     <div
-                        className="absolute inset-[40px] rounded-full"
+                        className="absolute inset-[20px] md:inset-[40px] rounded-full"
                         style={{
                             background: `
                 radial-gradient(circle at center, 
@@ -358,7 +358,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                 {/* Inner Bowl with Gradient Depth */}
                 <div
-                    className="absolute inset-[45px] rounded-full overflow-hidden"
+                    className="absolute inset-[25px] md:inset-[45px] rounded-full overflow-hidden"
                     style={{
                         background: `
               radial-gradient(circle at 35% 35%, 
@@ -682,7 +682,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                 className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
                             >
                                 <div
-                                    className="relative rounded-2xl px-6 py-4 text-center pointer-events-auto"
+                                    className="relative rounded-2xl px-4 md:px-6 py-3 md:py-4 text-center pointer-events-auto"
                                     style={{
                                         background: `
                       linear-gradient(135deg, 
@@ -700,10 +700,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     `
                                     }}
                                 >
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 md:gap-4">
                                         {/* Animal Image */}
                                         {getAnimalImagePath(lastWinningNumber) && (
-                                            <div className="w-16 h-16 relative flex-shrink-0">
+                                            <div className="w-10 h-10 md:w-16 md:h-16 relative flex-shrink-0">
                                                 <div
                                                     className="absolute inset-0 rounded-full"
                                                     style={{
@@ -722,7 +722,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                         {/* Winning Number */}
                                         <div
                                             className={cn(
-                                                "text-5xl font-black px-6 py-3 rounded-xl",
+                                                "text-2xl md:text-5xl font-black px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl",
                                                 "transition-all duration-300"
                                             )}
                                             style={{
@@ -744,11 +744,11 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                                         {/* Animal Name */}
                                         {getAnimalName(lastWinningNumber) && (
-                                            <div className="text-left">
-                                                <div className="text-[#FFD700] text-xs font-medium mb-1 uppercase tracking-wider">
+                                            <div className="text-left hidden xs:block">
+                                                <div className="text-[#FFD700] text-[8px] md:text-xs font-medium mb-1 uppercase tracking-wider">
                                                     Winner
                                                 </div>
-                                                <div className="text-white text-lg font-bold">
+                                                <div className="text-white text-sm md:text-lg font-bold">
                                                     {getAnimalName(lastWinningNumber)}
                                                 </div>
                                             </div>
@@ -789,7 +789,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                             }}
                         >
                             <div
-                                className="w-8 h-8 rounded-full"
+                                className="w-4 h-4 md:w-6 md:h-6 rounded-full"
                                 style={{
                                     background: `
                     radial-gradient(circle at 30% 30%, 
@@ -800,16 +800,16 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     )
                   `,
                                     boxShadow: `
-                    0 0 20px rgba(255, 255, 255, 0.9),
-                    inset 0 -3px 6px rgba(0, 0, 0, 0.3),
-                    inset 3px 3px 8px rgba(255, 255, 255, 0.8)
+                    0 0 10px md:0 0 20px rgba(255, 255, 255, 0.9),
+                    inset 0 -1px md:-3px 3px md:6px rgba(0, 0, 0, 0.3),
+                    inset 1px md:3px 1px md:3px 4px md:8px rgba(255, 255, 255, 0.8)
                   `,
-                                    border: '2px solid rgba(255, 255, 255, 0.6)'
+                                    border: '1px md:2px solid rgba(255, 255, 255, 0.6)'
                                 }}
                             >
                                 {/* Highlight spot */}
                                 <div
-                                    className="absolute top-2 left-2 w-3 h-3 rounded-full"
+                                    className="absolute top-0.5 md:top-2 left-0.5 md:left-2 w-1.5 md:w-3 h-1.5 md:h-3 rounded-full"
                                     style={{
                                         background: 'rgba(255, 255, 255, 0.9)',
                                         filter: 'blur(1px)'
@@ -819,10 +819,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                             {/* Ball glow */}
                             <div
-                                className="absolute -inset-6 rounded-full -z-10"
+                                className="absolute -inset-3 md:-inset-6 rounded-full -z-10"
                                 style={{
                                     background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                                    filter: 'blur(8px)'
+                                    filter: 'blur(4px md:8px)'
                                 }}
                             />
                         </motion.div>
@@ -831,7 +831,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                 {/* Reflection Overlay */}
                 <div
-                    className="absolute inset-[45px] rounded-full pointer-events-none z-30"
+                    className="absolute inset-[25px] md:inset-[45px] rounded-full pointer-events-none z-30"
                     style={{
                         background: `
               radial-gradient(circle at 25% 25%, 
@@ -844,8 +844,8 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                 />
             </div>
 
-            {/* Status Panel */}
-            <div className="absolute -left-56 top-1/2 transform -translate-y-1/2 text-center">
+            {/* Status Panel - Repositioned for Responsive */}
+            <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-56 text-center transform scale-75 md:scale-100 opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto transition-opacity duration-300">
                 <div className="text-[#FFD700] text-lg font-bold mb-4 uppercase tracking-wider">
                     Game Status
                 </div>

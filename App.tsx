@@ -8,6 +8,7 @@ import { HistoryPanel } from './components/HistoryPanel';
 import { GameHeader } from './components/GameHeader';
 import { LeaderboardPanel } from './components/LeaderboardPanel';
 import { Racetrack } from './components/Racetrack';
+import { OrientationOverlay } from './components/OrientationOverlay';
 import { comms } from './services/communication';
 import { simulation } from './services/simulation';
 import { getAnimalImagePath, getAnimalName } from './animalMapping';
@@ -199,20 +200,21 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
+      <OrientationOverlay />
 
       <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
 
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-4 p-4 lg:p-6 relative z-10">
+      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-2 md:gap-4 p-2 md:p-4 lg:p-6 relative z-10">
 
         {/* LEFT STAGE: Wheel & Info (30%) */}
-        <div className="w-full lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-4">
+        <div className="w-full lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-2 md:gap-4">
 
           {/* Wheel Pedestal */}
-          <div className="relative h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float">
-            <div className="transform scale-75 md:scale-90 lg:scale-100 origin-center transition-transform duration-700 ease-out">
+          <div className="relative h-[280px] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
+            <div className="transform scale-[0.6] sm:scale-75 md:scale-90 lg:scale-100 origin-center transition-transform duration-700 ease-out">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
@@ -229,11 +231,11 @@ const App: React.FC = () => {
         </div>
 
         {/* RIGHT STAGE: Betting & Controls (70%) */}
-        <div className="flex-1 flex flex-col min-h-[500px] relative glass-panel rounded-3xl border-white/5 overflow-hidden shadow-2xl">
+        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-2xl md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
 
           {/* Table Surface */}
-          <div className="flex-1 relative overflow-auto scrollbar-hide flex items-center justify-center p-6 bg-black/40">
-            <div className="transform origin-center w-full max-w-5xl transition-all duration-300">
+          <div className="flex-1 relative overflow-auto scrollbar-hide flex items-center justify-center p-2 md:p-6 bg-black/40">
+            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.85] sm:scale-90 md:scale-95 lg:scale-100">
               {showRacetrack ? (
                 <Racetrack onBet={handlePlaceBet} onHoverNumbers={setHighlightedNeighbors} />
               ) : (
@@ -252,7 +254,7 @@ const App: React.FC = () => {
 
           {/* Control Dock */}
           <div className="shrink-0 relative z-20">
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-x-0 bottom-0 h-24 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
             <GameControls
               selectedChip={selectedChip}
               onSelectChip={setSelectedChip}
@@ -282,9 +284,9 @@ const App: React.FC = () => {
 
       {/* Toast Notification System */}
       {notification && (
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 glass-panel px-8 py-4 rounded-full flex items-center gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
-          <div className={`w-3 h-3 rounded-full ${notification.type === 'error' ? 'bg-red-500 shadow-[0_0_10px_red]' : notification.type === 'success' ? 'bg-green-500 shadow-[0_0_10px_green]' : 'bg-neo-accent shadow-[0_0_10px_blue]'} animate-pulse`}></div>
-          <span className="font-display font-bold uppercase tracking-wider text-sm text-white">{notification.msg}</span>
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 glass-panel px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-3 md:gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className={`w-2 md:w-3 h-2 md:h-3 rounded-full ${notification.type === 'error' ? 'bg-red-500 shadow-[0_0_10px_red]' : notification.type === 'success' ? 'bg-green-500 shadow-[0_0_10px_green]' : 'bg-neo-accent shadow-[0_0_10px_blue]'} animate-pulse`}></div>
+          <span className="font-display font-bold uppercase tracking-wider text-xs md:text-sm text-white whitespace-nowrap">{notification.msg}</span>
         </div>
       )}
 
