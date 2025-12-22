@@ -28,7 +28,7 @@ export const AVAILABLE_CHIPS: Chip[] = [
 ];
 
 export const GAME_CONFIG = {
-    BETTING_DURATION_SEC: 60,
+    BETTING_DURATION_SEC: 15,
     SPIN_DURATION_MS: 10000,
     RESULT_DURATION_MS: 5000,
     CURRENCY: 'USD',
@@ -54,6 +54,7 @@ export const PAYOUTS = {
     SPLIT: 17,
     STREET: 11,
     CORNER: 8,
+    BASKET: 6,
     LINE: 5,
     COLUMN: 2,
     DOZEN: 2,

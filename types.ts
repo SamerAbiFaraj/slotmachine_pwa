@@ -20,6 +20,7 @@ export enum BetType {
   EVEN_ODD = 'EVEN_ODD',
   HIGH_LOW = 'HIGH_LOW',
   ZERO = 'ZERO',
+  BASKET = 'BASKET',
   VOISINS = 'VOISINS',
   TIERS = 'TIERS',
   ORPHELINS = 'ORPHELINS',
@@ -86,18 +87,18 @@ export interface GameState {
   history: string[];
   selectedChip: number;
   totalBetAmount: number;
-  timeLeft: number; 
+  timeLeft: number;
   roundId: string;
 }
 
 export interface WheelNumber {
   number: string;
   color: 'red' | 'black' | 'green';
-  angle: number; 
+  angle: number;
 }
 
 // Iframe Communication Types matching API Doc
-export type OutgoingMessage = 
+export type OutgoingMessage =
   | { type: 'IFRAME_READY', data: { iframeId: string, dimensions: { width: number, height: number } } }
   | { type: 'REQUEST_AUTH', data: { reason: string } }
   | { type: 'BET_PLACED', data: { betIds: string[], roundId: string, totalAmount: number, currency: string, betCount: number } }
@@ -106,7 +107,7 @@ export type OutgoingMessage =
   | { type: 'BALANCE_REQUEST', data: { currencies: string[] } }
   | { type: 'SESSION_WARNING', data: { warningType: string } };
 
-export type IncomingMessage = 
+export type IncomingMessage =
   | { type: 'AUTH_TOKEN', data: { sessionToken: string, expiresAt: string } }
   | { type: 'BALANCE_UPDATE', data: { userId: string, balances: { currency: string, amount: string }[] } }
   | { type: 'ROUND_STATE_UPDATE', data: { roundId: string, state: string, timeRemainingSeconds: number } }

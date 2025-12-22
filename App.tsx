@@ -208,42 +208,13 @@ const App: React.FC = () => {
       <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-4 p-4 lg:p-6 relative z-10">
 
         {/* LEFT STAGE: Wheel & Info (30%) */}
-        <div className="w-full lg:w-[32%] xl:w-[28%] shrink-0 flex flex-col gap-4">
+        <div className="w-full lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-4">
 
           {/* Wheel Pedestal */}
           <div className="relative h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float">
             <div className="transform scale-75 md:scale-90 lg:scale-100 origin-center transition-transform duration-700 ease-out">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
-
-            {/* Cinematic Winner Overlay */}
-            {phase === GamePhase.RESULT_DISPLAY && winningNumber && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none animate-in zoom-in duration-500">
-                <div className="glass-panel border-neo-gold/50 px-10 py-8 rounded-2xl flex flex-col items-center shadow-[0_0_80px_rgba(226,182,89,0.3)]">
-                  <div className="text-neo-gold font-display uppercase tracking-[0.3em] text-xs mb-3">Winning Number</div>
-
-                  {/* Animal Image */}
-                  {getAnimalImagePath(winningNumber) && (
-                    <div className="w-20 h-20 md:w-24 md:h-24 mb-3 flex items-center justify-center">
-                      <img
-                        src={getAnimalImagePath(winningNumber)}
-                        alt={`Animal ${winningNumber}`}
-                        className="w-full h-full object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] animate-bounce-short"
-                      />
-                    </div>
-                  )}
-
-                  <div className="text-6xl font-display font-bold text-white drop-shadow-lg mb-2">{winningNumber}</div>
-
-                  {/* Animal Name */}
-                  {getAnimalName(winningNumber) && (
-                    <div className="text-neo-gold/80 font-display text-sm uppercase tracking-wider">
-                      {getAnimalName(winningNumber)}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Information Deck */}

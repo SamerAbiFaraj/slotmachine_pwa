@@ -4,9 +4,9 @@ import { Volume2, RotateCw, Target, Check, Diamond } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { WHEEL_ORDER, getNumberColor } from '../constants-orginal';
 import { getAnimalImagePath, getAnimalName } from '../animalMapping';
+import { GamePhase } from '../types';
 
 // TYPES
-type GamePhase = 'WAITING_FOR_BETS' | 'SPINNING' | 'RESULTS';
 interface Props {
     phase: GamePhase;
     winningNumber: string | null;
@@ -50,7 +50,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
     // Idle animation
     useEffect(() => {
-        if (phase === 'WAITING_FOR_BETS') {
+        if (phase === GamePhase.WAITING_FOR_BETS) {
             cancelAnimationFrame(requestRef.current);
             setIsSpinning(false);
 
@@ -64,7 +64,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
             requestRef.current = requestAnimationFrame(idleSpin);
             setBallOpacity(0);
-        } else if (phase === 'SPINNING' && winningNumber) {
+        } else if (phase === GamePhase.SPINNING && winningNumber) {
             setIsSpinning(true);
             setLastWinningNumber(winningNumber);
             const dir = Math.random() > 0.5 ? 'clockwise' : 'counterclockwise';
@@ -153,7 +153,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
     };
 
     const handleNumberClick = (number: string) => {
-        if (phase === 'WAITING_FOR_BETS' && onBetPlaced) {
+        if (phase === GamePhase.WAITING_FOR_BETS && onBetPlaced) {
             setSelectedNumber(number);
             onBetPlaced(number, 10);
         }
@@ -549,6 +549,94 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                             }}
                         />
                     </div>
+
+                    {/* Winning Number Display - Centered Over Wheel */}
+                    <AnimatePresence>
+                        {lastWinningNumber && !isSpinning && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.7 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.7 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
+                            >
+                                <div
+                                    className="relative rounded-2xl px-6 py-4 text-center pointer-events-auto"
+                                    style={{
+                                        background: `
+                      linear-gradient(135deg, 
+                        rgba(0, 0, 0, 0.95) 0%, 
+                        rgba(26, 26, 26, 0.95) 100%
+                      )
+                    `,
+                                        backdropFilter: 'blur(20px)',
+                                        border: '3px solid',
+                                        borderImage: 'linear-gradient(135deg, #FFD700, #D4AF37) 1',
+                                        boxShadow: `
+                      0 15px 40px rgba(0, 0, 0, 0.8),
+                      inset 0 0 30px rgba(255, 215, 0, 0.15),
+                      0 0 60px rgba(255, 215, 0, 0.3)
+                    `
+                                    }}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {/* Animal Image */}
+                                        {getAnimalImagePath(lastWinningNumber) && (
+                                            <div className="w-16 h-16 relative flex-shrink-0">
+                                                <div
+                                                    className="absolute inset-0 rounded-full"
+                                                    style={{
+                                                        background: 'radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%)',
+                                                        animation: 'pulse 2s ease-in-out infinite'
+                                                    }}
+                                                />
+                                                <img
+                                                    src={getAnimalImagePath(lastWinningNumber)}
+                                                    alt={`Animal ${lastWinningNumber}`}
+                                                    className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(255,215,0,0.4)]"
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Winning Number */}
+                                        <div
+                                            className={cn(
+                                                "text-5xl font-black px-6 py-3 rounded-xl",
+                                                "transition-all duration-300"
+                                            )}
+                                            style={{
+                                                background: getColor(lastWinningNumber) === 'green'
+                                                    ? 'linear-gradient(135deg, rgba(0, 170, 68, 0.4), rgba(0, 102, 34, 0.6))'
+                                                    : getColor(lastWinningNumber) === 'red'
+                                                        ? 'linear-gradient(135deg, rgba(204, 0, 0, 0.4), rgba(128, 0, 0, 0.6))'
+                                                        : 'linear-gradient(135deg, rgba(68, 68, 68, 0.4), rgba(0, 0, 0, 0.6))',
+                                                color: getColor(lastWinningNumber) === 'green' ? '#00ff66'
+                                                    : getColor(lastWinningNumber) === 'red' ? '#ff4444' : '#ffffff',
+                                                textShadow: '0 4px 20px rgba(0, 0, 0, 0.9), 0 0 30px currentColor',
+                                                border: '2px solid',
+                                                borderColor: getColor(lastWinningNumber) === 'green' ? '#00aa44'
+                                                    : getColor(lastWinningNumber) === 'red' ? '#cc0000' : '#666'
+                                            }}
+                                        >
+                                            {lastWinningNumber}
+                                        </div>
+
+                                        {/* Animal Name */}
+                                        {getAnimalName(lastWinningNumber) && (
+                                            <div className="text-left">
+                                                <div className="text-[#FFD700] text-xs font-medium mb-1 uppercase tracking-wider">
+                                                    Winner
+                                                </div>
+                                                <div className="text-white text-lg font-bold">
+                                                    {getAnimalName(lastWinningNumber)}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Roulette Ball */}
@@ -635,103 +723,6 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                 />
             </div>
 
-            {/* Winning Number Display */}
-            <AnimatePresence>
-                {lastWinningNumber && !isSpinning && (
-                    <motion.div
-                        initial={{ opacity: 0, x: 50, scale: 0.9 }}
-                        animate={{ opacity: 1, x: 0, scale: 1 }}
-                        exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                        className="absolute -right-64 top-1/2 transform -translate-y-1/2"
-                    >
-                        <div
-                            className="relative rounded-3xl p-8 min-w-[280px] text-center"
-                            style={{
-                                background: `
-                  linear-gradient(135deg, 
-                    rgba(0, 0, 0, 0.95) 0%, 
-                    rgba(26, 26, 26, 0.95) 100%
-                  )
-                `,
-                                backdropFilter: 'blur(20px)',
-                                border: '3px solid',
-                                borderImage: 'linear-gradient(135deg, #FFD700, #D4AF37) 1',
-                                boxShadow: `
-                  0 25px 80px rgba(0, 0, 0, 0.7),
-                  inset 0 0 40px rgba(255, 215, 0, 0.1)
-                `
-                            }}
-                        >
-                            <div className="text-[#FFD700] text-xl font-bold tracking-[0.3em] mb-6 uppercase">
-                                Winner
-                            </div>
-
-                            {/* Animal Image */}
-                            {getAnimalImagePath(lastWinningNumber) && (
-                                <div className="w-24 h-24 mx-auto mb-4 relative">
-                                    <div
-                                        className="absolute inset-0 rounded-full"
-                                        style={{
-                                            background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%)',
-                                            animation: 'pulse 2s ease-in-out infinite'
-                                        }}
-                                    />
-                                    <img
-                                        src={getAnimalImagePath(lastWinningNumber)}
-                                        alt={`Animal ${lastWinningNumber}`}
-                                        className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(255,215,0,0.3)]"
-                                    />
-                                </div>
-                            )}
-
-                            {/* Winning Number */}
-                            <div
-                                className={cn(
-                                    "text-9xl font-black mb-6 py-6 px-10 rounded-2xl relative",
-                                    "transition-all duration-300"
-                                )}
-                                style={{
-                                    background: getColor(lastWinningNumber) === 'green'
-                                        ? 'linear-gradient(135deg, rgba(0, 170, 68, 0.3), rgba(0, 102, 34, 0.5))'
-                                        : getColor(lastWinningNumber) === 'red'
-                                            ? 'linear-gradient(135deg, rgba(204, 0, 0, 0.3), rgba(128, 0, 0, 0.5))'
-                                            : 'linear-gradient(135deg, rgba(68, 68, 68, 0.3), rgba(0, 0, 0, 0.5))',
-                                    color: getColor(lastWinningNumber) === 'green' ? '#00ff66'
-                                        : getColor(lastWinningNumber) === 'red' ? '#ff4444' : '#ffffff',
-                                    textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)',
-                                    border: '3px solid',
-                                    borderColor: getColor(lastWinningNumber) === 'green' ? '#00aa44'
-                                        : getColor(lastWinningNumber) === 'red' ? '#cc0000' : '#666'
-                                }}
-                            >
-                                {lastWinningNumber}
-                            </div>
-
-                            {/* Animal Name */}
-                            {getAnimalName(lastWinningNumber) && (
-                                <div className="mb-6">
-                                    <div className="text-gray-400 text-sm font-medium mb-2 uppercase tracking-wider">
-                                        Animal
-                                    </div>
-                                    <div className="text-[#FFD700] text-2xl font-bold">
-                                        {getAnimalName(lastWinningNumber)}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Verification Badge */}
-                            <div className="flex items-center justify-center gap-3 mt-6 pt-6 border-t border-gray-800">
-                                <Check className="w-6 h-6 text-emerald-400" />
-                                <span className="text-sm text-gray-300 uppercase tracking-wider">
-                                    Verified Result
-                                </span>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Status Panel */}
             <div className="absolute -left-56 top-1/2 transform -translate-y-1/2 text-center">
                 <div className="text-[#FFD700] text-lg font-bold mb-4 uppercase tracking-wider">
@@ -741,7 +732,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                 <div
                     className={cn(
                         "px-8 py-4 rounded-full text-lg font-bold mb-8 uppercase tracking-wider",
-                        phase === 'WAITING_FOR_BETS'
+                        phase === GamePhase.WAITING_FOR_BETS
                             ? "bg-gradient-to-r from-emerald-700 to-emerald-900 text-white animate-pulse"
                             : "bg-gradient-to-r from-amber-700 to-amber-900 text-white"
                     )}
@@ -749,7 +740,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
                     }}
                 >
-                    {phase === 'WAITING_FOR_BETS' ? "Place Bets" : "Spinning..."}
+                    {phase === GamePhase.WAITING_FOR_BETS ? "Place Bets" : "Spinning..."}
                 </div>
 
                 {/* Spin Direction */}
