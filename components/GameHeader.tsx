@@ -15,7 +15,7 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
     const isProfit = stats.netProfit >= 0;
 
     return (
-        <header className="h-[60px] md:h-[70px] px-4 md:px-6 flex items-center justify-between z-50 shrink-0 border-b border-white/5 bg-neo-bg/80 backdrop-blur-md">
+        <header className="h-[50px] md:h-[70px] landscape:h-[50px] px-4 md:px-6 flex items-center justify-between z-50 shrink-0 border-b border-white/5 bg-neo-bg/80 backdrop-blur-md">
 
             {/* Brand */}
             <div className="flex items-center gap-3 md:gap-4">

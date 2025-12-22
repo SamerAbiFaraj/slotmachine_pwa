@@ -207,14 +207,14 @@ const App: React.FC = () => {
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col landscape:flex-row lg:flex-row gap-0.5 md:gap-4 p-0.5 md:p-4 lg:p-6 relative z-10 transition-all duration-500">
+      <div className="flex-1 overflow-hidden flex flex-col landscape:flex-row lg:flex-row gap-1 md:gap-4 p-1 md:p-4 lg:p-6 relative z-10 transition-all duration-500">
 
         {/* LEFT STAGE: Wheel & Info (30% on wide, 40% on landscape) */}
-        <div className="w-full landscape:w-[45%] lg:w-[40%] xl:w-[36%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
+        <div className="w-full landscape:w-[45%] lg:w-[33%] xl:w-[30%] shrink-0 flex flex-col gap-1 md:gap-4 justify-center relative">
 
           {/* Wheel Pedestal */}
-          <div className="relative h-[240px] landscape:h-[85vh] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
-            <div className="transform scale-[0.45] landscape:scale-[0.45] sm:scale-70 md:scale-90 lg:scale-100 origin-center transition-all duration-700 ease-out">
+          <div className="relative h-[240px] landscape:h-[80vh] sm:h-[350px] md:h-[400px] lg:h-[500px] shrink-0 flex items-center justify-center animate-float overflow-visible">
+            <div className="transform scale-[0.45] landscape:scale-[0.5] sm:scale-75 md:scale-95 lg:scale-100 origin-center transition-all duration-700 ease-out">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
@@ -234,8 +234,8 @@ const App: React.FC = () => {
         <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-lg md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
 
           {/* Table Surface */}
-          <div className="flex-1 relative overflow-auto scrollbar-hide flex items-center justify-center p-0.5 md:p-6 bg-black/40">
-            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.55] sm:scale-90 md:scale-95 lg:scale-100">
+          <div className="flex-1 min-h-0 relative overflow-auto scrollbar-hide flex items-center justify-center p-0.5 md:p-6 bg-black/40">
+            <div className="transform origin-center w-full max-w-5xl transition-all duration-300 scale-[0.7] landscape:scale-[0.5] sm:scale-90 md:scale-95 lg:scale-100">
               {showRacetrack ? (
                 <Racetrack onBet={handlePlaceBet} onHoverNumbers={setHighlightedNeighbors} />
               ) : (
@@ -253,8 +253,8 @@ const App: React.FC = () => {
           </div>
 
           {/* Control Dock */}
-          <div className="shrink-0 relative z-20 landscape:mt-[-10px]">
-            <div className="absolute inset-x-0 bottom-0 h-8 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
+          <div className="shrink-0 relative z-20">
+            <div className="absolute inset-x-0 bottom-0 h-4 md:h-32 bg-gradient-to-t from-neo-bg via-neo-bg/90 to-transparent pointer-events-none"></div>
             <GameControls
               selectedChip={selectedChip}
               onSelectChip={setSelectedChip}
