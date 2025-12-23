@@ -42,30 +42,44 @@
     }
 }
 
+@media (max-width: 1024px) {
+    #root {
+        /* Apply 90% zoom as requested for better visibility on mobile/tablet */
+        zoom: 0.9;
+        -moz-transform: scale(0.9);
+        -moz-transform-origin: top center;
+        transform: scale(0.9);
+        transform-origin: top center;
+    }
+}
+
 /* Landscape optimizations for mobile devices */
 @media (orientation: landscape) and (max-width: 1023px) {
 
-    /* Prevent address bar bounce on mobile browsers */
+    /* Allow scrolling on mobile landscape */
     body {
-        overflow: hidden;
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh;
+        -webkit-overflow-scrolling: touch;
     }
 
     #root {
-        height: 100vh;
-        height: 100dvh;
-        /* Dynamic viewport height for mobile browsers */
+        height: auto !important;
+        min-height: 100vh;
+        min-height: 100dvh;
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
+        overflow-x: hidden;
     }
 
-    /* Disable pull-to-refresh and other browser gestures */
-    html,
-    body {
-        overscroll-behavior: none;
-        touch-action: none;
+    /* Allow natural scrolling but still disable some unwanted gestures if needed */
+    html {
+        overscroll-behavior-y: auto;
         -webkit-user-select: none;
         user-select: none;
+        height: auto;
     }
 }

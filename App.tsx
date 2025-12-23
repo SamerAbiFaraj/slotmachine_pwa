@@ -199,7 +199,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-y-auto landscape:overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black scrollbar-thin">
+    <div className="relative min-h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-y-auto landscape:overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black scrollbar-thin">
       <OrientationOverlay />
 
       <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
@@ -212,7 +212,7 @@ const App: React.FC = () => {
         {/* LEFT STAGE: Wheel & Info - MODIFIED FOR LANDSCAPE TOP-MIDDLE */}
         <div className="
             w-full lg:w-[38%] xl:w-[35%] 
-            h-auto lg:h-auto
+            h-auto min-h-[340px] sm:min-h-[480px] md:min-h-[580px] lg:min-h-0
             shrink-0 flex flex-col gap-2 md:gap-4 justify-center items-center
           ">
 
