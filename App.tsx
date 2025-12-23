@@ -199,7 +199,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
+    <div className="min-h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-y-auto landscape:overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black scrollbar-thin">
       <OrientationOverlay />
 
       <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
@@ -207,13 +207,13 @@ const App: React.FC = () => {
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
       {/* Main Content Area - RESPONSIVE FIX */}
-      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-2 md:gap-4 lg:gap-6 p-2 md:p-4 lg:p-6 relative z-10">
+      <div className="flex-1 flex flex-col lg:flex-row gap-2 md:gap-4 lg:gap-6 p-2 md:p-4 lg:p-6 relative z-10">
 
-        {/* LEFT STAGE: Wheel & Info */}
+        {/* LEFT STAGE: Wheel & Info - MODIFIED FOR LANDSCAPE TOP-MIDDLE */}
         <div className="
             w-full lg:w-[38%] xl:w-[35%] 
-            h-[35vh] max-lg:landscape:h-[30vh] lg:h-auto
-            shrink-0 flex flex-col gap-2 md:gap-4 justify-center
+            h-auto lg:h-auto
+            shrink-0 flex flex-col gap-2 md:gap-4 justify-center items-center
           ">
 
           <div className="
@@ -222,8 +222,7 @@ const App: React.FC = () => {
             flex items-center justify-center overflow-visible
           ">
             <div className="
-            w-full h-full max-w-[90vw] max-h-[90%]
-            lg:max-w-none lg:max-h-none
+            w-full h-auto max-w-[80vw] sm:max-w-[60vw] md:max-w-[50vw] lg:max-w-none
             flex items-center justify-center
           ">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
@@ -259,8 +258,7 @@ const App: React.FC = () => {
             scrollbar-thin scrollbar-thumb-neo-gold/30 scrollbar-track-transparent
           ">
             <div className="
-            w-[900px] lg:w-full lg:max-w-6xl 
-            min-w-[900px] lg:min-w-0
+            w-full lg:max-w-6xl 
             mx-auto
           ">
               {showRacetrack ? (

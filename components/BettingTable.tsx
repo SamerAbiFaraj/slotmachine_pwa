@@ -123,7 +123,7 @@ export const BettingTable: React.FC<Props> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
         className={`
-          relative h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 flex flex-col items-center justify-center border border-neo-gold/20
+          relative h-10 sm:h-12 md:h-16 lg:h-20 xl:h-24 flex flex-col items-center justify-center border border-neo-gold/20
           transition-all duration-200 cursor-pointer group
           hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
           ${isHighlighted ? 'bg-neo-gold/40' : 'bg-transparent'}
@@ -131,15 +131,15 @@ export const BettingTable: React.FC<Props> = ({
       >
         {multiplier && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-neo-accent/20 animate-pulse overflow-hidden">
-            <span className="text-neo-accent font-bold text-[8px] md:text-xs drop-shadow-[0_0_5px_rgba(14,165,233,1)]">⚡{multiplier.multiplier}x</span>
+            <span className="text-neo-accent font-bold text-[6px] sm:text-[8px] md:text-xs drop-shadow-[0_0_5px_rgba(14,165,233,1)]">⚡{multiplier.multiplier}x</span>
           </div>
         )}
         {animalImagePath && (
-          <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-10 md:h-10 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
+          <div className="w-4 h-4 sm:w-6 sm:h-6 md:w-10 md:h-10 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
             <img src={animalImagePath} alt={`Animal ${numStr}`} className="w-full h-full object-contain drop-shadow-md transition-transform group-hover:scale-110" />
           </div>
         )}
-        <span className={`font-display text-xs sm:text-sm md:text-lg font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
+        <span className={`font-display text-[10px] sm:text-sm md:text-lg font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
           {numStr}
         </span>
         {amount && renderChipStack(amount, PAYOUTS.STRAIGHT, BetType.STRAIGHT, [numStr])}
@@ -163,9 +163,9 @@ export const BettingTable: React.FC<Props> = ({
     <div className="
     w-full 
     select-none felt-texture 
-    p-3 md:p-6 lg:p-8 
+    p-2 md:p-6 lg:p-8 
     rounded-xl 
-    border-[3px] md:border-[6px] lg:border-[8px] 
+    border-[2px] md:border-[6px] lg:border-[8px] 
     border-[#1e293b] 
     shadow-2xl relative overflow-hidden
   ">
@@ -236,7 +236,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
         <div className="
-            w-14 md:w-16 lg:w-20 
+            w-10 sm:w-12 md:w-16 lg:w-20 
             flex flex-col border-r border-neo-gold/30 relative
           ">
           <div
@@ -283,7 +283,7 @@ export const BettingTable: React.FC<Props> = ({
                       {/* UPDATE CELL HEIGHT FOR BETTER MOBILE SIZING */}
                       <div className="
                       relative 
-                      h-14 md:h-16 lg:h-20 xl:h-24
+                      h-10 sm:h-12 md:h-16 lg:h-20 xl:h-24
                       flex flex-col items-center justify-center 
                       border border-neo-gold/20
                       transition-all duration-200 cursor-pointer group
@@ -337,7 +337,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* COLUMNS (RIGHT) */}
         <div className="
-          w-12 md:w-14 lg:w-16
+          w-10 sm:w-12 md:w-14 lg:w-16
           flex flex-col border-l border-neo-gold/30
         ">
           {[3, 2, 1].map(row => {
