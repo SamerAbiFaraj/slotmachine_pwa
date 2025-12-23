@@ -1,0 +1,58 @@
+/* src/index.css */
+
+/* Tailwind base imports - REQUIRED */
+@import "tailwindcss";
+
+/* Custom scrollbar styling for mobile landscape table scrolling */
+@layer utilities {
+
+    /* Thin scrollbar - visible but subtle */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(226, 182, 89, 0.3);
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(226, 182, 89, 0.5);
+    }
+
+    /* Firefox scrollbar support */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(226, 182, 89, 0.3) transparent;
+    }
+
+    /* Hidden scrollbar - functional but invisible */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+/* Landscape optimizations for mobile devices */
+@media (orientation: landscape) and (max-width: 1023px) {
+
+    /* Prevent address bar bounce on mobile browsers */
+    body {
+        overflow: hidden;
+    }
+
+    #root {
+        height: 100vh;
+        height: 100dvh;
+        /* Dynamic viewport height for mobile browsers */
+    }
+}

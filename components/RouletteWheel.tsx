@@ -672,6 +672,9 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     </div>
 
                     {/* Winning Number Display - Centered Over Wheel */}
+
+
+                    {/* Winning Number Display - Centered Over Wheel */}
                     <AnimatePresence>
                         {lastWinningNumber && !isSpinning && (
                             <motion.div
@@ -682,28 +685,28 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                 className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
                             >
                                 <div
-                                    className="relative rounded-2xl px-4 md:px-6 py-3 md:py-4 text-center pointer-events-auto"
+                                    className="relative rounded-xl md:rounded-2xl px-3 md:px-6 py-2 md:py-4 text-center pointer-events-auto"
                                     style={{
                                         background: `
-                      linear-gradient(135deg, 
-                        rgba(0, 0, 0, 0.95) 0%, 
-                        rgba(26, 26, 26, 0.95) 100%
-                      )
+                        linear-gradient(135deg, 
+                            rgba(0, 0, 0, 0.95) 0%, 
+                            rgba(26, 26, 26, 0.95) 100%
+                        )
                     `,
                                         backdropFilter: 'blur(20px)',
-                                        border: '3px solid',
+                                        border: '2px md:3px solid',
                                         borderImage: 'linear-gradient(135deg, #FFD700, #D4AF37) 1',
                                         boxShadow: `
-                      0 15px 40px rgba(0, 0, 0, 0.8),
-                      inset 0 0 30px rgba(255, 215, 0, 0.15),
-                      0 0 60px rgba(255, 215, 0, 0.3)
+                        0 15px 40px rgba(0, 0, 0, 0.8),
+                        inset 0 0 30px rgba(255, 215, 0, 0.15),
+                        0 0 60px rgba(255, 215, 0, 0.3)
                     `
                                     }}
                                 >
                                     <div className="flex items-center gap-2 md:gap-4">
                                         {/* Animal Image */}
                                         {getAnimalImagePath(lastWinningNumber) && (
-                                            <div className="w-10 h-10 md:w-16 md:h-16 relative flex-shrink-0">
+                                            <div className="w-8 h-8 md:w-16 md:h-16 relative flex-shrink-0">
                                                 <div
                                                     className="absolute inset-0 rounded-full"
                                                     style={{
@@ -722,7 +725,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                         {/* Winning Number */}
                                         <div
                                             className={cn(
-                                                "text-2xl md:text-5xl font-black px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl",
+                                                "text-xl md:text-5xl font-black px-3 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl",
                                                 "transition-all duration-300"
                                             )}
                                             style={{
@@ -742,13 +745,13 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                             {lastWinningNumber}
                                         </div>
 
-                                        {/* Animal Name */}
+                                        {/* Animal Name - NOW VISIBLE ON ALL SCREENS */}
                                         {getAnimalName(lastWinningNumber) && (
-                                            <div className="text-left hidden xs:block">
-                                                <div className="text-[#FFD700] text-[8px] md:text-xs font-medium mb-1 uppercase tracking-wider">
+                                            <div className="text-left flex-shrink-0">
+                                                <div className="text-[#FFD700] text-[7px] md:text-xs font-medium mb-0.5 md:mb-1 uppercase tracking-wider">
                                                     Winner
                                                 </div>
-                                                <div className="text-white text-sm md:text-lg font-bold">
+                                                <div className="text-white text-xs md:text-lg font-bold leading-tight">
                                                     {getAnimalName(lastWinningNumber)}
                                                 </div>
                                             </div>
@@ -845,46 +848,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
             </div>
 
             {/* Status Panel - Repositioned for Responsive */}
-            <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-56 text-center transform scale-75 md:scale-100 opacity-0 lg:opacity-100 pointer-events-none lg:pointer-events-auto transition-opacity duration-300">
-                <div className="text-[#FFD700] text-lg font-bold mb-4 uppercase tracking-wider">
-                    Game Status
-                </div>
 
-                <div
-                    className={cn(
-                        "px-8 py-4 rounded-full text-lg font-bold mb-8 uppercase tracking-wider",
-                        phase === GamePhase.WAITING_FOR_BETS
-                            ? "bg-gradient-to-r from-emerald-700 to-emerald-900 text-white animate-pulse"
-                            : "bg-gradient-to-r from-amber-700 to-amber-900 text-white"
-                    )}
-                    style={{
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
-                    }}
-                >
-                    {phase === GamePhase.WAITING_FOR_BETS ? "Place Bets" : "Spinning..."}
-                </div>
-
-                {/* Spin Direction */}
-                <div className="text-gray-400 text-sm mb-4">
-                    <div className="mb-2 uppercase tracking-wider">Direction:</div>
-                    <div
-                        className={cn(
-                            "text-lg font-bold px-4 py-2 rounded-full",
-                            spinDirection === 'clockwise'
-                                ? "bg-blue-900/50 text-blue-300"
-                                : "bg-purple-900/50 text-purple-300"
-                        )}
-                    >
-                        {spinDirection === 'clockwise' ? 'Clockwise ↻' : 'Counter ↺'}
-                    </div>
-                </div>
-
-                {/* Info */}
-                <div className="text-gray-500 text-xs uppercase tracking-wider">
-                    <div className="mb-1">American Roulette</div>
-                    <div>38 Numbers</div>
-                </div>
-            </div>
         </div>
     );
 };

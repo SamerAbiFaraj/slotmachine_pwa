@@ -207,20 +207,31 @@ const App: React.FC = () => {
       <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
 
       {/* Main Content Area - RESPONSIVE FIX */}
-      <div className="flex-1 overflow-hidden flex flex-col md:flex-row gap-2 md:gap-4 lg:gap-6 p-2 md:p-4 lg:p-6 relative z-10">
+      <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-2 md:gap-4 lg:gap-6 p-2 md:p-4 lg:p-6 relative z-10">
 
         {/* LEFT STAGE: Wheel & Info */}
-        <div className="w-full md:w-[42%] lg:w-[38%] xl:w-[35%] shrink-0 flex flex-col gap-2 md:gap-4 justify-center">
+        <div className="
+            w-full lg:w-[38%] xl:w-[35%] 
+            h-[35vh] max-lg:landscape:h-[30vh] lg:h-auto
+            shrink-0 flex flex-col gap-2 md:gap-4 justify-center
+          ">
 
-          {/* Wheel Container - FIXED SCALING */}
-          <div className="relative h-[280px] sm:h-[320px] md:h-[420px] lg:h-[520px] xl:h-[580px] shrink-0 flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center">
+          <div className="
+            relative flex-1 lg:flex-none
+            lg:h-[420px] xl:h-[520px] 2xl:h-[580px]
+            flex items-center justify-center overflow-visible
+          ">
+            <div className="
+            w-full h-full max-w-[90vw] max-h-[90%]
+            lg:max-w-none lg:max-h-none
+            flex items-center justify-center
+          ">
               <RouletteWheel phase={phase} winningNumber={winningNumber} />
             </div>
           </div>
 
           {/* Information Deck - Show on tablet+ */}
-          <div className="hidden md:flex flex-1 gap-3 lg:gap-4 min-h-0">
+          <div className="hidden lg:flex flex-1 gap-3 lg:gap-4 min-h-0">
             <div className="w-14 lg:w-16 glass-panel rounded-xl overflow-hidden shadow-lg">
               <HistoryPanel history={history} />
             </div>
@@ -231,11 +242,27 @@ const App: React.FC = () => {
         </div>
 
         {/* RIGHT STAGE: Betting & Controls */}
-        <div className="flex-1 flex flex-col min-h-0 relative glass-panel rounded-2xl md:rounded-3xl border-white/5 overflow-hidden shadow-2xl">
+        <div className="
+            flex-1 flex flex-col min-h-0 
+            glass-panel rounded-2xl md:rounded-3xl 
+            border-white/5 overflow-hidden shadow-2xl
+          ">
 
           {/* Table Surface - IMPROVED SCALING */}
-          <div className="flex-1 min-h-0 relative overflow-auto scrollbar-hide flex items-center justify-center p-2 md:p-4 lg:p-6 bg-black/40">
-            <div className="w-full max-w-6xl mx-auto">
+          <div className="
+            flex-1 min-h-0 relative 
+            overflow-x-auto overflow-y-auto
+            lg:overflow-hidden
+            flex items-start lg:items-center justify-start lg:justify-center 
+            p-2 md:p-4 lg:p-6 
+            bg-black/40
+            scrollbar-thin scrollbar-thumb-neo-gold/30 scrollbar-track-transparent
+          ">
+            <div className="
+            w-[900px] lg:w-full lg:max-w-6xl 
+            min-w-[900px] lg:min-w-0
+            mx-auto
+          ">
               {showRacetrack ? (
                 <Racetrack
                   onBet={handlePlaceBet}
@@ -280,7 +307,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Mobile Stats Drawer - Only show in portrait */}
-      <div className="md:hidden absolute top-16 left-2 z-30 max-sm:portrait:block max-sm:landscape:hidden">
+      <div className="lg:hidden absolute top-16 left-2 z-30 portrait:block landscape:hidden">
         <HistoryPanel history={history.slice(0, 3)} />
       </div>
 

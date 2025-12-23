@@ -160,7 +160,15 @@ export const BettingTable: React.FC<Props> = ({
   );
 
   return (
-    <div className="w-full max-w-full select-none felt-texture p-3 sm:p-4 md:p-6 lg:p-8 rounded-xl border-[3px] md:border-[6px] lg:border-[8px] border-[#1e293b] shadow-2xl relative overflow-hidden">
+    <div className="
+    w-full 
+    select-none felt-texture 
+    p-3 md:p-6 lg:p-8 
+    rounded-xl 
+    border-[3px] md:border-[6px] lg:border-[8px] 
+    border-[#1e293b] 
+    shadow-2xl relative overflow-hidden
+  ">
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
 
       {/* Floating Tooltip */}
@@ -227,7 +235,10 @@ export const BettingTable: React.FC<Props> = ({
       <div className="relative z-10 flex rounded overflow-hidden border border-neo-gold/30 md:border-2 shadow-lg bg-black/20">
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
-        <div className="w-12 sm:w-14 md:w-16 lg:w-20 flex flex-col border-r border-neo-gold/30 relative">
+        <div className="
+            w-14 md:w-16 lg:w-20 
+            flex flex-col border-r border-neo-gold/30 relative
+          ">
           <div
             onClick={() => handleBet(BetType.ZERO, ["0"], PAYOUTS.STRAIGHT)}
             onMouseEnter={(e) => handleMouseEnter(e, BetType.ZERO, ["0"], PAYOUTS.STRAIGHT)}
@@ -269,7 +280,17 @@ export const BettingTable: React.FC<Props> = ({
 
                   return (
                     <div key={num} className="relative">
-                      {renderCell(num)}
+                      {/* UPDATE CELL HEIGHT FOR BETTER MOBILE SIZING */}
+                      <div className="
+                      relative 
+                      h-14 md:h-16 lg:h-20 xl:h-24
+                      flex flex-col items-center justify-center 
+                      border border-neo-gold/20
+                      transition-all duration-200 cursor-pointer group
+                      hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
+                    ">
+                        {renderCell(num)}
+                      </div>
 
                       {/* Split Vertical */}
                       {nextInCol && renderBetHotspot(BetType.SPLIT, [num, nextInCol], PAYOUTS.SPLIT, "absolute bottom-[-10px] left-0 right-0 h-5 z-40")}
@@ -290,7 +311,11 @@ export const BettingTable: React.FC<Props> = ({
           </div>
 
           {/* DOZENS */}
-          <div className="grid grid-cols-3 h-10 sm:h-11 md:h-12 lg:h-14 border-t border-neo-gold/30">
+          <div className="
+              grid grid-cols-3 
+              h-12 md:h-14 lg:h-16
+              border-t border-neo-gold/30
+            ">
             {['1st 12', '2nd 12', '3rd 12'].map((label, idx) => {
               const nums = Array.from({ length: 12 }, (_, i) => (i + 1 + idx * 12).toString());
               return (
@@ -311,7 +336,10 @@ export const BettingTable: React.FC<Props> = ({
         </div>
 
         {/* COLUMNS (RIGHT) */}
-        <div className="w-10 sm:w-11 md:w-12 lg:w-14 flex flex-col border-l border-neo-gold/30">
+        <div className="
+          w-12 md:w-14 lg:w-16
+          flex flex-col border-l border-neo-gold/30
+        ">
           {[3, 2, 1].map(row => {
             const nums = Array.from({ length: 12 }, (_, i) => (i * 3 + row).toString());
             return (
@@ -323,7 +351,7 @@ export const BettingTable: React.FC<Props> = ({
                 onMouseLeave={() => setHoveredBet(null)}
                 className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-neo-gold/20 last:border-0 transition-colors"
               >
-                <span className="rotate-90 whitespace-nowrap text-[8px] sm:text-[10px] md:text-[10px] font-bold text-neo-gold">2 TO 1</span>
+                <span className="rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] md:text-[10px] font-bold text-neo-gold">2 TO 1</span>
                 {getBetAmount(BetType.COLUMN, nums) && renderChipStack(getBetAmount(BetType.COLUMN, nums)!, PAYOUTS.COLUMN, BetType.COLUMN, nums)}
               </div>
             );
@@ -333,7 +361,13 @@ export const BettingTable: React.FC<Props> = ({
       </div>
 
       {/* BOTTOM ROW: EVEN CHANCE */}
-      <div className="grid grid-cols-6 mt-2 md:mt-3 lg:mt-4 h-10 sm:h-11 md:h-12 lg:h-14 gap-1.5 md:gap-2 lg:gap-3 relative z-10">
+      <div className="
+          grid grid-cols-6 
+          mt-2 md:mt-3 lg:mt-4 
+          h-12 md:h-14 lg:h-16
+          gap-1.5 md:gap-2 lg:gap-3 
+          relative z-10
+        ">
         {[
           { label: "1-18", nums: Array.from({ length: 18 }, (_, i) => (i + 1).toString()), ratio: PAYOUTS.HIGH_LOW, type: BetType.HIGH_LOW },
           { label: "EVEN", nums: Array.from({ length: 36 }, (_, i) => (i + 1).toString()).filter(n => parseInt(n) % 2 === 0), ratio: PAYOUTS.EVEN_ODD, type: BetType.EVEN_ODD },
