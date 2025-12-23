@@ -9,7 +9,7 @@ export const OrientationOverlay: React.FC = () => {
         const checkOrientation = () => {
             // Check if device is mobile or tablet and in portrait mode
             const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const portrait = window.innerHeight < window.innerWidth;
+            const portrait = window.innerHeight > window.innerWidth;
             setIsPortrait(isMobileOrTablet && portrait);
         };
 
