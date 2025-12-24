@@ -12,6 +12,10 @@ import { OrientationOverlay } from './components/OrientationOverlay';
 import { comms } from './services/communication';
 import { simulation } from './services/simulation';
 import { getAnimalImagePath, getAnimalName } from './animalMapping';
+
+// ... (existing imports)
+
+import { SlideOutPanel } from './components/SlideOutPanel';
 import { InstallPrompt } from './components/InstallPrompt';
 
 // ✅ IMPORT CHIP MAPPING FOR USE IN GameControls
@@ -42,6 +46,7 @@ const App: React.FC = () => {
     const [autoPlayActive, setAutoPlayActive] = useState(false);
     const [quantumMultipliers, setQuantumMultipliers] = useState<QuantumMultiplier[]>([]);
     const [highlightedNeighbors, setHighlightedNeighbors] = useState<string[]>([]);
+    const [isStatsOpen, setIsStatsOpen] = useState(false); // Side Panel State
 
     // --- Refs ---
     const betsRef = useRef<PlacedBet[]>([]);
@@ -290,10 +295,40 @@ const App: React.FC = () => {
 
             </div>
 
-            {/* Mobile Stats Drawer - Only show in portrait */}
-            <div className="lg:hidden absolute top-16 left-2 z-30 portrait:block landscape:hidden">
-                <HistoryPanel history={history.slice(0, 3)} />
-            </div>
+            {/* FLOATING STATS TOGGLE BUTTON - RIGHT SIDE */}
+            <button
+                onClick={() => setIsStatsOpen(true)}
+                className="
+                    fixed top-1/2 -translate-y-1/2 right-0 
+                    z-40 pl-3 pr-2 py-4
+                    bg-neo-bg/90 backdrop-blur-xl
+                    border-l border-t border-b border-neo-gold/20
+                    rounded-l-xl
+                    shadow-[-5px_0_15px_rgba(0,0,0,0.5)]
+                    hover:pr-4 hover:bg-neo-bg
+                    transition-all duration-300 group
+                "
+            >
+                <div className="flex flex-col items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-neo-gold animate-pulse"></span>
+                    <span className="
+                        text-[10px] uppercase font-bold text-neo-gold 
+                        [writing-mode:vertical-rl] tracking-widest rotate-180
+                        group-hover:text-white transition-colors
+                    ">
+                        Stats
+                    </span>
+                </div>
+            </button>
+
+            {/* Slide-Out Stats Panel - Replaces old inline panels */}
+            <SlideOutPanel
+                isOpen={isStatsOpen}
+                onClose={() => setIsStatsOpen(false)}
+                history={history}
+                leaderboard={leaderboard}
+                currentRoundId={lastRoundIdRef.current}
+            />
 
             <InstallPrompt />
 
