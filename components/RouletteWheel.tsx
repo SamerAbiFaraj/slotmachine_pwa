@@ -293,7 +293,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
         <div className="relative flex items-center justify-center p-2 md:p-6 w-full">
             {/* Main Wheel Container with 3D Perspective - EXPLICIT LARGER SIZING */}
             <div
-                className="relative w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[680px] lg:h-[680px] xl:w-[780px] xl:h-[780px] landscape:w-[340px] landscape:h-[340px] lg:landscape:w-[500px] lg:landscape:h-[500px]"
+                className="relative w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[680px] lg:h-[680px] xl:w-[780px] xl:h-[780px] landscape:w-[260px] landscape:h-[260px] lg:landscape:w-[500px] lg:landscape:h-[500px]"
                 style={{
                     perspective: '1200px',
                     perspectiveOrigin: 'center center'

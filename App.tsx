@@ -212,8 +212,8 @@ const App: React.FC = () => {
 
                 {/* LEFT STAGE: Wheel ONLY - MATCHES USER IMAGE */}
                 <div className="
-            w-full lg:w-[45%] xl:w-[45%] landscape:w-[40%] landscape:max-w-[350px] lg:landscape:max-w-none
-            h-auto min-h-[340px] sm:min-h-[480px] md:min-h-[580px] lg:min-h-full landscape:min-h-0 landscape:h-full
+            w-full lg:w-[45%] xl:w-[45%] landscape:w-[40%] landscape:max-w-[280px] lg:landscape:max-w-none
+            h-auto min-h-[260px] sm:min-h-[260px] md:min-h-[580px] lg:min-h-full landscape:min-h-0 landscape:h-full
             shrink-0 flex flex-col justify-center items-center relative
           ">
                     <div className="
