@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css'; // ✅ Add this line - imports your custom scrollbar styles
+import { registerSW } from 'virtual:pwa-register';
+
+registerSW({ immediate: true });
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

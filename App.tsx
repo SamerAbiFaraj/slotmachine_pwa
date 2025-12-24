@@ -12,6 +12,7 @@ import { OrientationOverlay } from './components/OrientationOverlay';
 import { comms } from './services/communication';
 import { simulation } from './services/simulation';
 import { getAnimalImagePath, getAnimalName } from './animalMapping';
+import { InstallPrompt } from './components/InstallPrompt';
 
 // ✅ IMPORT CHIP MAPPING FOR USE IN GameControls
 import { chipMapping } from './chipMapping';
@@ -186,7 +187,7 @@ const App: React.FC = () => {
             startBalance: prev.startBalance
         }));
 
-        setHistory(prev => [result, ...prev]);
+        setHistory(prev => [result, ...prev].slice(0, 50));
         setLastWin(totalWin);
 
         if (totalWin > 0) {
@@ -199,7 +200,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="relative min-h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-y-auto landscape:overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black scrollbar-thin">
+        <div className="relative h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
             <OrientationOverlay />
 
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
@@ -293,6 +294,8 @@ const App: React.FC = () => {
             <div className="lg:hidden absolute top-16 left-2 z-30 portrait:block landscape:hidden">
                 <HistoryPanel history={history.slice(0, 3)} />
             </div>
+
+            <InstallPrompt />
 
             {/* Toast Notification System */}
             {notification && (
