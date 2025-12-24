@@ -17,8 +17,8 @@ interface Props {
 const PHYSICS_CONFIG = {
     initialVelocity: 18,           // Rotations per second (very fast initial spin)
     decayConstant: 0.35,           // Controls slowdown rate (higher = faster slowdown)
-    outerRadius: 60,               // Ball radius on outer rim (% of wheel)
-    pocketRadius: 30,              // Ball radius in pocket (% of wheel)
+    outerRadius: 49,               // Ball radius on outer rim (% of wheel) - EDGE
+    pocketRadius: 37,              // Ball radius in pocket (% of wheel) - ALIGNED TO CENTER OF POCKETS
     deflectorCount: 8,             // Number of diamond deflectors on rim
     deflectorMagnitude: 4,         // Max deflection angle in degrees
     rattleCount: 3,                // Number of pocket bounces
@@ -144,7 +144,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
     // State
     const [wheelRotation, setWheelRotation] = useState(0);
     const [ballRotation, setBallRotation] = useState(0);
-    const [ballRadius, setBallRadius] = useState(60);
+    const [ballRadius, setBallRadius] = useState(49);
     const [ballOpacity, setBallOpacity] = useState(0);
     const [hoveredNumber, setHoveredNumber] = useState<string | null>(null);
     const [isSpinning, setIsSpinning] = useState(false);
@@ -280,85 +280,46 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
         }
     };
 
-    // SVG calculations
+    // SVG calculations (MAXIMIZED SIZE)
     const wheelSize = 600;
     const center = wheelSize / 2;
-    const outerRadius = center - 30;
-    const innerRadius = 120;
+    const outerRadius = center - 5; // 295px - Maximized to edge
+    const innerRadius = 150;        // Proportional increase
     const pocketAngle = 360 / POCKET_COUNT;
-    const imageRadius = outerRadius - 40;
-    const numberRadius = imageRadius - 45;
+    const imageRadius = outerRadius - 35; // 260px
+    const numberRadius = imageRadius - 40; // 220px
 
     return (
-        <div className="relative flex items-center justify-center p-2 md:p-6">
-            {/* Main Wheel Container with 3D Perspective */}
+        <div className="relative flex items-center justify-center p-2 md:p-6 w-full">
+            {/* Main Wheel Container with 3D Perspective - EXPLICIT LARGER SIZING */}
             <div
-                className="relative w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] md:w-[550px] md:h-[550px] lg:w-[650px] lg:h-[650px]"
+                className="relative w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[680px] lg:h-[680px] xl:w-[780px] xl:h-[780px] landscape:w-[340px] landscape:h-[340px] lg:landscape:w-[500px] lg:landscape:h-[500px]"
                 style={{
                     perspective: '1200px',
                     perspectiveOrigin: 'center center'
                 }}
             >
-                {/* Outer Wooden Frame with Diamond Decorations */}
+                {/* Outer Wooden Frame REMOVED - Direct Inner Bowl use */}
+
+                {/* Inner Bowl Shadow - Expanded */}
                 <div
-                    className="absolute inset-0 rounded-full"
+                    className="absolute inset-[5px] rounded-full"
                     style={{
                         background: `
-              radial-gradient(circle at 30% 30%, #453c0540 0%, #53430fff 30%, #352806ff 60%, #3e300dff 100%)
-            `,
-                        boxShadow: `
-              0 0 0 4px md:0 0 0 8px #1a0f00,
-              0 0 0 6px md:0 0 0 12px #D4AF37,
-              0 0 0 8px md:0 0 0 16px #1a0f00,
-              0 15px 40px md:0 25px 80px rgba(0, 0, 0, 0.8),
-              inset 0 -10px 30px rgba(0, 0, 0, 0.6),
-              inset 0 10px 30px rgba(255, 255, 255, 0.3)
-            `,
-                        transform: 'rotateX(15deg)',
-                        transformStyle: 'preserve-3d'
+            radial-gradient(circle at center, 
+              transparent 0%, 
+              transparent 40%, 
+              rgba(0, 0, 0, 0.4) 70%,
+              rgba(0, 0, 0, 0.8) 100%
+            )
+          `,
+                        boxShadow: 'inset 0 0 60px rgba(0, 0, 0, 0.9)'
                     }}
-                >
-                    {/* Diamond Decorations on Frame */}
-                    {[0, 90, 180, 270].map((angle, idx) => (
-                        <div
-                            key={idx}
-                            className="absolute"
-                            style={{
-                                top: '50%',
-                                left: '50%',
-                                transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${center - 15}px)`,
-                            }}
-                        >
-                            <Diamond
-                                className="w-4 h-4 md:w-6 md:h-6 text-[#FFE55C]"
-                                fill="#FFD700"
-                                style={{
-                                    filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))'
-                                }}
-                            />
-                        </div>
-                    ))}
+                />
 
-                    {/* Inner Bowl Shadow */}
-                    <div
-                        className="absolute inset-[20px] md:inset-[40px] rounded-full"
-                        style={{
-                            background: `
-                radial-gradient(circle at center, 
-                  transparent 0%, 
-                  transparent 40%, 
-                  rgba(0, 0, 0, 0.4) 70%,
-                  rgba(0, 0, 0, 0.8) 100%
-                )
-              `,
-                            boxShadow: 'inset 0 0 60px rgba(0, 0, 0, 0.9)'
-                        }}
-                    />
-                </div>
-
-                {/* Inner Bowl with Gradient Depth */}
+                {/* Inner Bowl with Gradient Depth - MAXIMIZED TO 0 */}
                 <div
-                    className="absolute inset-[25px] md:inset-[45px] rounded-full overflow-hidden"
+                    className="absolute inset-0 rounded-full overflow-hidden"
                     style={{
                         background: `
               radial-gradient(circle at 35% 35%, 
