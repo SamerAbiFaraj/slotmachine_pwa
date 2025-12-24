@@ -351,7 +351,7 @@ export const BettingTable: React.FC<Props> = ({
                 onMouseLeave={() => setHoveredBet(null)}
                 className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-neo-gold/20 last:border-0 transition-colors"
               >
-                <span className="rotate-90 whitespace-nowrap text-[8px] sm:text-[10px] md:text-[10px] font-bold text-neo-gold">2 TO 1</span>
+                <span className="rotate-360 whitespace-nowrap text-[8px] sm:text-[10px] md:text-[10px] font-bold text-neo-gold">2 TO 1</span>
                 {getBetAmount(BetType.COLUMN, nums) && renderChipStack(getBetAmount(BetType.COLUMN, nums)!, PAYOUTS.COLUMN, BetType.COLUMN, nums)}
               </div>
             );
