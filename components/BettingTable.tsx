@@ -123,7 +123,7 @@ export const BettingTable: React.FC<Props> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
         className={`
-          relative h-14 sm:h-16 md:h-20 lg:h-28 xl:h-32 flex flex-col items-center justify-center border border-neo-gold/20
+          relative h-14 sm:h-16 md:h-20 lg:h-28 xl:h-32 landscape:h-9 flex flex-col items-center justify-center border border-neo-gold/20
           transition-all duration-200 cursor-pointer group
           hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
           ${isHighlighted ? 'bg-neo-gold/40' : 'bg-transparent'}
@@ -135,11 +135,11 @@ export const BettingTable: React.FC<Props> = ({
           </div>
         )}
         {animalImagePath && (
-          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 landscape:w-6 landscape:h-6 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
             <img src={animalImagePath} alt={`Animal ${numStr}`} className="w-full h-full object-contain drop-shadow-md transition-transform group-hover:scale-110" />
           </div>
         )}
-        <span className={`font-display text-xs sm:text-base md:text-xl lg:text-3xl font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
+        <span className={`font-display text-xs sm:text-base md:text-xl lg:text-3xl landscape:text-xs font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
           {numStr}
         </span>
         {amount && renderChipStack(amount, PAYOUTS.STRAIGHT, BetType.STRAIGHT, [numStr])}
@@ -163,7 +163,7 @@ export const BettingTable: React.FC<Props> = ({
     <div className="
     w-full 
     select-none felt-texture 
-    p-2 md:p-6 lg:p-8 
+    p-2 md:p-6 lg:p-8 landscape:p-1.5
     rounded-xl 
     border-[2px] md:border-[6px] lg:border-[8px] 
     border-[#1e293b] 
@@ -236,7 +236,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
         <div className="
-            w-12 sm:w-16 md:w-20 lg:w-24 
+            w-12 sm:w-16 md:w-20 lg:w-24 landscape:w-14
             flex flex-col border-r border-neo-gold/30 relative
           ">
           <div
@@ -246,8 +246,8 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center border-b border-neo-gold/30 text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("0") && <img src={getAnimalImagePath("0")} alt="0" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
-            <span className="text-sm sm:text-lg md:text-3xl">0</span>
+            {getAnimalImagePath("0") && <img src={getAnimalImagePath("0")} alt="0" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 landscape:w-6 landscape:h-6 mb-0.5 md:mb-1 object-contain" />}
+            <span className="text-sm sm:text-lg md:text-3xl landscape:text-xs">0</span>
             {getBetAmount(BetType.ZERO, ["0"]) && renderChipStack(getBetAmount(BetType.ZERO, ["0"])!, PAYOUTS.STRAIGHT, BetType.ZERO, ["0"])}
           </div>
           <div
@@ -257,8 +257,8 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("00") && <img src={getAnimalImagePath("00")} alt="00" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
-            <span className="text-sm sm:text-lg md:text-3xl">00</span>
+            {getAnimalImagePath("00") && <img src={getAnimalImagePath("00")} alt="00" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 landscape:w-6 landscape:h-6 mb-0.5 md:mb-1 object-contain" />}
+            <span className="text-sm sm:text-lg md:text-3xl landscape:text-xs">00</span>
             {getBetAmount(BetType.STRAIGHT, ["00"]) && renderChipStack(getBetAmount(BetType.STRAIGHT, ["00"])!, PAYOUTS.STRAIGHT, BetType.STRAIGHT, ["00"])}
           </div>
           {/* Basket Bet */}
@@ -303,7 +303,7 @@ export const BettingTable: React.FC<Props> = ({
           {/* DOZENS */}
           <div className="
               grid grid-cols-3 
-              h-14 md:h-16 lg:h-20
+              h-14 md:h-16 lg:h-20 landscape:h-9
               border-t border-neo-gold/30
             ">
             {['1st 12', '2nd 12', '3rd 12'].map((label, idx) => {
@@ -327,7 +327,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* COLUMNS (RIGHT) */}
         <div className="
-          w-12 sm:w-16 md:w-20 lg:w-24
+          w-12 sm:w-16 md:w-20 lg:w-24 landscape:w-14
           flex flex-col border-l border-neo-gold/30
         ">
           {[3, 2, 1].map(row => {
@@ -353,9 +353,9 @@ export const BettingTable: React.FC<Props> = ({
       {/* BOTTOM ROW: EVEN CHANCE */}
       <div className="
           grid grid-cols-6 
-          mt-2 md:mt-3 lg:mt-4 
-          h-14 md:h-16 lg:h-20
-          gap-1.5 md:gap-2 lg:gap-3 
+          mt-2 md:mt-3 lg:mt-4 landscape:mt-1
+          h-14 md:h-16 lg:h-20 landscape:h-9
+          gap-1.5 md:gap-2 lg:gap-3 landscape:gap-1
           relative z-10
         ">
         {[
