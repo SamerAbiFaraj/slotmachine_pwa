@@ -218,32 +218,28 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="relative h-[100dvh] w-full bg-neo-bg font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
+        <div className="relative h-[100dvh] w-full bg-neo-bg font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black flex flex-col">
             <OrientationOverlay />
 
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay z-10"></div>
 
-            {/* HEADER - Floating Top */}
-            <div className="absolute top-0 left-0 w-full z-30 pointer-events-none">
-                <div className="pointer-events-auto">
-                    <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
-                </div>
-            </div>
+            {/* SECTION 1: HEADER */}
+            <header className="relative z-30 w-full shrink-0">
+                <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
+            </header>
 
-            {/* FULL SCREEN BETTING TABLE */}
-            <div className={`
-                absolute inset-0 z-0 flex items-center justify-center 
-                transition-all duration-700 ease-in-out
+            {/* SECTION 2: MIDDLE (TABLE AREA) */}
+            <main className={`
+                relative flex-1 min-h-0 z-0 flex items-center justify-center 
+                transition-all duration-700 ease-in-out overflow-hidden
                 ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
                 {/* Scale Container: Prevents clipping on small vertical viewports (mobile landscape) */}
-                <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 pt-10 pb-12 md:p-8 md:pt-24 md:pb-32">
-                    <div className="
-                        relative w-full max-h-full flex items-center justify-center
-                    ">
+                <div className="w-full h-full flex items-center justify-center p-2">
+                    <div className="relative w-full max-h-full flex items-center justify-center">
                         <div className="
                             w-full transition-transform duration-500
-                            scale-[0.7] sm:scale-85 md:scale-100 lg:scale-110
+                            scale-[0.65] sm:scale-85 md:scale-95 lg:scale-110
                         ">
                             {showRacetrack ? (
                                 <Racetrack
@@ -264,9 +260,30 @@ const App: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
-            {/* WHEEL DRAWER */}
+            {/* SECTION 3: BOTTOM CONTROLS */}
+            <footer className="relative z-40 w-full shrink-0 pb-2 md:pb-0 bg-gradient-to-t from-black/90 to-transparent">
+                <GameControls
+                    selectedChip={selectedChip}
+                    onSelectChip={setSelectedChip}
+                    onUndo={handleUndo}
+                    onClear={handleClear}
+                    gamePhase={phase}
+                    totalBet={totalBetAmount}
+                    balance={balance}
+                    showRacetrack={showRacetrack}
+                    onToggleRacetrack={() => setShowRacetrack(!showRacetrack)}
+                    heatmapActive={heatmapActive}
+                    onToggleHeatmap={() => setHeatmapActive(!heatmapActive)}
+                    autoPlayActive={autoPlayActive}
+                    onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
+                    onSaveLayout={handleSaveLayout}
+                    onLoadLayout={handleLoadLayout}
+                />
+            </footer>
+
+            {/* PERSISTENT OVERLAYS */}
             <WheelDrawer
                 isOpen={isDrawerOpen}
                 onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
@@ -276,29 +293,6 @@ const App: React.FC = () => {
             />
 
             <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} />
-
-            {/* BOTTOM CONTROLS - Floating Bottom */}
-            <div className="absolute bottom-0 left-0 w-full z-40 pointer-events-none pb-4 md:pb-0">
-                <div className="pointer-events-auto p-2 md:p-4 bg-gradient-to-t from-black/90 to-transparent">
-                    <GameControls
-                        selectedChip={selectedChip}
-                        onSelectChip={setSelectedChip}
-                        onUndo={handleUndo}
-                        onClear={handleClear}
-                        gamePhase={phase}
-                        totalBet={totalBetAmount}
-                        balance={balance}
-                        showRacetrack={showRacetrack}
-                        onToggleRacetrack={() => setShowRacetrack(!showRacetrack)}
-                        heatmapActive={heatmapActive}
-                        onToggleHeatmap={() => setHeatmapActive(!heatmapActive)}
-                        autoPlayActive={autoPlayActive}
-                        onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
-                        onSaveLayout={handleSaveLayout}
-                        onLoadLayout={handleLoadLayout}
-                    />
-                </div>
-            </div>
 
             {/* FLOATING STATS TOGGLE BUTTON - RIGHT SIDE */}
             <button
@@ -326,7 +320,7 @@ const App: React.FC = () => {
                 </div>
             </button>
 
-            {/* Slide-Out Stats Panel - Replaces old inline panels */}
+            {/* Slide-Out Stats Panel */}
             <SlideOutPanel
                 isOpen={isStatsOpen}
                 onClose={() => setIsStatsOpen(false)}
@@ -339,12 +333,11 @@ const App: React.FC = () => {
 
             {/* Toast Notification System */}
             {notification && (
-                <div className="absolute top-10 landscape:top-2 left-1/2 -translate-x-1/2 glass-panel px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-3 md:gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
+                <div className="absolute top-20 landscape:top-4 left-1/2 -translate-x-1/2 glass-panel px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-3 md:gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[100] border border-white/10 animate-in slide-in-from-top-4 fade-in duration-300">
                     <div className={`w-2 md:w-3 h-2 md:h-3 rounded-full ${notification.type === 'error' ? 'bg-red-500 shadow-[0_0_10px_red]' : notification.type === 'success' ? 'bg-green-500 shadow-[0_0_10px_green]' : 'bg-neo-accent shadow-[0_0_10px_blue]'} animate-pulse`}></div>
                     <span className="font-display font-bold uppercase tracking-wider text-xs md:text-sm text-white whitespace-nowrap">{notification.msg}</span>
                 </div>
             )}
-
         </div>
     );
 };
