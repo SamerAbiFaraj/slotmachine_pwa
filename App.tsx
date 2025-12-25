@@ -239,7 +239,7 @@ const App: React.FC = () => {
                     <div className="relative w-full max-h-full max-w-[98vw] mx-auto flex items-center justify-center">
                         <div className="
                             w-full transition-transform duration-500
-                            scale-[0.55] sm:scale-75 md:scale-90 lg:scale-95
+                            scale-[0.48] sm:scale-75 md:scale-90 lg:scale-95
                         ">
                             {showRacetrack ? (
                                 <Racetrack
