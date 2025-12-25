@@ -41,7 +41,7 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                     {/* Background Glow specifically for Wheel Container */}
                     <div className="absolute inset-0 bg-radial-gradient from-neo-green/10 to-transparent opacity-50 pointer-events-none" />
 
-                    <div className="relative w-full aspect-square max-w-[80vh] md:max-w-[80%] flex items-center justify-center">
+                    <div className="relative w-full aspect-square max-h-[60vh] md:max-h-[75vh] flex items-center justify-center">
                         <RouletteWheel phase={gamePhase} winningNumber={winningNumber} />
                     </div>
                 </div>
