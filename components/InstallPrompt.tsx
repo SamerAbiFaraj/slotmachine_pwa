@@ -64,7 +64,7 @@ export const InstallPrompt: React.FC = () => {
     if (!isVisible || isStandalone) return null;
 
     return (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-4 fade-in duration-500">
+        <div className="fixed bottom-4 right-4 sm:left-1/2 sm:-translate-x-1/2 z-[100] animate-in slide-in-from-bottom-4 fade-in duration-500">
             <button
                 onClick={handleInstallClick}
                 className="

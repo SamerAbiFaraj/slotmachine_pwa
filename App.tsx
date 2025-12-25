@@ -237,13 +237,13 @@ const App: React.FC = () => {
                 ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
                 {/* Scale Container: Prevents clipping on small vertical viewports (mobile landscape) */}
-                <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 pt-12 pb-14 md:p-8 md:pt-24 md:pb-32">
+                <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 pt-10 pb-12 md:p-8 md:pt-24 md:pb-32">
                     <div className="
                         relative w-full max-h-full flex items-center justify-center
                     ">
                         <div className="
                             w-full transition-transform duration-500
-                            scale-[0.75] sm:scale-90 md:scale-100 lg:scale-110
+                            scale-[0.7] sm:scale-85 md:scale-100 lg:scale-110
                         ">
                             {showRacetrack ? (
                                 <Racetrack
@@ -278,7 +278,7 @@ const App: React.FC = () => {
             <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} />
 
             {/* BOTTOM CONTROLS - Floating Bottom */}
-            <div className="absolute bottom-0 left-0 w-full z-40 pointer-events-none">
+            <div className="absolute bottom-0 left-0 w-full z-40 pointer-events-none pb-4 md:pb-0">
                 <div className="pointer-events-auto p-2 md:p-4 bg-gradient-to-t from-black/90 to-transparent">
                     <GameControls
                         selectedChip={selectedChip}
