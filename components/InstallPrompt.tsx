@@ -1,40 +1,67 @@
 import React, { useEffect, useState } from 'react';
 
 export const InstallPrompt: React.FC = () => {
-    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(false);
 
     useEffect(() => {
-        const handler = (e: any) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
-            e.preventDefault();
-            // Stash the event so it can be triggered later.
-            setDeferredPrompt(e);
-            // Update UI to notify the user they can add to home screen
-            setIsVisible(true);
+        // Check if already in standalone mode
+        const checkStandalone = () => {
+            const isStandaloneMode =
+                window.matchMedia('(display-mode: standalone)').matches ||
+                (window.navigator as any).standalone === true;
+            setIsStandalone(isStandaloneMode);
+            if (isStandaloneMode) {
+                setIsVisible(false);
+            }
         };
 
-        window.addEventListener('beforeinstallprompt', handler);
+        checkStandalone();
 
-        return () => window.removeEventListener('beforeinstallprompt', handler);
-    }, []);
+        // Listen for the prompt event
+        const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            // Only show if not already installed (double check)
+            if (!isStandalone) {
+                setIsVisible(true);
+            }
+        };
+
+        // Listen for successful install
+        const handleAppInstalled = () => {
+            setDeferredPrompt(null);
+            setIsVisible(false);
+            setIsStandalone(true);
+            console.log('PWA was installed');
+        };
+
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.addEventListener('appinstalled', handleAppInstalled);
+
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            window.removeEventListener('appinstalled', handleAppInstalled);
+        };
+    }, [isStandalone]);
 
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
 
         // Show the install prompt
-        deferredPrompt.prompt();
+        await deferredPrompt.prompt();
 
-        // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`User response to the install prompt: ${outcome}`);
+        // Wait for user choice
+        const choiceResult = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${choiceResult.outcome}`);
 
-        // We've used the prompt, and can't use it again, throw it away
+        // We can only use the prompt once
         setDeferredPrompt(null);
         setIsVisible(false);
     };
 
-    if (!isVisible) return null;
+    if (!isVisible || isStandalone) return null;
 
     return (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-4 fade-in duration-500">
