@@ -236,24 +236,33 @@ const App: React.FC = () => {
                 transition-all duration-700 ease-in-out
                 ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
-                <div className="w-full h-full overflow-hidden flex items-center justify-center p-0">
-                    <div className="scale-100 w-full h-full flex items-center justify-center origin-center">
-                        {showRacetrack ? (
-                            <Racetrack
-                                onBet={handlePlaceBet}
-                                onHoverNumbers={setHighlightedNeighbors}
-                            />
-                        ) : (
-                            <BettingTable
-                                currentBets={currentBets}
-                                selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
-                                onPlaceBet={handlePlaceBet}
-                                gamePhase={phase}
-                                quantumMultipliers={quantumMultipliers}
-                                highlightedNumbers={highlightedNeighbors}
-                                heatmapActive={heatmapActive}
-                            />
-                        )}
+                {/* Scale Container: Prevents clipping on small vertical viewports (mobile landscape) */}
+                <div className="w-full h-full flex items-center justify-center overflow-hidden p-4 pt-16 pb-20 md:p-8 md:pt-24 md:pb-32">
+                    <div className="
+                        relative w-full max-h-full aspect-[21/9] md:aspect-[16/9]
+                        flex items-center justify-center
+                    ">
+                        <div className="
+                            w-full transition-transform duration-500
+                            scale-[0.85] sm:scale-100 md:scale-100 lg:scale-110
+                        ">
+                            {showRacetrack ? (
+                                <Racetrack
+                                    onBet={handlePlaceBet}
+                                    onHoverNumbers={setHighlightedNeighbors}
+                                />
+                            ) : (
+                                <BettingTable
+                                    currentBets={currentBets}
+                                    selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
+                                    onPlaceBet={handlePlaceBet}
+                                    gamePhase={phase}
+                                    quantumMultipliers={quantumMultipliers}
+                                    highlightedNumbers={highlightedNeighbors}
+                                    heatmapActive={heatmapActive}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
