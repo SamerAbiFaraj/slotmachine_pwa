@@ -235,11 +235,11 @@ const App: React.FC = () => {
                 ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
                 {/* Scale Container: Prevents clipping on small vertical viewports (mobile landscape) */}
-                <div className="w-full h-full flex items-center justify-center p-4">
+                <div className="w-full h-full flex items-center justify-center p-1">
                     <div className="relative w-full max-h-full max-w-[98vw] mx-auto flex items-center justify-center">
                         <div className="
                             w-full transition-transform duration-500
-                            scale-[0.48] sm:scale-75 md:scale-90 lg:scale-95
+                            scale-[0.42] sm:scale-75 md:scale-90 lg:scale-95
                         ">
                             {showRacetrack ? (
                                 <Racetrack
@@ -263,7 +263,7 @@ const App: React.FC = () => {
             </main>
 
             {/* SECTION 3: BOTTOM CONTROLS */}
-            <footer className="relative z-40 w-full shrink-0 pb-2 md:pb-0 bg-gradient-to-t from-black/90 to-transparent">
+            <footer className="relative z-40 w-full shrink-0 pb-6 md:pb-0 bg-gradient-to-t from-black/90 to-transparent">
                 <GameControls
                     selectedChip={selectedChip}
                     onSelectChip={setSelectedChip}

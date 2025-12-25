@@ -46,7 +46,7 @@ export const GameControls: React.FC<Props> = ({
    );
 
    return (
-      <div className="w-full flex justify-center px-2 md:px-4 pb-2 md:pb-4">
+      <div className="w-full flex justify-center px-2 md:px-4 pb-0.5 md:pb-4">
          <div className="glass-panel rounded-xl md:rounded-2xl p-2 md:p-2.5 flex flex-row items-center gap-2 md:gap-3 shadow-2xl relative max-w-full overflow-x-auto scrollbar-hide">
 
             {/* Pro Tools (Left) - REMOVED RACETRACK */}
