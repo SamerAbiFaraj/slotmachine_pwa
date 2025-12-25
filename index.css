@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+    --neo-bg: #0f172a;
+    --neo-gold: #fbbf24;
+    --neo-green: #22c55e;
+    --neo-red: #ef4444;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    /* Prevent pull-to-refresh on mobile */
+    background-color: var(--neo-bg);
+}
+
+/* Dynamic Viewport Height for Mobile Browsers */
+@supports (height: 100dvh) {
+
+    html,
+    body,
+    #root {
+        height: 100dvh;
+    }
+}
+
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hide Scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}

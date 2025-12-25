@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GamePhase, BetType, PlacedBet, UserProfile, UserStats, LeaderboardEntry, QuantumMultiplier } from './types';
 import { AVAILABLE_CHIPS, GAME_CONFIG } from './constants';
-import { RouletteWheel } from './components/RouletteWheel';
+import { WheelDrawer } from './components/WheelDrawer';
 import { BettingTable } from './components/BettingTable';
 import { GameControls } from './components/GameControls';
 import { HistoryPanel } from './components/HistoryPanel';
@@ -17,6 +17,7 @@ import { getAnimalImagePath, getAnimalName } from './animalMapping';
 
 import { SlideOutPanel } from './components/SlideOutPanel';
 import { InstallPrompt } from './components/InstallPrompt';
+import { WinAnnouncement } from './components/WinAnnouncement';
 
 // ✅ IMPORT CHIP MAPPING FOR USE IN GameControls
 import { chipMapping } from './chipMapping';
@@ -47,6 +48,7 @@ const App: React.FC = () => {
     const [quantumMultipliers, setQuantumMultipliers] = useState<QuantumMultiplier[]>([]);
     const [highlightedNeighbors, setHighlightedNeighbors] = useState<string[]>([]);
     const [isStatsOpen, setIsStatsOpen] = useState(false); // Side Panel State
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Wheel Drawer State
 
     // --- Refs ---
     const betsRef = useRef<PlacedBet[]>([]);
@@ -109,6 +111,17 @@ const App: React.FC = () => {
         const unsubLeaderboard = simulation.subscribeLeaderboard(setLeaderboard);
         return () => { unsubState(); unsubLeaderboard(); };
     }, [autoPlayActive]);
+
+    // --- Drawer Logic ---
+    useEffect(() => {
+        if (phase === GamePhase.SPINNING || phase === GamePhase.RESULT_DISPLAY) {
+            setIsDrawerOpen(true);
+        } else if (phase === GamePhase.WAITING_FOR_BETS) {
+            // Optional: Add a small delay so user sees result before closing
+            const timer = setTimeout(() => setIsDrawerOpen(false), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [phase]);
 
     const handlePlaceBet = useCallback((type: BetType, numbers: string[], payoutRatio: number) => {
         if (balance - totalBetAmount < selectedChip) {
@@ -205,95 +218,78 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="relative h-screen w-full bg-neo-bg flex flex-col font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
+        <div className="relative h-[100dvh] w-full bg-neo-bg font-sans text-gray-100 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-800 via-neo-bg to-black">
             <OrientationOverlay />
 
-            <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
+            <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay z-10"></div>
 
-            <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
-
-            {/* Main Content Area - RESPONSIVE FIX */}
-            <div className="flex-1 flex flex-col landscape:flex-row gap-2 landscape:gap-1 md:gap-4 lg:gap-6 p-2 landscape:p-1 md:p-4 lg:p-6 relative z-10 h-full">
-
-                {/* LEFT STAGE: Wheel ONLY - MATCHES USER IMAGE */}
-                <div className="
-            w-full lg:w-[45%] xl:w-[45%] landscape:w-[40%] landscape:max-w-[280px] lg:landscape:max-w-none
-            h-auto min-h-[260px] sm:min-h-[260px] md:min-h-[580px] lg:min-h-full landscape:min-h-0 landscape:h-full
-            shrink-0 flex flex-col justify-center items-center relative
-            pb-4 md:pb-8 lg:pb-32 landscape:pb-16
-          ">
-                    <div className="
-            relative w-full h-full
-            flex items-center justify-center
-          ">
-                        <RouletteWheel phase={phase} winningNumber={winningNumber} />
-                    </div>
-
-                    {/* Information Deck REMOVED to match reference image (Wheel only on left) */}
+            {/* HEADER - Floating Top */}
+            <div className="absolute top-0 left-0 w-full z-30 pointer-events-none">
+                <div className="pointer-events-auto">
+                    <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
                 </div>
+            </div>
 
-                {/* RIGHT STAGE: Betting & Controls */}
-                <div className="
-            flex-1 flex flex-col min-h-0 
-            glass-panel rounded-2xl md:rounded-3xl 
-            border-white/5 overflow-hidden shadow-2xl
-          ">
-
-                    {/* Table Surface - IMPROVED SCALING */}
-                    <div className="
-            flex-1 min-h-0 relative 
-            overflow-x-auto overflow-y-auto
-            lg:overflow-hidden
-            flex items-start lg:items-center justify-start lg:justify-center 
-            p-2 md:p-4 lg:p-6 
-            bg-black/40
-            scrollbar-thin scrollbar-thumb-neo-gold/30 scrollbar-track-transparent
-          ">
-                        <div className="
-            w-full lg:max-w-6xl 
-            mx-auto
-          ">
-                            {showRacetrack ? (
-                                <Racetrack
-                                    onBet={handlePlaceBet}
-                                    onHoverNumbers={setHighlightedNeighbors}
-                                />
-                            ) : (
-                                <BettingTable
-                                    currentBets={currentBets}
-                                    selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
-                                    onPlaceBet={handlePlaceBet}
-                                    gamePhase={phase}
-                                    quantumMultipliers={quantumMultipliers}
-                                    highlightedNumbers={highlightedNeighbors}
-                                    heatmapActive={heatmapActive}
-                                />
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Control Dock - RESPONSIVE SIZING */}
-                    <div className="shrink-0 relative z-20 pb-2 md:pb-4 lg:pb-6">
-                        <GameControls
-                            selectedChip={selectedChip}
-                            onSelectChip={setSelectedChip}
-                            onUndo={handleUndo}
-                            onClear={handleClear}
-                            gamePhase={phase}
-                            totalBet={totalBetAmount}
-                            balance={balance}
-                            showRacetrack={showRacetrack}
-                            onToggleRacetrack={() => setShowRacetrack(!showRacetrack)}
-                            heatmapActive={heatmapActive}
-                            onToggleHeatmap={() => setHeatmapActive(!heatmapActive)}
-                            autoPlayActive={autoPlayActive}
-                            onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
-                            onSaveLayout={handleSaveLayout}
-                            onLoadLayout={handleLoadLayout}
-                        />
+            {/* FULL SCREEN BETTING TABLE */}
+            <div className={`
+                absolute inset-0 z-0 flex items-center justify-center 
+                transition-all duration-700 ease-in-out
+                ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
+            `}>
+                <div className="w-full h-full overflow-hidden flex items-center justify-center p-0">
+                    <div className="scale-100 w-full h-full flex items-center justify-center origin-center">
+                        {showRacetrack ? (
+                            <Racetrack
+                                onBet={handlePlaceBet}
+                                onHoverNumbers={setHighlightedNeighbors}
+                            />
+                        ) : (
+                            <BettingTable
+                                currentBets={currentBets}
+                                selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
+                                onPlaceBet={handlePlaceBet}
+                                gamePhase={phase}
+                                quantumMultipliers={quantumMultipliers}
+                                highlightedNumbers={highlightedNeighbors}
+                                heatmapActive={heatmapActive}
+                            />
+                        )}
                     </div>
                 </div>
+            </div>
 
+            {/* WHEEL DRAWER */}
+            <WheelDrawer
+                isOpen={isDrawerOpen}
+                onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
+                gamePhase={phase}
+                winningNumber={winningNumber}
+                timeLeft={timeLeft}
+            />
+
+            <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} />
+
+            {/* BOTTOM CONTROLS - Floating Bottom */}
+            <div className="absolute bottom-0 left-0 w-full z-40 pointer-events-none">
+                <div className="pointer-events-auto p-2 md:p-4 bg-gradient-to-t from-black/90 to-transparent">
+                    <GameControls
+                        selectedChip={selectedChip}
+                        onSelectChip={setSelectedChip}
+                        onUndo={handleUndo}
+                        onClear={handleClear}
+                        gamePhase={phase}
+                        totalBet={totalBetAmount}
+                        balance={balance}
+                        showRacetrack={showRacetrack}
+                        onToggleRacetrack={() => setShowRacetrack(!showRacetrack)}
+                        heatmapActive={heatmapActive}
+                        onToggleHeatmap={() => setHeatmapActive(!heatmapActive)}
+                        autoPlayActive={autoPlayActive}
+                        onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
+                        onSaveLayout={handleSaveLayout}
+                        onLoadLayout={handleLoadLayout}
+                    />
+                </div>
             </div>
 
             {/* FLOATING STATS TOGGLE BUTTON - RIGHT SIDE */}

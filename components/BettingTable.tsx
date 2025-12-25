@@ -68,15 +68,15 @@ export const BettingTable: React.FC<Props> = ({
 
     return (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-bounce-short">
-        <div className="absolute w-4 h-4 md:w-7 md:h-7 rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px]"></div>
+        <div className="absolute w-5 h-5 md:w-9 md:h-9 rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px]"></div>
         <div
-          className="relative w-5 h-5 md:w-8 md:h-8 flex items-center justify-center pointer-events-auto cursor-pointer"
+          className="relative w-6 h-6 md:w-10 md:h-10 flex items-center justify-center pointer-events-auto cursor-pointer"
           onMouseEnter={handleChipMouseEnter}
           onMouseMove={handleChipMouseMove}
           onMouseLeave={handleChipMouseLeave}
         >
           <img src={chipImage} alt={`${amount} chip`} className="w-full h-full object-contain z-10" />
-          <span className="absolute text-[7px] md:text-[8px] font-bold text-white drop-shadow-md z-20 pointer-events-none">{formatAmount(amount)}</span>
+          <span className="absolute text-[8px] md:text-[10px] font-bold text-white drop-shadow-md z-20 pointer-events-none">{formatAmount(amount)}</span>
         </div>
       </div>
     );
@@ -123,7 +123,7 @@ export const BettingTable: React.FC<Props> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
         className={`
-          relative h-10 sm:h-12 md:h-16 lg:h-20 xl:h-24 flex flex-col items-center justify-center border border-neo-gold/20
+          relative h-14 sm:h-16 md:h-20 lg:h-28 xl:h-32 flex flex-col items-center justify-center border border-neo-gold/20
           transition-all duration-200 cursor-pointer group
           hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
           ${isHighlighted ? 'bg-neo-gold/40' : 'bg-transparent'}
@@ -131,15 +131,15 @@ export const BettingTable: React.FC<Props> = ({
       >
         {multiplier && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-neo-accent/20 animate-pulse overflow-hidden">
-            <span className="text-neo-accent font-bold text-[6px] sm:text-[8px] md:text-xs drop-shadow-[0_0_5px_rgba(14,165,233,1)]">⚡{multiplier.multiplier}x</span>
+            <span className="text-neo-accent font-bold text-[8px] sm:text-[10px] md:text-sm drop-shadow-[0_0_5px_rgba(14,165,233,1)]">⚡{multiplier.multiplier}x</span>
           </div>
         )}
         {animalImagePath && (
-          <div className="w-4 h-4 sm:w-6 sm:h-6 md:w-10 md:h-10 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
             <img src={animalImagePath} alt={`Animal ${numStr}`} className="w-full h-full object-contain drop-shadow-md transition-transform group-hover:scale-110" />
           </div>
         )}
-        <span className={`font-display text-[10px] sm:text-sm md:text-lg font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
+        <span className={`font-display text-xs sm:text-base md:text-xl lg:text-3xl font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
           {numStr}
         </span>
         {amount && renderChipStack(amount, PAYOUTS.STRAIGHT, BetType.STRAIGHT, [numStr])}
@@ -236,7 +236,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
         <div className="
-            w-10 sm:w-12 md:w-16 lg:w-20 
+            w-12 sm:w-16 md:w-20 lg:w-24 
             flex flex-col border-r border-neo-gold/30 relative
           ">
           <div
@@ -246,8 +246,8 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center border-b border-neo-gold/30 text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("0") && <img src={getAnimalImagePath("0")} alt="0" className="w-5 h-5 sm:w-6 sm:h-6 md:w-10 md:h-10 mb-0.5 md:mb-1 object-contain" />}
-            <span className="text-xs sm:text-sm md:text-2xl">0</span>
+            {getAnimalImagePath("0") && <img src={getAnimalImagePath("0")} alt="0" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
+            <span className="text-sm sm:text-lg md:text-3xl">0</span>
             {getBetAmount(BetType.ZERO, ["0"]) && renderChipStack(getBetAmount(BetType.ZERO, ["0"])!, PAYOUTS.STRAIGHT, BetType.ZERO, ["0"])}
           </div>
           <div
@@ -257,8 +257,8 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("00") && <img src={getAnimalImagePath("00")} alt="00" className="w-5 h-5 sm:w-6 sm:h-6 md:w-10 md:h-10 mb-0.5 md:mb-1 object-contain" />}
-            <span className="text-xs sm:text-sm md:text-2xl">00</span>
+            {getAnimalImagePath("00") && <img src={getAnimalImagePath("00")} alt="00" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
+            <span className="text-sm sm:text-lg md:text-3xl">00</span>
             {getBetAmount(BetType.STRAIGHT, ["00"]) && renderChipStack(getBetAmount(BetType.STRAIGHT, ["00"])!, PAYOUTS.STRAIGHT, BetType.STRAIGHT, ["00"])}
           </div>
           {/* Basket Bet */}
@@ -280,17 +280,7 @@ export const BettingTable: React.FC<Props> = ({
 
                   return (
                     <div key={num} className="relative">
-                      {/* UPDATE CELL HEIGHT FOR BETTER MOBILE SIZING */}
-                      <div className="
-                      relative 
-                      h-10 sm:h-12 md:h-16 lg:h-20 xl:h-24
-                      flex flex-col items-center justify-center 
-                      border border-neo-gold/20
-                      transition-all duration-200 cursor-pointer group
-                      hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
-                    ">
-                        {renderCell(num)}
-                      </div>
+                      {renderCell(num)}
 
                       {/* Split Vertical */}
                       {nextInCol && renderBetHotspot(BetType.SPLIT, [num, nextInCol], PAYOUTS.SPLIT, "absolute bottom-[-10px] left-0 right-0 h-5 z-40")}
@@ -313,7 +303,7 @@ export const BettingTable: React.FC<Props> = ({
           {/* DOZENS */}
           <div className="
               grid grid-cols-3 
-              h-12 md:h-14 lg:h-16
+              h-14 md:h-16 lg:h-20
               border-t border-neo-gold/30
             ">
             {['1st 12', '2nd 12', '3rd 12'].map((label, idx) => {
@@ -325,7 +315,7 @@ export const BettingTable: React.FC<Props> = ({
                   onMouseEnter={(e) => handleMouseEnter(e, BetType.DOZEN, nums, PAYOUTS.DOZEN)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={() => setHoveredBet(null)}
-                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer text-[8px] sm:text-[10px] md:text-xs font-bold text-neo-gold border-r border-neo-gold/20 last:border-0 transition-colors"
+                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer text-[10px] sm:text-xs md:text-sm lg:text-base font-bold text-neo-gold border-r border-neo-gold/20 last:border-0 transition-colors"
                 >
                   <span>{label}</span>
                   {getBetAmount(BetType.DOZEN, nums) && renderChipStack(getBetAmount(BetType.DOZEN, nums)!, PAYOUTS.DOZEN, BetType.DOZEN, nums)}
@@ -337,7 +327,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* COLUMNS (RIGHT) */}
         <div className="
-          w-10 sm:w-12 md:w-14 lg:w-16
+          w-12 sm:w-16 md:w-20 lg:w-24
           flex flex-col border-l border-neo-gold/30
         ">
           {[3, 2, 1].map(row => {
@@ -351,12 +341,12 @@ export const BettingTable: React.FC<Props> = ({
                 onMouseLeave={() => setHoveredBet(null)}
                 className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-neo-gold/20 last:border-0 transition-colors"
               >
-                <span className="rotate-360 whitespace-nowrap text-[8px] sm:text-[10px] md:text-[10px] font-bold text-neo-gold">2 TO 1</span>
+                <span className="rotate-360 whitespace-nowrap text-[10px] sm:text-xs md:text-sm lg:text-base font-bold text-neo-gold">2 TO 1</span>
                 {getBetAmount(BetType.COLUMN, nums) && renderChipStack(getBetAmount(BetType.COLUMN, nums)!, PAYOUTS.COLUMN, BetType.COLUMN, nums)}
               </div>
             );
           })}
-          <div className="h-10 sm:h-11 md:h-12 lg:h-14 border-t border-neo-gold/20"></div>
+          <div className="h-12 sm:h-14 md:h-16 lg:h-18 border-t border-neo-gold/20"></div>
         </div>
       </div>
 
@@ -364,7 +354,7 @@ export const BettingTable: React.FC<Props> = ({
       <div className="
           grid grid-cols-6 
           mt-2 md:mt-3 lg:mt-4 
-          h-12 md:h-14 lg:h-16
+          h-14 md:h-16 lg:h-20
           gap-1.5 md:gap-2 lg:gap-3 
           relative z-10
         ">
@@ -390,9 +380,9 @@ export const BettingTable: React.FC<Props> = ({
             {item.special === 'red' ? (
               <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-red-600 rotate-45 border md:border-2 border-red-400"></div>
             ) : item.special === 'black' ? (
-              <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-black rotate-45 border md:border-2 border-gray-600"></div>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-black rotate-45 border md:border-2 border-gray-600"></div>
             ) : (
-              <span className="text-[7px] sm:text-[9px] md:text-xs font-bold text-neo-gold uppercase">{item.label}</span>
+              <span className="text-[9px] sm:text-xs md:text-sm font-bold text-neo-gold uppercase">{item.label}</span>
             )}
             {getBetAmount(item.type, item.nums) && renderChipStack(getBetAmount(item.type, item.nums)!, item.ratio, item.type, item.nums)}
           </div>
