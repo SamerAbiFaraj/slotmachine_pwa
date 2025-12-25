@@ -235,11 +235,11 @@ const App: React.FC = () => {
                 ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
                 {/* Scale Container: Prevents clipping on small vertical viewports (mobile landscape) */}
-                <div className="w-full h-full flex items-center justify-center p-2">
-                    <div className="relative w-full max-h-full flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center p-4">
+                    <div className="relative w-full max-h-full max-w-[98vw] mx-auto flex items-center justify-center">
                         <div className="
                             w-full transition-transform duration-500
-                            scale-[0.65] sm:scale-85 md:scale-95 lg:scale-110
+                            scale-[0.55] sm:scale-75 md:scale-90 lg:scale-95
                         ">
                             {showRacetrack ? (
                                 <Racetrack
