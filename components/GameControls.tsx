@@ -32,7 +32,7 @@ export const GameControls: React.FC<Props> = ({
          onClick={onClick}
          disabled={disabled}
          className={`
-            glass-button px-2 md:px-3 py-2 md:py-2.5 landscape:px-1.5 landscape:py-1 rounded-lg flex items-center justify-center gap-1 md:gap-1.5 transition-all
+            glass-button px-2 md:px-3 py-2 md:py-2.5 rounded-lg flex items-center justify-center gap-1 md:gap-1.5 transition-all
             ${active
                ? 'bg-neo-gold text-black border-neo-gold shadow-[0_0_15px_rgba(226,182,89,0.5)]'
                : 'text-gray-300 hover:text-white hover:bg-white/10'
@@ -40,14 +40,14 @@ export const GameControls: React.FC<Props> = ({
             disabled:opacity-40 disabled:cursor-not-allowed
         `}
       >
-         {React.cloneElement(icon, { className: `w-4 h-4 landscape:w-3 landscape:h-3` })}
-         <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest hidden sm:inline landscape:hidden">[{label}]</span>
+         {icon}
+         <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{label}</span>
       </button>
    );
 
    return (
-      <div className="w-full flex justify-center px-2 md:px-4 pb-0.5 md:pb-4 landscape:pb-0.5">
-         <div className="glass-panel rounded-xl md:rounded-2xl p-2 md:p-2.5 landscape:p-1 flex flex-row items-center gap-2 md:gap-3 shadow-2xl relative max-w-[92vw] md:max-w-full overflow-x-auto scrollbar-hide">
+      <div className="w-full flex justify-center px-2 md:px-4 pb-0.5 md:pb-4">
+         <div className="glass-panel rounded-xl md:rounded-2xl p-2 md:p-2.5 flex flex-row items-center gap-2 md:gap-3 shadow-2xl relative max-w-[92vw] md:max-w-full overflow-x-auto scrollbar-hide">
 
             {/* Pro Tools (Left) - REMOVED RACETRACK */}
             <div className="flex gap-1.5 shrink-0">
@@ -59,20 +59,20 @@ export const GameControls: React.FC<Props> = ({
                />
             </div>
 
-            <div className="w-[1px] h-8 md:h-9 landscape:h-6 bg-white/10 shrink-0"></div>
+            <div className="w-[1px] h-8 md:h-9 bg-white/10 shrink-0"></div>
 
             {/* CHIP RACK - SMALLER CHIPS */}
-            <div className="bg-black/40 rounded-xl p-1.5 md:p-2 landscape:p-1 border border-white/5 flex gap-1.5 md:gap-2 landscape:gap-1 shadow-inner overflow-x-auto scrollbar-hide shrink-0">
+            <div className="bg-black/40 rounded-xl p-1.5 md:p-2 border border-white/5 flex gap-1.5 md:gap-2 shadow-inner overflow-x-auto scrollbar-hide shrink-0">
                {AVAILABLE_CHIPS.map((chip) => (
                   <button
                      key={chip.value}
                      onClick={() => onSelectChip(chip.value)}
                      disabled={!isBetting}
                      className={`
-                       relative w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 landscape:w-8 landscape:h-8 rounded-full flex items-center justify-center
+                       relative w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center
                        transition-all duration-200 shrink-0
                        ${selectedChip === chip.value
-                           ? 'scale-110 -translate-y-2 md:-translate-y-2.5 landscape:-translate-y-1.5 z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]'
+                           ? 'scale-110 -translate-y-2 md:-translate-y-2.5 z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]'
                            : 'hover:-translate-y-1 hover:brightness-110'
                         }
                        ${!isBetting && 'grayscale opacity-50'}
@@ -91,7 +91,7 @@ export const GameControls: React.FC<Props> = ({
                ))}
             </div>
 
-            <div className="w-[1px] h-8 md:h-9 landscape:h-6 bg-white/10 shrink-0"></div>
+            <div className="w-[1px] h-8 md:h-9 bg-white/10 shrink-0"></div>
 
             {/* Actions (Right) - COMPACT */}
             <div className="flex gap-1.5 shrink-0">
