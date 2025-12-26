@@ -23,7 +23,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
     return (
         <AnimatePresence>
             {show && winningNumber && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+                <div className="fixed inset-0 z-[250] flex items-center justify-center pointer-events-none">
                     {/* Background Dim - Optional, might not be needed if existing dim is enough */}
 
                     <motion.div

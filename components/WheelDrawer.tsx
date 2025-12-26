@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RouletteWheel } from './RouletteWheel';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { GamePhase } from '../types';
 
 interface WheelDrawerProps {
@@ -21,19 +21,36 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
 }) => {
     return (
         <>
+            <AnimatePresence>
+                {/* Backdrop Layer */}
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onToggle}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[190]"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Drawer Container */}
             <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: isOpen ? 0 : '-100%' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[70vw] bg-neo-bg/95 backdrop-blur-xl z-50 shadow-2xl border-r border-neo-gold/20 flex flex-col"
+                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[70vw] bg-neo-bg/95 backdrop-blur-xl z-[200] shadow-2xl border-r border-neo-gold/20 flex flex-col"
             >
-                {/* Close Button / Handle inside drawer (Optional, mainly for mobile) */}
+                {/* Close Button / Handle inside drawer - MOVED TO TOP LEFT TO AVOID PROFILE TRIGGER */}
                 <button
-                    onClick={onToggle}
-                    className="absolute top-4 right-4 p-2 text-white/50 hover:text-white sm:hidden"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggle();
+                    }}
+                    className="absolute top-4 left-4 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white flex items-center gap-2 group cursor-pointer z-[210] pointer-events-auto shadow-lg border border-white/20"
                 >
-                    <ChevronLeft size={24} />
+                    <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+                    <span className="text-xs uppercase tracking-widest font-bold">Close</span>
                 </button>
 
                 {/* Wheel Content */}

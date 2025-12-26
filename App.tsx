@@ -311,7 +311,7 @@ const App: React.FC = () => {
             {/* PERSISTENT OVERLAYS */}
             <WheelDrawer
                 isOpen={isDrawerOpen}
-                onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
+                onToggle={() => setIsDrawerOpen(prev => !prev)}
                 gamePhase={phase}
                 winningNumber={winningNumber}
                 timeLeft={timeLeft}
