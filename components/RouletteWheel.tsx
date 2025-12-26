@@ -738,10 +738,12 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                         style={{
                             top: `${50 - ballRadius}%`,
                             transform: `translate(-50%, -50%)`,
+                            width: '3.5%', // Fluid size relative to wheel container
+                            aspectRatio: '1/1'
                         }}
                     >
                         <motion.div
-                            className="relative"
+                            className="relative w-full h-full"
                             animate={{
                                 rotate: isSpinning ? 360 : 0,
                                 scale: isSpinning ? [1, 1.15, 1] : 1
@@ -753,7 +755,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                             }}
                         >
                             <div
-                                className="w-4 h-4 md:w-6 md:h-6 rounded-full"
+                                className="w-full h-full rounded-full"
                                 style={{
                                     background: `
                     radial-gradient(circle at 30% 30%, 
@@ -764,16 +766,17 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     )
                   `,
                                     boxShadow: `
-                    0 0 10px md:0 0 20px rgba(255, 255, 255, 0.9),
-                    inset 0 -1px md:-3px 3px md:6px rgba(0, 0, 0, 0.3),
-                    inset 1px md:3px 1px md:3px 4px md:8px rgba(255, 255, 255, 0.8)
+                    0 0 10px rgba(255, 255, 255, 0.9),
+                    inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                    inset 3px 3px 8px rgba(255, 255, 255, 0.8)
                   `,
-                                    border: '1px md:2px solid rgba(255, 255, 255, 0.6)'
+                                    border: '1px solid rgba(255, 255, 255, 0.6)',
+                                    position: 'relative'
                                 }}
                             >
                                 {/* Highlight spot */}
                                 <div
-                                    className="absolute top-0.5 md:top-2 left-0.5 md:left-2 w-1.5 md:w-3 h-1.5 md:h-3 rounded-full"
+                                    className="absolute top-[10%] left-[10%] w-[30%] h-[30%] rounded-full"
                                     style={{
                                         background: 'rgba(255, 255, 255, 0.9)',
                                         filter: 'blur(1px)'
@@ -783,10 +786,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
                             {/* Ball glow */}
                             <div
-                                className="absolute -inset-3 md:-inset-6 rounded-full -z-10"
+                                className="absolute -inset-[50%] rounded-full -z-10"
                                 style={{
                                     background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                                    filter: 'blur(4px md:8px)'
+                                    filter: 'blur(8px)'
                                 }}
                             />
                         </motion.div>

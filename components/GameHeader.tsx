@@ -23,7 +23,8 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
             z-50 shrink-0 
             border-b border-white/5 
             bg-neo-bg/80 backdrop-blur-md landscape:bg-neo-bg landscape:backdrop-blur-none
-        " style={{ height: 'var(--header-height)' }}>
+            pt-[env(safe-area-inset-top)]
+        " style={{ minHeight: 'var(--header-height)' }}>
 
             {/* Brand - LARGER */}
             <div className="flex items-center gap-3 md:gap-4 landscape:gap-2">

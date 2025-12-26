@@ -313,7 +313,7 @@ const App: React.FC = () => {
                 timeLeft={timeLeft}
             />
 
-            <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} />
+            <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} totalWin={lastWin} />
 
             <AnimatePresence>
                 {/* Profile Drawer (Top) */}
