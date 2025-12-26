@@ -12,6 +12,8 @@ import { OrientationOverlay } from './components/OrientationOverlay';
 import { comms } from './services/communication';
 import { simulation } from './services/simulation';
 import { getAnimalImagePath, getAnimalName } from './animalMapping';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Coins, X } from 'lucide-react';
 
 // ... (existing imports)
 
@@ -49,6 +51,8 @@ const App: React.FC = () => {
     const [highlightedNeighbors, setHighlightedNeighbors] = useState<string[]>([]);
     const [isStatsOpen, setIsStatsOpen] = useState(false); // Side Panel State
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Wheel Drawer State
+    const [isProfileOpen, setIsProfileOpen] = useState(false); // Mobile Top Drawer
+    const [isChipsOpen, setIsChipsOpen] = useState(false); // Mobile Bottom Drawer
 
     // --- Refs ---
     const betsRef = useRef<PlacedBet[]>([]);
@@ -223,16 +227,26 @@ const App: React.FC = () => {
 
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay z-10"></div>
 
-            {/* SECTION 1: HEADER */}
-            <header className="relative z-30 w-full shrink-0">
+            {/* SECTION 1: HEADER (Desktop Only) */}
+            <header className="relative z-30 w-full shrink-0 hidden md:block">
                 <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
             </header>
+
+            {/* MOBILE DROPDOWN TRIGGERS (Mobile Only) */}
+            <div className="md:hidden fixed top-2 right-2 z-[60] flex gap-2">
+                <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg"
+                >
+                    <User className="w-5 h-5 text-neo-gold" />
+                </button>
+            </div>
 
             {/* SECTION 2: MIDDLE (TABLE AREA) */}
             <main className={`
                 relative flex-1 min-h-0 z-0 flex items-center justify-center 
                 transition-all duration-700 ease-in-out overflow-hidden
-                ${isDrawerOpen ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
+                ${(isDrawerOpen || isProfileOpen || isChipsOpen) ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
             `}>
                 <div className="w-full h-full flex items-center justify-center p-1">
                     <div className="relative w-full max-h-full max-w-[92vw] mx-auto flex items-center justify-center">
@@ -261,8 +275,8 @@ const App: React.FC = () => {
                 </div>
             </main>
 
-            {/* SECTION 3: BOTTOM CONTROLS */}
-            <footer className="relative z-40 w-full shrink-0 pb-10 md:pb-0 bg-gradient-to-t from-black/90 to-transparent mt-2 md:mt-0">
+            {/* SECTION 3: BOTTOM CONTROLS (Desktop Only) */}
+            <footer className="relative z-40 w-full shrink-0 hidden md:block bg-gradient-to-t from-black/90 to-transparent">
                 <GameControls
                     selectedChip={selectedChip}
                     onSelectChip={setSelectedChip}
@@ -282,6 +296,17 @@ const App: React.FC = () => {
                 />
             </footer>
 
+            {/* MOBILE BOTTOM TRIGGER (Mobile Only) */}
+            <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[60]">
+                <button
+                    onClick={() => setIsChipsOpen(!isChipsOpen)}
+                    className="flex items-center gap-2 px-6 py-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-xl"
+                >
+                    <Coins className="w-5 h-5 text-neo-gold" />
+                    <span className="text-xs font-bold text-white uppercase tracking-widest">Select Chips</span>
+                </button>
+            </div>
+
             {/* PERSISTENT OVERLAYS */}
             <WheelDrawer
                 isOpen={isDrawerOpen}
@@ -292,6 +317,82 @@ const App: React.FC = () => {
             />
 
             <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} />
+
+            <AnimatePresence>
+                {/* Profile Drawer (Top) */}
+                {isProfileOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsProfileOpen(false)}
+                            className="md:hidden fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ y: '-100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '-100%' }}
+                            className="md:hidden fixed top-0 left-0 w-full z-[100] glass-panel border-b border-neo-gold/30 shadow-2xl"
+                        >
+                            <div className="relative">
+                                <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
+                                <button
+                                    onClick={() => setIsProfileOpen(false)}
+                                    className="absolute -bottom-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold hover:text-white"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+
+                {/* Chips Drawer (Bottom) */}
+                {isChipsOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsChipsOpen(false)}
+                            className="md:hidden fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            className="md:hidden fixed bottom-0 left-0 w-full z-[100] glass-panel border-t border-neo-gold/30 shadow-2xl pt-2 pb-8"
+                        >
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsChipsOpen(false)}
+                                    className="absolute -top-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold hover:text-white"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                                <GameControls
+                                    selectedChip={selectedChip}
+                                    onSelectChip={(c) => { setSelectedChip(c); setIsChipsOpen(false); }}
+                                    onUndo={handleUndo}
+                                    onClear={handleClear}
+                                    gamePhase={phase}
+                                    totalBet={totalBetAmount}
+                                    balance={balance}
+                                    showRacetrack={showRacetrack}
+                                    onToggleRacetrack={() => setShowRacetrack(!showRacetrack)}
+                                    heatmapActive={heatmapActive}
+                                    onToggleHeatmap={() => setHeatmapActive(!heatmapActive)}
+                                    autoPlayActive={autoPlayActive}
+                                    onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
+                                    onSaveLayout={handleSaveLayout}
+                                    onLoadLayout={handleLoadLayout}
+                                />
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* FLOATING STATS TOGGLE BUTTON - RIGHT SIDE */}
             <button

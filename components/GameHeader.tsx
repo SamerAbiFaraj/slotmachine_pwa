@@ -24,7 +24,6 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
             z-50 shrink-0 
             border-b border-white/5 
             bg-neo-bg/80 backdrop-blur-md landscape:bg-neo-bg landscape:backdrop-blur-none
-            mb-2 md:mb-0
         ">
 
             {/* Brand - LARGER */}
