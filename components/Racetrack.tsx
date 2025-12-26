@@ -95,8 +95,8 @@ export const Racetrack: React.FC<Props> = ({ onBet, onHoverNumbers }) => {
   );
 
   return (
-    <div className="relative w-full h-auto min-h-[180px] md:h-[320px] flex items-center justify-center animate-in zoom-in duration-500">
-      <svg width="600" height="300" viewBox="0 0 600 300" className="w-full h-full drop-shadow-2xl">
+    <div className="relative w-full h-full flex items-center justify-center animate-in zoom-in duration-500">
+      <svg viewBox="0 0 600 300" className="w-full h-full max-h-full drop-shadow-2xl overflow-visible">
         {/* Track Path */}
         <ellipse cx={CX} cy={CY} rx={RX + 15} ry={RY + 15} fill="none" stroke="#E2B659" strokeWidth="2" strokeOpacity="0.1" />
         <ellipse cx={CX} cy={CY} rx={RX - 25} ry={RY - 25} fill="none" stroke="#E2B659" strokeWidth="2" strokeOpacity="0.1" />

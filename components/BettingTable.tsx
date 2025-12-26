@@ -68,15 +68,30 @@ export const BettingTable: React.FC<Props> = ({
 
     return (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-bounce-short">
-        <div className="absolute w-5 h-5 md:w-9 md:h-9 rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px]"></div>
         <div
-          className="relative w-6 h-6 md:w-10 md:h-10 flex items-center justify-center pointer-events-auto cursor-pointer"
+          className="absolute rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px]"
+          style={{
+            width: 'clamp(1.25rem, 6vw, 2.25rem)',
+            height: 'clamp(1.25rem, 6vw, 2.25rem)'
+          }}
+        ></div>
+        <div
+          className="relative flex items-center justify-center pointer-events-auto cursor-pointer"
+          style={{
+            width: 'clamp(1.5rem, 7vw, 2.5rem)',
+            height: 'clamp(1.5rem, 7vw, 2.5rem)'
+          }}
           onMouseEnter={handleChipMouseEnter}
           onMouseMove={handleChipMouseMove}
           onMouseLeave={handleChipMouseLeave}
         >
           <img src={chipImage} alt={`${amount} chip`} className="w-full h-full object-contain z-10" />
-          <span className="absolute text-[8px] md:text-[10px] font-bold text-white drop-shadow-md z-20 pointer-events-none">{formatAmount(amount)}</span>
+          <span
+            className="absolute font-bold text-white drop-shadow-md z-20 pointer-events-none"
+            style={{ fontSize: 'clamp(0.5rem, 2vw, 0.625rem)' }}
+          >
+            {formatAmount(amount)}
+          </span>
         </div>
       </div>
     );
@@ -123,23 +138,44 @@ export const BettingTable: React.FC<Props> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
         className={`
-          relative h-14 sm:h-16 md:h-20 lg:h-28 xl:h-32 flex flex-col items-center justify-center border border-neo-gold/20
-          transition-all duration-200 cursor-pointer group
+          relative aspect-[3/4] flex flex-col items-center justify-center border border-neo-gold/20
+          transition-all duration-200 cursor-pointer group overflow-hidden
           hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
           ${isHighlighted ? 'bg-neo-gold/40' : 'bg-transparent'}
         `}
+        style={{ padding: 'clamp(0.125rem, 0.5vw, 0.375rem)' }}
       >
         {multiplier && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-neo-accent/20 animate-pulse overflow-hidden">
-            <span className="text-neo-accent font-bold text-[8px] sm:text-[10px] md:text-sm drop-shadow-[0_0_5px_rgba(14,165,233,1)]">⚡{multiplier.multiplier}x</span>
+            <span
+              className="text-neo-accent font-bold drop-shadow-[0_0_5px_rgba(14,165,233,1)]"
+              style={{ fontSize: 'clamp(0.5rem, 2.5vw, 0.875rem)' }}
+            >
+              ⚡{multiplier.multiplier}x
+            </span>
           </div>
         )}
         {animalImagePath && (
-          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-1 flex items-center justify-center pointer-events-none">
-            <img src={animalImagePath} alt={`Animal ${numStr}`} className="w-full h-full object-contain drop-shadow-md transition-transform group-hover:scale-110" />
+          <div
+            className="flex items-center justify-center pointer-events-none flex-shrink-0"
+            style={{
+              width: 'clamp(1rem, 4.5vw, 2.25rem)',
+              height: 'clamp(1rem, 4.5vw, 2.25rem)',
+              marginBottom: 'clamp(0.0625rem, 0.2vw, 0.125rem)'
+            }}
+          >
+            <img
+              src={animalImagePath}
+              alt={`Animal ${numStr}`}
+              className="w-full h-full object-contain drop-shadow-md transition-transform group-hover:scale-110"
+              loading="lazy"
+            />
           </div>
         )}
-        <span className={`font-display text-xs sm:text-base md:text-xl lg:text-3xl font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}>
+        <span
+          className={`font-display font-bold drop-shadow-md transition-transform group-hover:scale-110 pointer-events-none flex-shrink-0 ${color === 'red' ? 'text-red-500' : 'text-gray-100'}`}
+          style={{ fontSize: 'clamp(0.5rem, 2vw, 0.875rem)', lineHeight: 1 }}
+        >
           {numStr}
         </span>
         {amount && renderChipStack(amount, PAYOUTS.STRAIGHT, BetType.STRAIGHT, [numStr])}
@@ -160,15 +196,10 @@ export const BettingTable: React.FC<Props> = ({
   );
 
   return (
-    <div className="
-    w-full 
-    select-none felt-texture 
-    p-2 md:p-6 lg:p-8 
-    rounded-xl 
-    border-[2px] md:border-[6px] lg:border-[8px] 
-    border-[#1e293b] 
-    shadow-2xl relative overflow-hidden
-  ">
+    <div
+      className="w-full select-none felt-texture rounded-xl border-[2px] md:border-[3px] border-[#1e293b] shadow-2xl relative overflow-hidden h-full flex flex-col"
+      style={{ padding: 'clamp(0.25rem, 1.5vw, 1.5rem)' }}
+    >
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
 
       {/* Floating Tooltip */}
@@ -178,24 +209,27 @@ export const BettingTable: React.FC<Props> = ({
           style={{
             left: hoveredBet.x + 20,
             top: hoveredBet.y - 40,
-            transform: 'translate(0, -50%)'
+            transform: 'translate(0, -50%)',
+            fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
           }}
         >
-          <div className="text-neo-gold text-[8px] md:text-[10px] uppercase tracking-wider mb-1 font-bold">Current Bet Info</div>
+          <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
+            Current Bet Info
+          </div>
           <div className="flex flex-col gap-0.5 md:gap-1">
             <div className="flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-400 text-[10px] md:text-xs">Total Bet:</span>
-              <span className="text-white text-[10px] md:text-xs font-bold">${getBetAmount(hoveredBet.type, hoveredBet.numbers)?.toLocaleString()}</span>
+              <span className="text-gray-400">Total Bet:</span>
+              <span className="text-white font-bold">${getBetAmount(hoveredBet.type, hoveredBet.numbers)?.toLocaleString()}</span>
             </div>
             <div className="flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-400 text-[10px] md:text-xs">Potential Win:</span>
-              <span className="text-green-400 text-[10px] md:text-xs font-bold">
+              <span className="text-gray-400">Potential Win:</span>
+              <span className="text-green-400 font-bold">
                 ${((getBetAmount(hoveredBet.type, hoveredBet.numbers) || 0) * hoveredBet.payoutRatio).toLocaleString()}
               </span>
             </div>
             <div className="mt-1 pt-1 border-t border-white/10 flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-500 text-[8px] md:text-[10px]">Payout:</span>
-              <span className="text-neo-gold text-[8px] md:text-[10px]">{hoveredBet.payoutRatio}:1</span>
+              <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout:</span>
+              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
             </div>
           </div>
         </div>
@@ -204,27 +238,30 @@ export const BettingTable: React.FC<Props> = ({
       {/* Chip Hover Tooltip */}
       {hoveredChip && typeof document !== 'undefined' && ReactDOM.createPortal(
         <div
-          className="fixed z-[9999] pointer-events-none bg-gradient-to-br from-neo-gold/20 to-black/95 border-2 border-neo-gold rounded-lg p-2 md:p-2.5 shadow-[0_0_25px_rgba(226,182,89,0.4)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
+          className="fixed z-[9999] pointer-events-none bg-gradient-to-br from-neo-gold/20 to-black/95 border-2 border-neo-gold rounded-lg p-2 shadow-[0_0_25px_rgba(226,182,89,0.4)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
           style={{
             left: hoveredChip.x + 15,
             top: hoveredChip.y - 70,
+            fontSize: 'clamp(0.625rem, 2vw, 0.6875rem)'
           }}
         >
-          <div className="text-neo-gold text-[8px] md:text-[9px] uppercase tracking-widest mb-1 font-bold drop-shadow-md">💰 Chip Info</div>
+          <div className="text-neo-gold uppercase tracking-widest mb-1 font-bold drop-shadow-md" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>
+            💰 Chip Info
+          </div>
           <div className="flex flex-col gap-0.5">
-            <div className="flex justify-between gap-4 md:gap-6">
-              <span className="text-gray-300 text-[10px] md:text-[11px]">Bet:</span>
-              <span className="text-white text-[10px] md:text-[11px] font-bold">${getBetAmount(hoveredChip.type, hoveredChip.numbers)?.toLocaleString()}</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-gray-300">Bet:</span>
+              <span className="text-white font-bold">${getBetAmount(hoveredChip.type, hoveredChip.numbers)?.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between gap-4 md:gap-6">
-              <span className="text-gray-300 text-[10px] md:text-[11px]">Win:</span>
-              <span className="text-green-400 text-[10px] md:text-[11px] font-bold">
+            <div className="flex justify-between gap-4">
+              <span className="text-gray-300">Win:</span>
+              <span className="text-green-400 font-bold">
                 ${((getBetAmount(hoveredChip.type, hoveredChip.numbers) || 0) * hoveredChip.payoutRatio).toLocaleString()}
               </span>
             </div>
-            <div className="mt-0.5 pt-0.5 border-t border-neo-gold/30 flex justify-between gap-4 md:gap-6">
-              <span className="text-gray-400 text-[8px] md:text-[9px]">{hoveredChip.payoutRatio}:1</span>
-              <span className="text-neo-gold text-[8px] md:text-[9px]">⚡</span>
+            <div className="mt-0.5 pt-0.5 border-t border-neo-gold/30 flex justify-between gap-4">
+              <span className="text-gray-400" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>{hoveredChip.payoutRatio}:1</span>
+              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>⚡</span>
             </div>
           </div>
         </div>,
@@ -232,13 +269,13 @@ export const BettingTable: React.FC<Props> = ({
       )}
 
       {/* MAIN TABLE GRID WRAPPER */}
-      <div className="relative z-10 flex rounded overflow-hidden border border-neo-gold/30 md:border-2 shadow-lg bg-black/20">
+      <div className="relative z-10 flex flex-1 rounded overflow-hidden border border-neo-gold/30 md:border-2 shadow-lg bg-black/20 min-h-0">
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
-        <div className="
-            w-12 sm:w-16 md:w-20 lg:w-24 
-            flex flex-col border-r border-neo-gold/30 relative
-          ">
+        <div
+          className="flex flex-col border-r border-neo-gold/30 relative"
+          style={{ width: 'clamp(3rem, 12vw, 6rem)' }}
+        >
           <div
             onClick={() => handleBet(BetType.ZERO, ["0"], PAYOUTS.STRAIGHT)}
             onMouseEnter={(e) => handleMouseEnter(e, BetType.ZERO, ["0"], PAYOUTS.STRAIGHT)}
@@ -246,8 +283,18 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center border-b border-neo-gold/30 text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("0") && <img src={getAnimalImagePath("0")} alt="0" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
-            <span className="text-sm sm:text-lg md:text-3xl">0</span>
+            {getAnimalImagePath("0") && (
+              <img
+                src={getAnimalImagePath("0")}
+                alt="0"
+                className="object-contain mb-0.5 md:mb-2"
+                style={{
+                  width: 'clamp(1.5rem, 6vw, 3rem)',
+                  height: 'clamp(1.5rem, 6vw, 3rem)'
+                }}
+              />
+            )}
+            <span style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }}>0</span>
             {getBetAmount(BetType.ZERO, ["0"]) && renderChipStack(getBetAmount(BetType.ZERO, ["0"])!, PAYOUTS.STRAIGHT, BetType.ZERO, ["0"])}
           </div>
           <div
@@ -257,14 +304,34 @@ export const BettingTable: React.FC<Props> = ({
             onMouseLeave={() => setHoveredBet(null)}
             className="flex-1 flex flex-col items-center justify-center text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
-            {getAnimalImagePath("00") && <img src={getAnimalImagePath("00")} alt="00" className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 mb-0.5 md:mb-2 object-contain" />}
-            <span className="text-sm sm:text-lg md:text-3xl">00</span>
+            {getAnimalImagePath("00") && (
+              <img
+                src={getAnimalImagePath("00")}
+                alt="00"
+                className="object-contain mb-0.5 md:mb-2"
+                style={{
+                  width: 'clamp(1.5rem, 6vw, 3rem)',
+                  height: 'clamp(1.5rem, 6vw, 3rem)'
+                }}
+              />
+            )}
+            <span style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }}>00</span>
             {getBetAmount(BetType.STRAIGHT, ["00"]) && renderChipStack(getBetAmount(BetType.STRAIGHT, ["00"])!, PAYOUTS.STRAIGHT, BetType.STRAIGHT, ["00"])}
           </div>
           {/* Basket Bet */}
-          {renderBetHotspot(BetType.BASKET, ["0", "00", "1", "2", "3"], PAYOUTS.BASKET, "right-[-8px] md:right-[-10px] top-[calc(50%-8px)] md:top-[calc(50%-10px)] w-4 h-4 md:w-5 md:h-5 rounded-full bg-white/5 border border-white/10")}
+          {renderBetHotspot(
+            BetType.BASKET,
+            ["0", "00", "1", "2", "3"],
+            PAYOUTS.BASKET,
+            "right-[-8px] md:right-[-10px] top-[calc(50%-8px)] md:top-[calc(50%-10px)] w-4 h-4 md:w-5 md:h-5 rounded-full bg-white/5 border border-white/10"
+          )}
           {/* Split 0-00 */}
-          {renderBetHotspot(BetType.SPLIT, ["0", "00"], PAYOUTS.SPLIT, "bottom-[-8px] md:bottom-[-10px] left-[calc(50%-8px)] md:left-[calc(50%-10px)] w-4 h-4 md:w-5 md:h-5 rounded-full")}
+          {renderBetHotspot(
+            BetType.SPLIT,
+            ["0", "00"],
+            PAYOUTS.SPLIT,
+            "bottom-[-8px] md:bottom-[-10px] left-[calc(50%-8px)] md:left-[calc(50%-10px)] w-4 h-4 md:w-5 md:h-5 rounded-full"
+          )}
         </div>
 
         {/* MAIN NUMBERS GRID (MIDDLE) */}
@@ -301,11 +368,10 @@ export const BettingTable: React.FC<Props> = ({
           </div>
 
           {/* DOZENS */}
-          <div className="
-              grid grid-cols-3 
-              h-14 md:h-16 lg:h-20
-              border-t border-neo-gold/30
-            ">
+          <div
+            className="grid grid-cols-3 border-t border-neo-gold/30"
+            style={{ height: 'clamp(3.5rem, 8vw, 5rem)' }}
+          >
             {['1st 12', '2nd 12', '3rd 12'].map((label, idx) => {
               const nums = Array.from({ length: 12 }, (_, i) => (i + 1 + idx * 12).toString());
               return (
@@ -315,7 +381,8 @@ export const BettingTable: React.FC<Props> = ({
                   onMouseEnter={(e) => handleMouseEnter(e, BetType.DOZEN, nums, PAYOUTS.DOZEN)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={() => setHoveredBet(null)}
-                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer text-[10px] sm:text-xs md:text-sm lg:text-base font-bold text-neo-gold border-r border-neo-gold/20 last:border-0 transition-colors"
+                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer font-bold text-neo-gold border-r border-neo-gold/20 last:border-0 transition-colors"
+                  style={{ fontSize: 'clamp(0.625rem, 2vw, 1rem)' }}
                 >
                   <span>{label}</span>
                   {getBetAmount(BetType.DOZEN, nums) && renderChipStack(getBetAmount(BetType.DOZEN, nums)!, PAYOUTS.DOZEN, BetType.DOZEN, nums)}
@@ -326,10 +393,10 @@ export const BettingTable: React.FC<Props> = ({
         </div>
 
         {/* COLUMNS (RIGHT) */}
-        <div className="
-          w-12 sm:w-16 md:w-20 lg:w-24
-          flex flex-col border-l border-neo-gold/30
-        ">
+        <div
+          className="flex flex-col border-l border-neo-gold/30"
+          style={{ width: 'clamp(3rem, 12vw, 6rem)' }}
+        >
           {[3, 2, 1].map(row => {
             const nums = Array.from({ length: 12 }, (_, i) => (i * 3 + row).toString());
             return (
@@ -341,23 +408,32 @@ export const BettingTable: React.FC<Props> = ({
                 onMouseLeave={() => setHoveredBet(null)}
                 className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-neo-gold/20 last:border-0 transition-colors"
               >
-                <span className="rotate-360 whitespace-nowrap text-[10px] sm:text-xs md:text-sm lg:text-base font-bold text-neo-gold">2 TO 1</span>
+                <span
+                  className="rotate-360 whitespace-nowrap font-bold text-neo-gold"
+                  style={{ fontSize: 'clamp(0.625rem, 2vw, 1rem)' }}
+                >
+                  2 TO 1
+                </span>
                 {getBetAmount(BetType.COLUMN, nums) && renderChipStack(getBetAmount(BetType.COLUMN, nums)!, PAYOUTS.COLUMN, BetType.COLUMN, nums)}
               </div>
             );
           })}
-          <div className="h-12 sm:h-14 md:h-16 lg:h-18 border-t border-neo-gold/20"></div>
+          <div
+            className="border-t border-neo-gold/20"
+            style={{ height: 'clamp(3rem, 7vw, 4.5rem)' }}
+          ></div>
         </div>
       </div>
 
       {/* BOTTOM ROW: EVEN CHANCE */}
-      <div className="
-          grid grid-cols-6 
-          mt-2 md:mt-3 lg:mt-4 
-          h-14 md:h-16 lg:h-20
-          gap-1.5 md:gap-2 lg:gap-3 
-          relative z-10
-        ">
+      <div
+        className="grid grid-cols-6 relative z-10 shrink-0"
+        style={{
+          marginTop: 'clamp(0.25rem, 1vw, 0.75rem)',
+          height: 'clamp(2.5rem, 7vw, 4.5rem)',
+          gap: 'clamp(0.25rem, 0.8vw, 0.5rem)'
+        }}
+      >
         {[
           { label: "1-18", nums: Array.from({ length: 18 }, (_, i) => (i + 1).toString()), ratio: PAYOUTS.HIGH_LOW, type: BetType.HIGH_LOW },
           { label: "EVEN", nums: Array.from({ length: 36 }, (_, i) => (i + 1).toString()).filter(n => parseInt(n) % 2 === 0), ratio: PAYOUTS.EVEN_ODD, type: BetType.EVEN_ODD },
@@ -378,11 +454,28 @@ export const BettingTable: React.FC<Props> = ({
             `}
           >
             {item.special === 'red' ? (
-              <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-red-600 rotate-45 border md:border-2 border-red-400"></div>
+              <div
+                className="bg-red-600 rotate-45 border md:border-2 border-red-400"
+                style={{
+                  width: 'clamp(1.25rem, 5vw, 2rem)',
+                  height: 'clamp(1.25rem, 5vw, 2rem)'
+                }}
+              ></div>
             ) : item.special === 'black' ? (
-              <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-black rotate-45 border md:border-2 border-gray-600"></div>
+              <div
+                className="bg-black rotate-45 border md:border-2 border-gray-600"
+                style={{
+                  width: 'clamp(1.5rem, 6vw, 2.5rem)',
+                  height: 'clamp(1.5rem, 6vw, 2.5rem)'
+                }}
+              ></div>
             ) : (
-              <span className="text-[9px] sm:text-xs md:text-sm font-bold text-neo-gold uppercase">{item.label}</span>
+              <span
+                className="font-bold text-neo-gold uppercase"
+                style={{ fontSize: 'clamp(0.5625rem, 2vw, 0.875rem)' }}
+              >
+                {item.label}
+              </span>
             )}
             {getBetAmount(item.type, item.nums) && renderChipStack(getBetAmount(item.type, item.nums)!, item.ratio, item.type, item.nums)}
           </div>

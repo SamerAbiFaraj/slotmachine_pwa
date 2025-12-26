@@ -46,7 +46,7 @@ export const GameControls: React.FC<Props> = ({
    );
 
    return (
-      <div className="w-full flex justify-center px-2 md:px-4 pb-0.5 md:pb-4">
+      <div className="w-full h-full flex items-center justify-center px-2 md:px-4">
          <div className="glass-panel rounded-xl md:rounded-2xl p-2 md:p-2.5 flex flex-row items-center gap-2 md:gap-3 shadow-2xl relative max-w-[92vw] md:max-w-full overflow-x-auto scrollbar-hide">
 
             {/* Pro Tools (Left) - REMOVED RACETRACK */}
@@ -69,13 +69,13 @@ export const GameControls: React.FC<Props> = ({
                      onClick={() => onSelectChip(chip.value)}
                      disabled={!isBetting}
                      className={`
-                       relative w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center
-                       transition-all duration-200 shrink-0
-                       ${selectedChip === chip.value
-                           ? 'scale-110 -translate-y-2 md:-translate-y-2.5 z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]'
+                chip-image rounded-full flex items-center justify-center
+                transition-all duration-200 shrink-0
+                ${selectedChip === chip.value
+                           ? 'scale-110 -translate-y-2 z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)]'
                            : 'hover:-translate-y-1 hover:brightness-110'
                         }
-                       ${!isBetting && 'grayscale opacity-50'}
+                ${!isBetting && 'grayscale opacity-50'}
                     `}
                   >
                      <img

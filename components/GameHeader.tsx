@@ -18,13 +18,12 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
 
     return (
         <header className="
-            h-[60px] md:h-[75px] lg:h-[85px] landscape:h-[45px]
-            px-4 md:px-6 lg:px-8 landscape:px-3
+            w-full px-4 md:px-6 lg:px-8
             flex items-center justify-between 
             z-50 shrink-0 
             border-b border-white/5 
             bg-neo-bg/80 backdrop-blur-md landscape:bg-neo-bg landscape:backdrop-blur-none
-        ">
+        " style={{ height: 'var(--header-height)' }}>
 
             {/* Brand - LARGER */}
             <div className="flex items-center gap-3 md:gap-4 landscape:gap-2">

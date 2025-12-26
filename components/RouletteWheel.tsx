@@ -280,20 +280,20 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
         }
     };
 
-    // SVG calculations (MAXIMIZED SIZE)
-    const wheelSize = 600;
+    // SVG coordinate system (Standardized for easier math)
+    const wheelSize = 1000;
     const center = wheelSize / 2;
-    const outerRadius = center - 5; // 295px - Maximized to edge
-    const innerRadius = 150;        // Proportional increase
+    const outerRadius = center - 10;
+    const innerRadius = 250;
     const pocketAngle = 360 / POCKET_COUNT;
-    const imageRadius = outerRadius - 35; // 260px
-    const numberRadius = imageRadius - 40; // 220px
+    const imageRadius = outerRadius - 60;
+    const numberRadius = imageRadius - 65;
 
     return (
-        <div className="relative flex items-center justify-center p-2 md:p-6 w-full">
-            {/* Main Wheel Container with 3D Perspective - EXPLICIT LARGER SIZING */}
+        <div className="relative flex items-center justify-center p-2 w-full h-full">
+            {/* Main Wheel Container - Using CSS variables for fluid sizing */}
             <div
-                className="relative w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[680px] lg:h-[680px] xl:w-[780px] xl:h-[780px] landscape:w-[260px] landscape:h-[260px] lg:landscape:w-[500px] lg:landscape:h-[500px]"
+                className="relative wheel-container"
                 style={{
                     perspective: '1200px',
                     perspectiveOrigin: 'center center'
@@ -464,13 +464,13 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                             <circle
                                                 cx={imageX}
                                                 cy={imageY}
-                                                r="14"
+                                                r="24"
                                                 fill="none"
                                                 stroke="#FFD700"
-                                                strokeWidth="1.5"
+                                                strokeWidth="2.5"
                                                 opacity="0.6"
                                                 style={{
-                                                    filter: 'drop-shadow(0 0 6px rgba(255, 77, 0, 0.36))'
+                                                    filter: 'drop-shadow(0 0 10px rgba(255, 77, 0, 0.36))'
                                                 }}
                                             />
 
@@ -478,12 +478,12 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                             <circle
                                                 cx={imageX}
                                                 cy={imageY}
-                                                r="12"
+                                                r="20"
                                                 fill="white"
                                                 stroke="#FFD700"
-                                                strokeWidth="2.5"
+                                                strokeWidth="3.5"
                                                 style={{
-                                                    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))'
+                                                    filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3))'
                                                 }}
                                             />
 
@@ -491,10 +491,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                             {imagePath && (
                                                 <image
                                                     href={imagePath}
-                                                    x={imageX - 15}
-                                                    y={imageY - 15}
-                                                    width="30"
-                                                    height="30"
+                                                    x={imageX - 25}
+                                                    y={imageY - 25}
+                                                    width="50"
+                                                    height="50"
                                                     preserveAspectRatio="xMidYMid meet"
                                                     className="brightness-110 contrast-110"
                                                 />
@@ -518,20 +518,20 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                             <circle
                                                 cx={numberX}
                                                 cy={numberY}
-                                                r="12"
+                                                r="20"
                                                 fill="white"
                                                 stroke={color === 'green' ? '#00aa44' : color === 'red' ? '#cc0000' : '#000'}
-                                                strokeWidth="2.5"
+                                                strokeWidth="3.5"
                                                 style={{
-                                                    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))'
+                                                    filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4))'
                                                 }}
                                             />
 
                                             <text
                                                 x={numberX}
-                                                y={numberY + 6}
+                                                y={numberY + 10}
                                                 textAnchor="middle"
-                                                fontSize="14"
+                                                fontSize="24"
                                                 fontWeight="900"
                                                 fill={color === 'green' ? '#006622' : color === 'red' ? '#990000' : '#000'}
                                                 className="select-none"
@@ -560,21 +560,21 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                             {/* Center Cross Pattern */}
                             <g>
                                 <line
-                                    x1={center - 40}
+                                    x1={center - 60}
                                     y1={center}
-                                    x2={center + 40}
+                                    x2={center + 60}
                                     y2={center}
                                     stroke="#2a1c01"
-                                    strokeWidth="10"
+                                    strokeWidth="15"
                                     strokeLinecap="round"
                                 />
                                 <line
                                     x1={center}
-                                    y1={center - 40}
+                                    y1={center - 60}
                                     x2={center}
-                                    y2={center + 40}
+                                    y2={center + 60}
                                     stroke="#2a1c01"
-                                    strokeWidth="10"
+                                    strokeWidth="15"
                                     strokeLinecap="round"
                                 />
 
@@ -582,10 +582,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                 <circle
                                     cx={center}
                                     cy={center}
-                                    r={20}
+                                    r={30}
                                     fill="#2a1c01"
                                     style={{
-                                        filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8))'
+                                        filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.8))'
                                     }}
                                 />
 
@@ -624,10 +624,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     >
                         {/* Turret Finial */}
                         <div
-                            className="w-8 h-8 rounded-full"
+                            className="w-12 h-12 rounded-full"
                             style={{
                                 background: 'radial-gradient(circle at 30% 30%, #ffa35cd0, #ffb7001b)',
-                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)'
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.6)'
                             }}
                         />
                     </div>

@@ -21,6 +21,9 @@ export default {
                     felt: '#032F26', // Deep Teal
                 }
             },
+            aspectRatio: {
+                'roulette-cell': '3 / 4',
+            },
             animation: {
                 'bounce-short': 'bounceShort 0.3s ease-out 1',
                 'pulse-slow': 'pulseSlow 3s infinite',

@@ -13,24 +13,138 @@ interface Props {
   onBetPlaced?: (number: string, amount: number) => void;
 }
 
+// PHYSICS CONFIGURATION
+const PHYSICS_CONFIG = {
+  initialVelocity: 18,           // Rotations per second (very fast initial spin)
+  decayConstant: 0.35,           // Controls slowdown rate (higher = faster slowdown)
+  outerRadius: 49,               // Ball radius on outer rim (% of wheel) - EDGE
+  pocketRadius: 37,              // Ball radius in pocket (% of wheel) - ALIGNED TO CENTER OF POCKETS
+  deflectorCount: 8,             // Number of diamond deflectors on rim
+  deflectorMagnitude: 4,         // Max deflection angle in degrees
+  rattleCount: 3,                // Number of pocket bounces
+  totalDuration: 8000,           // Total animation duration (ms)
+
+  // Phase timing (as fraction of total duration)
+  outerRimDuration: 0.60,        // 60% of time on outer rim
+  spiralDuration: 0.25,          // 25% of time spiraling inward
+  settleDuration: 0.15,          // 15% of time settling in pocket
+};
+
+// Seeded random number generator for deterministic deflector hits
+class SeededRandom {
+  private seed: number;
+
+  constructor(seed: number) {
+    this.seed = seed;
+  }
+
+  next(): number {
+    this.seed = (this.seed * 9301 + 49297) % 233280;
+    return this.seed / 233280;
+  }
+}
+
+// Calculate velocity at time t using exponential decay
+const calculateVelocity = (t: number, config: typeof PHYSICS_CONFIG): number => {
+  const { initialVelocity, decayConstant, totalDuration } = config;
+  const normalizedTime = t / totalDuration;
+  return initialVelocity * Math.exp(-decayConstant * normalizedTime * 10);
+};
+
+// Calculate total angle traveled from 0 to t
+const calculateAngleTraveled = (t: number, config: typeof PHYSICS_CONFIG): number => {
+  const { initialVelocity, decayConstant, totalDuration } = config;
+  const normalizedTime = t / totalDuration;
+  const k = decayConstant * 10;
+
+  // Integral of v(t) = v₀ × e^(-k×t) is (v₀/k) × (1 - e^(-k×t))
+  const angleInRotations = (initialVelocity / k) * (1 - Math.exp(-k * normalizedTime));
+  return angleInRotations * 360; // Convert rotations to degrees
+};
+
+// Apply deflector hit at specific intervals
+const applyDeflectorHit = (
+  baseAngle: number,
+  time: number,
+  config: typeof PHYSICS_CONFIG,
+  rng: SeededRandom
+): number => {
+  const { deflectorCount, deflectorMagnitude, totalDuration, outerRimDuration } = config;
+
+  // Only apply deflector hits during outer rim phase
+  if (time > totalDuration * outerRimDuration) {
+    return baseAngle;
+  }
+
+  // Calculate which deflector we're near
+  const currentRotations = baseAngle / 360;
+  const deflectorInterval = 1 / deflectorCount;
+  const nearestDeflector = Math.floor(currentRotations / deflectorInterval);
+  const distanceToDeflector = (currentRotations % deflectorInterval) / deflectorInterval;
+
+  // Apply hit when very close to deflector (within 5% of interval)
+  if (distanceToDeflector < 0.05 || distanceToDeflector > 0.95) {
+    const hitStrength = (rng.next() - 0.5) * 2; // -1 to 1
+    const deflection = hitStrength * deflectorMagnitude;
+    return baseAngle + deflection;
+  }
+
+  return baseAngle;
+};
+
+// Apply pocket rattle effect (damped oscillation)
+const applyPocketRattle = (
+  time: number,
+  targetAngle: number,
+  config: typeof PHYSICS_CONFIG
+): number => {
+  const { totalDuration, settleDuration, rattleCount } = config;
+  const settleStartTime = totalDuration * (1 - settleDuration);
+
+  if (time < settleStartTime) {
+    return 0;
+  }
+
+  const settleProgress = (time - settleStartTime) / (totalDuration - settleStartTime);
+  const frequency = rattleCount * Math.PI * 2;
+  const damping = 5;
+
+  // Damped oscillation: A × e^(-ζt) × sin(ωt)
+  const amplitude = 8; // degrees
+  const rattle = amplitude * Math.exp(-damping * settleProgress) * Math.sin(frequency * settleProgress);
+
+  return rattle;
+};
+
+// Calculate ball radius based on current phase
+const calculateBallRadius = (time: number, config: typeof PHYSICS_CONFIG): number => {
+  const { totalDuration, outerRimDuration, spiralDuration, outerRadius, pocketRadius } = config;
+  const outerRimEnd = totalDuration * outerRimDuration;
+  const spiralEnd = totalDuration * (outerRimDuration + spiralDuration);
+
+  if (time < outerRimEnd) {
+    // Stay on outer rim
+    return outerRadius;
+  } else if (time < spiralEnd) {
+    // Spiral inward
+    const spiralProgress = (time - outerRimEnd) / (spiralEnd - outerRimEnd);
+    const easeProgress = 1 - Math.pow(1 - spiralProgress, 3); // Ease out cubic
+    return outerRadius - (outerRadius - pocketRadius) * easeProgress;
+  } else {
+    // In pocket
+    return pocketRadius;
+  }
+};
+
 // CONSTANTS
 const POCKET_COUNT = 38;
-const TOTAL_SPIN_DURATION = 8000;
-const BALL_LANDING_POSITION = 135;
-
-// Custom easing functions
-const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
-const easeOutBack = (t: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-};
+const BALL_LANDING_POSITION = 90;
 
 export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlaced }) => {
   // State
   const [wheelRotation, setWheelRotation] = useState(0);
   const [ballRotation, setBallRotation] = useState(0);
-  const [ballRadius, setBallRadius] = useState(60);
+  const [ballRadius, setBallRadius] = useState(49);
   const [ballOpacity, setBallOpacity] = useState(0);
   const [hoveredNumber, setHoveredNumber] = useState<string | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -87,57 +201,62 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
     }
 
     const anglePerPocket = 360 / POCKET_COUNT;
-    const OFFSET = -10;
-    const adjustedIndex = (targetIndex - OFFSET + POCKET_COUNT) % POCKET_COUNT;
-    const targetWheelAngle = adjustedIndex * anglePerPocket;
+    const targetPocketAngle = (targetIndex + 0.5) * anglePerPocket;
 
+    // Calculate how much the wheel will rotate
     const startWheelAngle = wheelRotation % 360;
-    const ballStartAngle = 0;
-    const isClockwise = direction === 'clockwise';
-    const dirMultiplier = isClockwise ? 1 : -1;
-    const targetFinalAngle = (BALL_LANDING_POSITION - targetWheelAngle + 360) % 360;
+    const wheelIsClockwise = direction === 'clockwise';
+    const wheelDirMultiplier = wheelIsClockwise ? 1 : -1;
 
-    const extraRotations = 5;
-    const totalWheelRotation = 360 * extraRotations;
-    const finalWheelAngle = startWheelAngle + (totalWheelRotation * dirMultiplier) + (targetFinalAngle * dirMultiplier);
+    // Wheel rotates 5 times
+    const wheelExtraRotations = 5;
+    const totalWheelRotation = 360 * wheelExtraRotations * wheelDirMultiplier;
+    const finalWheelAngle = startWheelAngle + totalWheelRotation;
+
+    // Ball rotates in OPPOSITE direction
+    const ballDirMultiplier = -wheelDirMultiplier;
+
+    // Ball needs to land at BALL_LANDING_POSITION (90°) relative to wheel
+    // Calculate total ball travel needed
+    const totalBallAngle = calculateAngleTraveled(PHYSICS_CONFIG.totalDuration, PHYSICS_CONFIG);
+
+    // Adjust ball starting angle so it lands correctly
+    // Final ball angle (absolute) = final wheel angle + target pocket angle + BALL_LANDING_POSITION
+    const desiredFinalBallAngle = finalWheelAngle + targetPocketAngle + BALL_LANDING_POSITION;
+    const ballStartAngle = desiredFinalBallAngle - (totalBallAngle * ballDirMultiplier);
+
+    // Create seeded random for deterministic deflector hits
+    const rng = new SeededRandom(targetIndex * 1000 + Date.now() % 1000);
 
     const animate = (time: number) => {
       const elapsed = time - startTimeRef.current;
-      const progress = Math.min(elapsed / TOTAL_SPIN_DURATION, 1);
+      const progress = Math.min(elapsed / PHYSICS_CONFIG.totalDuration, 1);
 
-      // Wheel rotation
-      const wheelEase = easeOutCubic(progress);
-      const currentWheelAngle = startWheelAngle + (finalWheelAngle - startWheelAngle) * wheelEase;
+      // Animate wheel rotation (simple ease out)
+      const wheelEase = 1 - Math.pow(1 - progress, 3);
+      const currentWheelAngle = startWheelAngle + totalWheelRotation * wheelEase;
       setWheelRotation(currentWheelAngle);
 
-      // Ball animation
-      let ballAngle;
-      let currentBallRadius;
+      // Calculate ball position using physics
+      let ballAngleTraveled = calculateAngleTraveled(elapsed, PHYSICS_CONFIG);
+      let currentBallAngle = ballStartAngle + (ballAngleTraveled * ballDirMultiplier);
 
-      if (progress < 0.5) {
-        const phaseProgress = progress / 0.5;
-        const orbitSpeed = 10;
-        ballAngle = ballStartAngle + (360 * orbitSpeed * phaseProgress * dirMultiplier);
-        currentBallRadius = 60 - (30 * phaseProgress);
-      } else if (progress < 0.85) {
-        const phaseProgress = (progress - 0.5) / 0.35;
-        const ballFollowEase = easeOutBack(phaseProgress);
-        const targetBallAngle = currentWheelAngle + targetWheelAngle;
-        const transitionStart = ballStartAngle + (360 * 10 * dirMultiplier);
-        ballAngle = transitionStart + (targetBallAngle - transitionStart) * ballFollowEase;
-        const wobble = Math.sin(phaseProgress * Math.PI * 6) * 8 * (1 - phaseProgress);
-        ballAngle += wobble;
-        currentBallRadius = 30 + (Math.sin(phaseProgress * Math.PI * 3) * 4);
-      } else {
-        const phaseProgress = (progress - 0.85) / 0.15;
-        const settleEase = 1 - Math.pow(1 - phaseProgress, 3);
-        const targetBallAngle = currentWheelAngle + targetWheelAngle;
-        const finalWobble = Math.sin(phaseProgress * Math.PI * 8) * 3 * (1 - phaseProgress);
-        ballAngle = targetBallAngle + finalWobble;
-        currentBallRadius = 30;
-      }
+      // Apply deflector hits
+      currentBallAngle = applyDeflectorHit(
+        Math.abs(ballAngleTraveled),
+        elapsed,
+        PHYSICS_CONFIG,
+        rng
+      ) * ballDirMultiplier + ballStartAngle;
 
-      setBallRotation(ballAngle);
+      // Apply pocket rattle
+      const rattleOffset = applyPocketRattle(elapsed, desiredFinalBallAngle, PHYSICS_CONFIG);
+      currentBallAngle += rattleOffset;
+
+      // Calculate ball radius
+      const currentBallRadius = calculateBallRadius(elapsed, PHYSICS_CONFIG);
+
+      setBallRotation(currentBallAngle);
       setBallRadius(currentBallRadius);
 
       if (progress < 1) {
@@ -145,7 +264,9 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
       } else {
         setIsSpinning(false);
         setSelectedNumber(targetNumber);
-        setAlignmentDebug(`✅ Perfect alignment on ${targetNumber}`);
+        // Final position: ensure perfect alignment
+        setBallRotation(desiredFinalBallAngle);
+        setBallRadius(PHYSICS_CONFIG.pocketRadius);
       }
     };
 
@@ -159,85 +280,46 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
     }
   };
 
-  // SVG calculations
+  // SVG calculations (MAXIMIZED SIZE)
   const wheelSize = 600;
   const center = wheelSize / 2;
-  const outerRadius = center - 30;
-  const innerRadius = 120;
+  const outerRadius = center - 5; // 295px - Maximized to edge
+  const innerRadius = 150;        // Proportional increase
   const pocketAngle = 360 / POCKET_COUNT;
-  const imageRadius = outerRadius - 40;
-  const numberRadius = imageRadius - 45;
+  const imageRadius = outerRadius - 35; // 260px
+  const numberRadius = imageRadius - 40; // 220px
 
   return (
-    <div className="relative flex items-center justify-center p-6">
-      {/* Main Wheel Container with 3D Perspective */}
+    <div className="relative flex items-center justify-center p-2 md:p-6 w-full">
+      {/* Main Wheel Container with 3D Perspective - EXPLICIT LARGER SIZING */}
       <div
-        className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[650px] lg:h-[650px]"
+        className="relative w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[680px] lg:h-[680px] xl:w-[780px] xl:h-[780px] landscape:w-[260px] landscape:h-[260px] lg:landscape:w-[500px] lg:landscape:h-[500px]"
         style={{
           perspective: '1200px',
           perspectiveOrigin: 'center center'
         }}
       >
-        {/* Outer Wooden Frame with Diamond Decorations */}
+        {/* Outer Wooden Frame REMOVED - Direct Inner Bowl use */}
+
+        {/* Inner Bowl Shadow - Expanded */}
         <div
-          className="absolute inset-0 rounded-full"
+          className="absolute inset-[5px] rounded-full"
           style={{
             background: `
-              radial-gradient(circle at 30% 30%, #453c0540 0%, #53430fff 30%, #352806ff 60%, #3e300dff 100%)
-            `,
-            boxShadow: `
-              0 0 0 8px #1a0f00,
-              0 0 0 12px #D4AF37,
-              0 0 0 16px #1a0f00,
-              0 25px 80px rgba(0, 0, 0, 0.8),
-              inset 0 -10px 30px rgba(0, 0, 0, 0.6),
-              inset 0 10px 30px rgba(255, 255, 255, 0.3)
-            `,
-            transform: 'rotateX(15deg)',
-            transformStyle: 'preserve-3d'
+            radial-gradient(circle at center, 
+              transparent 0%, 
+              transparent 40%, 
+              rgba(0, 0, 0, 0.4) 70%,
+              rgba(0, 0, 0, 0.8) 100%
+            )
+          `,
+            boxShadow: 'inset 0 0 60px rgba(0, 0, 0, 0.9)'
           }}
-        >
-          {/* Diamond Decorations on Frame */}
-          {[0, 90, 180, 270].map((angle, idx) => (
-            <div
-              key={idx}
-              className="absolute"
-              style={{
-                top: '50%',
-                left: '50%',
-                transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${center - 15}px)`,
-              }}
-            >
-              <Diamond
-                className="w-6 h-6 text-[#FFE55C]"
-                fill="#FFD700"
-                style={{
-                  filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))'
-                }}
-              />
-            </div>
-          ))}
+        />
 
-          {/* Inner Bowl Shadow */}
-          <div
-            className="absolute inset-[40px] rounded-full"
-            style={{
-              background: `
-                radial-gradient(circle at center, 
-                  transparent 0%, 
-                  transparent 40%, 
-                  rgba(0, 0, 0, 0.4) 70%,
-                  rgba(0, 0, 0, 0.8) 100%
-                )
-              `,
-              boxShadow: 'inset 0 0 60px rgba(0, 0, 0, 0.9)'
-            }}
-          />
-        </div>
-
-        {/* Inner Bowl with Gradient Depth */}
+        {/* Inner Bowl with Gradient Depth - MAXIMIZED TO 0 */}
         <div
-          className="absolute inset-[45px] rounded-full overflow-hidden"
+          className="absolute inset-0 rounded-full overflow-hidden"
           style={{
             background: `
               radial-gradient(circle at 35% 35%, 
@@ -551,6 +633,9 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
           </div>
 
           {/* Winning Number Display - Centered Over Wheel */}
+
+
+          {/* Winning Number Display - Centered Over Wheel */}
           <AnimatePresence>
             {lastWinningNumber && !isSpinning && (
               <motion.div
@@ -561,28 +646,28 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                 className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
               >
                 <div
-                  className="relative rounded-2xl px-6 py-4 text-center pointer-events-auto"
+                  className="relative rounded-xl md:rounded-2xl px-3 md:px-6 py-2 md:py-4 text-center pointer-events-auto"
                   style={{
                     background: `
-                      linear-gradient(135deg, 
-                        rgba(0, 0, 0, 0.95) 0%, 
-                        rgba(26, 26, 26, 0.95) 100%
-                      )
+                        linear-gradient(135deg, 
+                            rgba(0, 0, 0, 0.95) 0%, 
+                            rgba(26, 26, 26, 0.95) 100%
+                        )
                     `,
                     backdropFilter: 'blur(20px)',
-                    border: '3px solid',
+                    border: '2px md:3px solid',
                     borderImage: 'linear-gradient(135deg, #FFD700, #D4AF37) 1',
                     boxShadow: `
-                      0 15px 40px rgba(0, 0, 0, 0.8),
-                      inset 0 0 30px rgba(255, 215, 0, 0.15),
-                      0 0 60px rgba(255, 215, 0, 0.3)
+                        0 15px 40px rgba(0, 0, 0, 0.8),
+                        inset 0 0 30px rgba(255, 215, 0, 0.15),
+                        0 0 60px rgba(255, 215, 0, 0.3)
                     `
                   }}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 md:gap-4">
                     {/* Animal Image */}
                     {getAnimalImagePath(lastWinningNumber) && (
-                      <div className="w-16 h-16 relative flex-shrink-0">
+                      <div className="w-8 h-8 md:w-16 md:h-16 relative flex-shrink-0">
                         <div
                           className="absolute inset-0 rounded-full"
                           style={{
@@ -601,7 +686,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     {/* Winning Number */}
                     <div
                       className={cn(
-                        "text-5xl font-black px-6 py-3 rounded-xl",
+                        "text-xl md:text-5xl font-black px-3 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl",
                         "transition-all duration-300"
                       )}
                       style={{
@@ -621,13 +706,13 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                       {lastWinningNumber}
                     </div>
 
-                    {/* Animal Name */}
+                    {/* Animal Name - NOW VISIBLE ON ALL SCREENS */}
                     {getAnimalName(lastWinningNumber) && (
-                      <div className="text-left">
-                        <div className="text-[#FFD700] text-xs font-medium mb-1 uppercase tracking-wider">
+                      <div className="text-left flex-shrink-0">
+                        <div className="text-[#FFD700] text-[7px] md:text-xs font-medium mb-0.5 md:mb-1 uppercase tracking-wider">
                           Winner
                         </div>
-                        <div className="text-white text-lg font-bold">
+                        <div className="text-white text-xs md:text-lg font-bold leading-tight">
                           {getAnimalName(lastWinningNumber)}
                         </div>
                       </div>
@@ -668,7 +753,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
               }}
             >
               <div
-                className="w-8 h-8 rounded-full"
+                className="w-4 h-4 md:w-6 md:h-6 rounded-full"
                 style={{
                   background: `
                     radial-gradient(circle at 30% 30%, 
@@ -679,16 +764,16 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                     )
                   `,
                   boxShadow: `
-                    0 0 20px rgba(255, 255, 255, 0.9),
-                    inset 0 -3px 6px rgba(0, 0, 0, 0.3),
-                    inset 3px 3px 8px rgba(255, 255, 255, 0.8)
+                    0 0 10px md:0 0 20px rgba(255, 255, 255, 0.9),
+                    inset 0 -1px md:-3px 3px md:6px rgba(0, 0, 0, 0.3),
+                    inset 1px md:3px 1px md:3px 4px md:8px rgba(255, 255, 255, 0.8)
                   `,
-                  border: '2px solid rgba(255, 255, 255, 0.6)'
+                  border: '1px md:2px solid rgba(255, 255, 255, 0.6)'
                 }}
               >
                 {/* Highlight spot */}
                 <div
-                  className="absolute top-2 left-2 w-3 h-3 rounded-full"
+                  className="absolute top-0.5 md:top-2 left-0.5 md:left-2 w-1.5 md:w-3 h-1.5 md:h-3 rounded-full"
                   style={{
                     background: 'rgba(255, 255, 255, 0.9)',
                     filter: 'blur(1px)'
@@ -698,10 +783,10 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
               {/* Ball glow */}
               <div
-                className="absolute -inset-6 rounded-full -z-10"
+                className="absolute -inset-3 md:-inset-6 rounded-full -z-10"
                 style={{
                   background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                  filter: 'blur(8px)'
+                  filter: 'blur(4px md:8px)'
                 }}
               />
             </motion.div>
@@ -710,7 +795,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
 
         {/* Reflection Overlay */}
         <div
-          className="absolute inset-[45px] rounded-full pointer-events-none z-30"
+          className="absolute inset-[25px] md:inset-[45px] rounded-full pointer-events-none z-30"
           style={{
             background: `
               radial-gradient(circle at 25% 25%, 
@@ -723,47 +808,8 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
         />
       </div>
 
-      {/* Status Panel */}
-      <div className="absolute -left-56 top-1/2 transform -translate-y-1/2 text-center">
-        <div className="text-[#FFD700] text-lg font-bold mb-4 uppercase tracking-wider">
-          Game Status
-        </div>
+      {/* Status Panel - Repositioned for Responsive */}
 
-        <div
-          className={cn(
-            "px-8 py-4 rounded-full text-lg font-bold mb-8 uppercase tracking-wider",
-            phase === GamePhase.WAITING_FOR_BETS
-              ? "bg-gradient-to-r from-emerald-700 to-emerald-900 text-white animate-pulse"
-              : "bg-gradient-to-r from-amber-700 to-amber-900 text-white"
-          )}
-          style={{
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
-          }}
-        >
-          {phase === GamePhase.WAITING_FOR_BETS ? "Place Bets" : "Spinning..."}
-        </div>
-
-        {/* Spin Direction */}
-        <div className="text-gray-400 text-sm mb-4">
-          <div className="mb-2 uppercase tracking-wider">Direction:</div>
-          <div
-            className={cn(
-              "text-lg font-bold px-4 py-2 rounded-full",
-              spinDirection === 'clockwise'
-                ? "bg-blue-900/50 text-blue-300"
-                : "bg-purple-900/50 text-purple-300"
-            )}
-          >
-            {spinDirection === 'clockwise' ? 'Clockwise ↻' : 'Counter ↺'}
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="text-gray-500 text-xs uppercase tracking-wider">
-          <div className="mb-1">American Roulette</div>
-          <div>38 Numbers</div>
-        </div>
-      </div>
     </div>
   );
 };

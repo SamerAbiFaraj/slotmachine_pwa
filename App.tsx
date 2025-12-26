@@ -228,56 +228,52 @@ const App: React.FC = () => {
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay z-10"></div>
 
             {/* SECTION 1: HEADER (Desktop Only) */}
-            <header className="relative z-30 w-full shrink-0 hidden md:block">
+            <header className="relative z-30 w-full shrink-0 desktop-ui" style={{ height: 'var(--header-height)' }}>
                 <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
             </header>
 
             {/* MOBILE DROPDOWN TRIGGERS (Mobile Only) */}
-            <div className="md:hidden fixed top-2 right-2 z-[60] flex gap-2">
+            <div className="mobile-ui fixed top-2 right-2 z-[60] flex gap-2">
                 <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg"
+                    className="p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold"
                 >
-                    <User className="w-5 h-5 text-neo-gold" />
+                    <User className="w-5 h-5" />
                 </button>
             </div>
 
             {/* SECTION 2: MIDDLE (TABLE AREA) */}
-            <main className={`
-                relative flex-1 min-h-0 z-0 flex items-center justify-center 
-                transition-all duration-700 ease-in-out overflow-hidden
-                ${(isDrawerOpen || isProfileOpen || isChipsOpen) ? 'opacity-40 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
-            `}>
-                <div className="w-full h-full flex items-center justify-center p-1">
-                    <div className="relative w-full max-h-full max-w-[92vw] mx-auto flex items-center justify-center">
-                        <div className="
-                            w-full transition-transform duration-500
-                            scale-100 md:scale-90 lg:scale-95
-                            max-md:-translate-y-8
-                        ">
-                            {showRacetrack ? (
-                                <Racetrack
-                                    onBet={handlePlaceBet}
-                                    onHoverNumbers={setHighlightedNeighbors}
-                                />
-                            ) : (
-                                <BettingTable
-                                    currentBets={currentBets}
-                                    selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
-                                    onPlaceBet={handlePlaceBet}
-                                    gamePhase={phase}
-                                    quantumMultipliers={quantumMultipliers}
-                                    highlightedNumbers={highlightedNeighbors}
-                                    heatmapActive={heatmapActive}
-                                />
-                            )}
-                        </div>
+            <main className="relative flex-1 min-h-0 z-0 flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out"
+                style={{
+                    opacity: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 0.4 : 1,
+                    transform: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 'scale(0.95)' : 'scale(1)',
+                    filter: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 'blur(4px)' : 'none'
+                }}
+            >
+                <div className="game-container w-full h-full flex items-center justify-center p-1 md:p-2">
+                    <div className="relative w-full h-full max-w-[min(98vw,1400px)] mx-auto flex items-center justify-center">
+                        {showRacetrack ? (
+                            <Racetrack
+                                onBet={handlePlaceBet}
+                                onHoverNumbers={setHighlightedNeighbors}
+                            />
+                        ) : (
+                            <BettingTable
+                                currentBets={currentBets}
+                                selectedChip={AVAILABLE_CHIPS.find(c => c.value === selectedChip)!}
+                                onPlaceBet={handlePlaceBet}
+                                gamePhase={phase}
+                                quantumMultipliers={quantumMultipliers}
+                                highlightedNumbers={highlightedNeighbors}
+                                heatmapActive={heatmapActive}
+                            />
+                        )}
                     </div>
                 </div>
             </main>
 
             {/* SECTION 3: BOTTOM CONTROLS (Desktop Only) */}
-            <footer className="relative z-40 w-full shrink-0 hidden md:block bg-gradient-to-t from-black/90 to-transparent">
+            <footer className="relative z-40 w-full shrink-0 desktop-ui bg-gradient-to-t from-black/90 to-transparent" style={{ height: 'var(--footer-height)' }}>
                 <GameControls
                     selectedChip={selectedChip}
                     onSelectChip={setSelectedChip}
@@ -298,13 +294,13 @@ const App: React.FC = () => {
             </footer>
 
             {/* MOBILE BOTTOM TRIGGER (Mobile Only) */}
-            <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[60]">
+            <div className="mobile-ui fixed bottom-4 left-1/2 -translate-x-1/2 z-[60]">
                 <button
                     onClick={() => setIsChipsOpen(!isChipsOpen)}
                     className="flex items-center gap-2 px-6 py-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-xl"
                 >
                     <Coins className="w-5 h-5 text-neo-gold" />
-                    <span className="text-xs font-bold text-white uppercase tracking-widest">Select Chips</span>
+                    <span className="text-xs font-bold text-white uppercase tracking-widest px-2">Chips</span>
                 </button>
             </div>
 
@@ -334,7 +330,7 @@ const App: React.FC = () => {
                             initial={{ y: '-100%' }}
                             animate={{ y: 0 }}
                             exit={{ y: '-100%' }}
-                            className="md:hidden fixed top-0 left-0 w-full z-[100] glass-panel border-b border-neo-gold/30 shadow-2xl"
+                            className="fixed top-0 left-0 w-full z-[100] glass-panel border-b border-neo-gold/30 shadow-2xl drawer-active"
                         >
                             <div className="relative">
                                 <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
@@ -363,7 +359,7 @@ const App: React.FC = () => {
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
-                            className="md:hidden fixed bottom-0 left-0 w-full z-[100] glass-panel border-t border-neo-gold/30 shadow-2xl pt-2 pb-8"
+                            className="fixed bottom-0 left-0 w-full z-[100] glass-panel border-t border-neo-gold/30 shadow-2xl pt-2 pb-8 drawer-active"
                         >
                             <div className="relative">
                                 <button
