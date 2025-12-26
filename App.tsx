@@ -262,7 +262,7 @@ const App: React.FC = () => {
             </main>
 
             {/* SECTION 3: BOTTOM CONTROLS */}
-            <footer className="relative z-40 w-full shrink-0 pb-10 md:pb-0 bg-gradient-to-t from-black/90 to-transparent">
+            <footer className="relative z-40 w-full shrink-0 pb-10 md:pb-0 bg-gradient-to-t from-black/90 to-transparent mt-2 md:mt-0">
                 <GameControls
                     selectedChip={selectedChip}
                     onSelectChip={setSelectedChip}
