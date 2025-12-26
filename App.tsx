@@ -253,6 +253,7 @@ const App: React.FC = () => {
                         <div className="
                             w-full transition-transform duration-500
                             scale-100 md:scale-90 lg:scale-95
+                            max-md:-translate-y-8
                         ">
                             {showRacetrack ? (
                                 <Racetrack
