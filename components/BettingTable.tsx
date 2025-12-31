@@ -27,6 +27,7 @@ export const BettingTable: React.FC<Props> = ({
   currentBets, selectedChip, onPlaceBet, gamePhase, quantumMultipliers, highlightedNumbers, heatmapActive
 }) => {
   const [hoveredBet, setHoveredBet] = useState<HoveredBetInfo | null>(null);
+  const [hoveredChip, setHoveredChip] = useState<HoveredBetInfo | null>(null);
   const isInteractable = gamePhase === GamePhase.WAITING_FOR_BETS;
 
   const handleBet = (type: BetType, numbers: string[], payout: number) => {
@@ -46,28 +47,23 @@ export const BettingTable: React.FC<Props> = ({
 
     const handleChipMouseEnter = (e: React.MouseEvent) => {
       e.stopPropagation();
-      handleShowTooltip(e.clientX, e.clientY, type, numbers, payoutRatio);
-    };
-
-    const handleChipTouchStart = (e: React.TouchEvent) => {
-      e.stopPropagation();
-      const touch = e.touches[0];
-      handleShowTooltip(touch.clientX, touch.clientY, type, numbers, payoutRatio, true);
+      setHoveredChip({
+        type,
+        numbers,
+        payoutRatio,
+        x: e.clientX,
+        y: e.clientY
+      });
     };
 
     const handleChipMouseMove = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setHoveredBet(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null);
+      setHoveredChip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null);
     };
 
     const handleChipMouseLeave = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setHoveredBet(null);
-    };
-
-    const handleChipTouchEnd = (e: React.TouchEvent) => {
-      // Don't clear immediately on mobile to allow reading
-      // it will be cleared by touching elsewhere or clicking the background
+      setHoveredChip(null);
     };
 
     return (
@@ -88,8 +84,6 @@ export const BettingTable: React.FC<Props> = ({
           onMouseEnter={handleChipMouseEnter}
           onMouseMove={handleChipMouseMove}
           onMouseLeave={handleChipMouseLeave}
-          onTouchStart={handleChipTouchStart}
-          onTouchEnd={handleChipTouchEnd}
         >
           <img src={chipImage} alt={`${amount} chip`} className="w-full h-full object-contain z-10" />
           <span
@@ -110,31 +104,17 @@ export const BettingTable: React.FC<Props> = ({
     return bets.reduce((sum, b) => sum + b.amount, 0);
   };
 
-  const handleShowTooltip = (clientX: number, clientY: number, type: BetType, numbers: string[], payoutRatio: number, isTouch = false) => {
+  const handleMouseEnter = (e: React.MouseEvent, type: BetType, numbers: string[], payoutRatio: number) => {
     const amount = getBetAmount(type, numbers);
-    if (!amount) {
-      setHoveredBet(null);
-      return;
-    }
+    if (!amount) return;
 
     setHoveredBet({
       type,
       numbers,
       payoutRatio,
-      x: clientX,
-      // On mobile, offset the tooltip much higher so it's not under the finger
-      y: isTouch ? clientY - 40 : clientY
+      x: e.clientX,
+      y: e.clientY
     });
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent, type: BetType, numbers: string[], payoutRatio: number) => {
-    handleShowTooltip(e.clientX, e.clientY, type, numbers, payoutRatio);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent, type: BetType, numbers: string[], payoutRatio: number) => {
-    // Note: No stopPropagation here to allow the click to eventually fire for betting
-    const touch = e.touches[0];
-    handleShowTooltip(touch.clientX, touch.clientY, type, numbers, payoutRatio, true);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -157,7 +137,6 @@ export const BettingTable: React.FC<Props> = ({
         onMouseEnter={(e) => handleMouseEnter(e, BetType.STRAIGHT, [numStr], PAYOUTS.STRAIGHT)}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
-        onTouchStart={(e) => handleTouchStart(e, BetType.STRAIGHT, [numStr], PAYOUTS.STRAIGHT)}
         className={`
           relative aspect-[3/4] flex flex-col items-center justify-center border border-neo-gold/20
           transition-all duration-200 cursor-pointer group overflow-hidden
@@ -210,7 +189,6 @@ export const BettingTable: React.FC<Props> = ({
       onMouseEnter={(e) => handleMouseEnter(e, type, numbers, payout)}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setHoveredBet(null)}
-      onTouchStart={(e) => handleTouchStart(e, type, numbers, payout)}
       className={`absolute z-40 cursor-pointer hover:bg-white/20 transition-colors group flex items-center justify-center ${className}`}
     >
       {getBetAmount(type, numbers) && renderChipStack(getBetAmount(type, numbers)!, payout, type, numbers)}
@@ -219,44 +197,71 @@ export const BettingTable: React.FC<Props> = ({
 
   return (
     <div
-      className="w-full select-none felt-texture rounded-xl border-[2px] md:border-[3px] border-[#1e293b] shadow-2xl relative overflow-hidden h-full flex flex-col"
+      className="w-full select-none felt-texture rounded-xl border-[2px] md:border-[3px] border-[#1e293b] shadow-2xl relative overflow-hidden  flex flex-col"
       style={{ padding: 'clamp(0.25rem, 1.5vw, 1.5rem)' }}
-      onPointerDown={(e) => {
-        // Clear tooltip when touching empty background
-        if (e.target === e.currentTarget) setHoveredBet(null);
-      }}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
 
-      {/* Unified Hover Tooltip */}
-      {hoveredBet && typeof document !== 'undefined' && ReactDOM.createPortal(
+      {/* Floating Tooltip */}
+      {hoveredBet && (
         <div
-          className="fixed z-[9999] pointer-events-none bg-black/90 border border-neo-gold/50 rounded-lg p-2 md:p-3 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
+          className="fixed z-[100] pointer-events-none bg-black/90 border border-neo-gold/50 rounded-lg p-2 md:p-3 shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md animate-in fade-in zoom-in duration-200"
           style={{
             left: hoveredBet.x + 20,
-            top: hoveredBet.y - 70, // Increased offset for better finger visibility
+            top: hoveredBet.y - 40,
             transform: 'translate(0, -50%)',
             fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
           }}
         >
-          <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold flex items-center gap-2" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
-            <span>💰</span>
-            <span>Current Bet Info</span>
+          <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
+            Current Bet Info
           </div>
           <div className="flex flex-col gap-0.5 md:gap-1">
-            <div className="flex justify-between gap-6 md:gap-10">
+            <div className="flex justify-between gap-4 md:gap-8">
               <span className="text-gray-400">Total Bet:</span>
               <span className="text-white font-bold">${getBetAmount(hoveredBet.type, hoveredBet.numbers)?.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between gap-6 md:gap-10">
+            <div className="flex justify-between gap-4 md:gap-8">
               <span className="text-gray-400">Potential Win:</span>
               <span className="text-green-400 font-bold">
                 ${((getBetAmount(hoveredBet.type, hoveredBet.numbers) || 0) * hoveredBet.payoutRatio).toLocaleString()}
               </span>
             </div>
-            <div className="mt-1 pt-1 border-t border-white/10 flex justify-between items-center gap-6 md:gap-10">
-              <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout Ratio:</span>
-              <span className="text-neo-gold font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
+            <div className="mt-1 pt-1 border-t border-white/10 flex justify-between gap-4 md:gap-8">
+              <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout:</span>
+              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Chip Hover Tooltip */}
+      {hoveredChip && typeof document !== 'undefined' && ReactDOM.createPortal(
+        <div
+          className="fixed z-[9999] pointer-events-none bg-gradient-to-br from-neo-gold/20 to-black/95 border-2 border-neo-gold rounded-lg p-2 shadow-[0_0_25px_rgba(226,182,89,0.4)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
+          style={{
+            left: hoveredChip.x + 15,
+            top: hoveredChip.y - 70,
+            fontSize: 'clamp(0.625rem, 2vw, 0.6875rem)'
+          }}
+        >
+          <div className="text-neo-gold uppercase tracking-widest mb-1 font-bold drop-shadow-md" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>
+            💰 Chip Info
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <div className="flex justify-between gap-4">
+              <span className="text-gray-300">Bet:</span>
+              <span className="text-white font-bold">${getBetAmount(hoveredChip.type, hoveredChip.numbers)?.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-gray-300">Win:</span>
+              <span className="text-green-400 font-bold">
+                ${((getBetAmount(hoveredChip.type, hoveredChip.numbers) || 0) * hoveredChip.payoutRatio).toLocaleString()}
+              </span>
+            </div>
+            <div className="mt-0.5 pt-0.5 border-t border-neo-gold/30 flex justify-between gap-4">
+              <span className="text-gray-400" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>{hoveredChip.payoutRatio}:1</span>
+              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>⚡</span>
             </div>
           </div>
         </div>,
@@ -414,10 +419,10 @@ export const BettingTable: React.FC<Props> = ({
               </div>
             );
           })}
-          <div
+          {/* <div
             className="border-t border-neo-gold/20"
             style={{ height: 'clamp(3rem, 7vw, 4.5rem)' }}
-          ></div>
+          ></div> */}
         </div>
       </div>
 
@@ -427,7 +432,7 @@ export const BettingTable: React.FC<Props> = ({
         style={{
           marginTop: 'clamp(0.25rem, 1vw, 0.75rem)',
           height: 'clamp(2.5rem, 7vw, 4.5rem)',
-          gap: 'clamp(0.25rem, 0.8vw, 0.5rem)'
+          gap: 'clamp(0.25rem, 0.8vw, 0.5rem)',
         }}
       >
         {[
@@ -451,24 +456,16 @@ export const BettingTable: React.FC<Props> = ({
           >
             {item.special === 'red' ? (
               <div
-                className="bg-red-600 rotate-45 border md:border-2 border-red-400"
-                style={{
-                  width: 'clamp(1.25rem, 5vw, 2rem)',
-                  height: 'clamp(1.25rem, 5vw, 2rem)'
-                }}
+                className="bg-red-600 rotate-45 border md:border-2 border-red-400 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8"
               ></div>
             ) : item.special === 'black' ? (
               <div
-                className="bg-black rotate-45 border md:border-2 border-gray-600"
-                style={{
-                  width: 'clamp(2.25rem, 5vw, 2rem)',
-                  height: 'clamp(2.25rem, 5vw, 2rem)'
-                }}
+                className="bg-black rotate-45 border md:border-2 border-gray-600 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8"
               ></div>
             ) : (
               <span
                 className="font-bold text-neo-gold uppercase"
-                style={{ fontSize: 'clamp(0.625rem, 2vw, 1rem)' }}
+                style={{ fontSize: 'clamp(1rem, 2.5vw, 1.5rem)' }}
               >
                 {item.label}
               </span>

@@ -245,7 +245,7 @@ const App: React.FC = () => {
             {/* SECTION 2: MIDDLE (TABLE AREA) */}
             <main className="relative flex-1 min-h-0 z-0 flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out"
                 style={{
-                    opacity: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 0.4 : 1,
+                    opacity: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 0.4 : 9,
                     transform: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 'scale(0.95)' : 'scale(1)',
                     filter: (isDrawerOpen || isProfileOpen || isChipsOpen) ? 'blur(4px)' : 'none'
                 }}
