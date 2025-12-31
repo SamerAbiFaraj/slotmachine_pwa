@@ -213,7 +213,7 @@ export const BettingTable: React.FC<Props> = ({
         // Calculate tooltip dimensions (approximate)
         const tooltipWidth = 200; // approximate width of tooltip
         const tooltipHeight = 120; // approximate height of tooltip
-        const offset = 20; // offset from cursor
+        const offset = 10; // offset from cursor
 
         // Get viewport dimensions
         const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
