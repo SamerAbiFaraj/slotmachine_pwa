@@ -208,37 +208,59 @@ export const BettingTable: React.FC<Props> = ({
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
 
       {/* Floating Tooltip */}
-      {hoveredBet && (
-        <div
-          className="fixed z-[100] pointer-events-none bg-black/90 border-2 border-yellow-500 rounded-lg p-2 md:p-3 shadow-[0_0_20px_rgba(226,182,89,0.5)] backdrop-blur-md animate-in fade-in zoom-in duration-200"
-          style={{
-            left: hoveredBet.x + 20,
-            top: hoveredBet.y - 40,
-            transform: 'translate(0, -50%)',
-            fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
-          }}
-        >
-          <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
-            Current Bet Info
+      {/* Floating Tooltip */}
+      {hoveredBet && (() => {
+        // Calculate tooltip dimensions (approximate)
+        const tooltipWidth = 200; // approximate width of tooltip
+        const tooltipHeight = 120; // approximate height of tooltip
+        const offset = 20; // offset from cursor
+
+        // Get viewport dimensions
+        const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
+        const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 1080;
+
+        // Check if tooltip would overflow on the right
+        const wouldOverflowRight = hoveredBet.x + offset + tooltipWidth > viewportWidth;
+
+        // Check if tooltip would overflow on the bottom
+        const wouldOverflowBottom = hoveredBet.y + tooltipHeight > viewportHeight;
+
+        // Calculate position
+        let left = wouldOverflowRight ? hoveredBet.x - tooltipWidth - offset : hoveredBet.x + offset;
+        let top = wouldOverflowBottom ? hoveredBet.y - tooltipHeight - offset : hoveredBet.y - 40;
+
+        return (
+          <div
+            className="fixed z-[100] pointer-events-none bg-black/90 border-2 border-yellow-500 rounded-lg p-2 md:p-3 shadow-[0_0_20px_rgba(226,182,89,0.5)] backdrop-blur-md animate-in fade-in zoom-in duration-200"
+            style={{
+              left: left,
+              top: top,
+              transform: wouldOverflowBottom ? 'translate(0, 0)' : 'translate(0, -50%)',
+              fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
+            }}
+          >
+            <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
+              Current Bet Info
+            </div>
+            <div className="flex flex-col gap-0.5 md:gap-1">
+              <div className="flex justify-between gap-4 md:gap-8">
+                <span className="text-gray-400">Total Bet:</span>
+                <span className="text-white font-bold">${getBetAmount(hoveredBet.type, hoveredBet.numbers)?.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between gap-4 md:gap-8">
+                <span className="text-gray-400">Potential Win:</span>
+                <span className="text-green-400 font-bold">
+                  ${((getBetAmount(hoveredBet.type, hoveredBet.numbers) || 0) * hoveredBet.payoutRatio).toLocaleString()}
+                </span>
+              </div>
+              <div className="mt-1 pt-1 border-t border-white/10 flex justify-between gap-4 md:gap-8">
+                <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout:</span>
+                <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-0.5 md:gap-1">
-            <div className="flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-400">Total Bet:</span>
-              <span className="text-white font-bold">${getBetAmount(hoveredBet.type, hoveredBet.numbers)?.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-400">Potential Win:</span>
-              <span className="text-green-400 font-bold">
-                ${((getBetAmount(hoveredBet.type, hoveredBet.numbers) || 0) * hoveredBet.payoutRatio).toLocaleString()}
-              </span>
-            </div>
-            <div className="mt-1 pt-1 border-t border-white/10 flex justify-between gap-4 md:gap-8">
-              <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout:</span>
-              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
-            </div>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
 
       {/* Chip Hover Tooltip */}
