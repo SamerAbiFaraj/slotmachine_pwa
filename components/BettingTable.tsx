@@ -207,23 +207,30 @@ export const BettingTable: React.FC<Props> = ({
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
 
-      {/* Floating Tooltip */}
+
       {/* Floating Tooltip */}
       {hoveredBet && (() => {
         // Calculate tooltip dimensions (approximate)
         const tooltipWidth = 200; // approximate width of tooltip
         const tooltipHeight = 120; // approximate height of tooltip
-        const offset = 10; // offset from cursor
+        const offset = 20; // offset from cursor
+        const chipSelectorHeight = 100; // height of bottom chip selector bar (adjust based on your actual height)
 
         // Get viewport dimensions
         const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
         const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 1080;
 
+        // Check if we're on md breakpoint or larger (768px+)
+        const isMdOrLarger = viewportWidth >= 768;
+
+        // Adjust effective viewport height to account for chip selector on md+
+        const effectiveViewportHeight = isMdOrLarger ? viewportHeight - chipSelectorHeight : viewportHeight;
+
         // Check if tooltip would overflow on the right
         const wouldOverflowRight = hoveredBet.x + offset + tooltipWidth > viewportWidth;
 
-        // Check if tooltip would overflow on the bottom
-        const wouldOverflowBottom = hoveredBet.y + tooltipHeight > viewportHeight;
+        // Check if tooltip would overflow on the bottom (accounting for chip selector)
+        const wouldOverflowBottom = hoveredBet.y + tooltipHeight > effectiveViewportHeight;
 
         // Calculate position
         let left = wouldOverflowRight ? hoveredBet.x - tooltipWidth - offset : hoveredBet.x + offset;
