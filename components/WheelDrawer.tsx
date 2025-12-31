@@ -22,32 +22,32 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
     return (
         <>
             <AnimatePresence>
-                {/* Backdrop Layer */}
+                {/* Backdrop Layer - More transparent */}
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 5 }}
-                        exit={{ opacity: 1 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         onClick={onToggle}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[190]"
+                        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[190]"
                     />
                 )}
             </AnimatePresence>
 
-            {/* Drawer Container */}
+            {/* Drawer Container - More transparent background */}
             <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: isOpen ? 0 : '-100%' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[70vw] bg-neo-bg/95 backdrop-blur-xl z-[200] shadow-2xl border-r border-neo-gold/20 flex flex-col"
+                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[70vw] bg-neo-bg/70 backdrop-blur-lg z-[200] shadow-2xl border-r border-neo-gold/20 flex flex-col"
             >
-                {/* Close Button / Handle inside drawer - MOVED TO TOP LEFT TO AVOID PROFILE TRIGGER */}
+                {/* Close Button / Handle inside drawer */}
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         onToggle();
                     }}
-                    className="absolute top-4 left-4 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white flex items-center gap-2 group cursor-pointer z-[210] pointer-events-auto shadow-lg border border-white/20"
+                    className="absolute top-4 left-4 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full text-white flex items-center gap-2 group cursor-pointer z-[210] pointer-events-auto shadow-lg border border-white/20"
                 >
                     <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
                     <span className="text-xs uppercase tracking-widest font-bold">Close</span>
@@ -55,8 +55,8 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
 
                 {/* Wheel Content */}
                 <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
-                    {/* Background Glow specifically for Wheel Container */}
-                    <div className="absolute inset-0 bg-radial-gradient from-neo-green/10 to-transparent opacity-50 pointer-events-none" />
+                    {/* Background Glow - More subtle */}
+                    <div className="absolute inset-0 bg-radial-gradient from-neo-green/5 to-transparent opacity-30 pointer-events-none" />
 
                     <div className="relative w-full aspect-square max-h-[60vh] md:max-h-[75vh] flex items-center justify-center">
                         <RouletteWheel phase={gamePhase} winningNumber={winningNumber} />
@@ -64,7 +64,7 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                 </div>
 
                 {/* Game Phase Indicator / Status Text inside Drawer */}
-                <div className="p-6 text-center border-t border-white/5 bg-black/20">
+                <div className="p-6 text-center border-t border-white/10 bg-black/30 backdrop-blur-md">
                     <div className="text-neo-gold font-bold tracking-widest uppercase text-sm mb-1">
                         {gamePhase === GamePhase.SPINNING ? 'SPINNING...' :
                             gamePhase === GamePhase.WAITING_FOR_BETS ? 'PLACE BETS' :

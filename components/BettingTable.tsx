@@ -47,48 +47,53 @@ export const BettingTable: React.FC<Props> = ({
 
     const handleChipMouseEnter = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setHoveredChip({
+      // Set both hoveredChip AND hoveredBet with the same data
+      const hoverData = {
         type,
         numbers,
         payoutRatio,
         x: e.clientX,
         y: e.clientY
-      });
+      };
+      //setHoveredChip(hoverData);
+      setHoveredBet(hoverData);
     };
 
     const handleChipMouseMove = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setHoveredChip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null);
+      // Update both states
+      const hoverData = {
+        type,
+        numbers,
+        payoutRatio,
+        x: e.clientX,
+        y: e.clientY
+      };
+      // setHoveredChip(hoverData);
+      setHoveredBet(hoverData);
     };
 
     const handleChipMouseLeave = (e: React.MouseEvent) => {
       e.stopPropagation();
+      // Clear both states
       setHoveredChip(null);
+      setHoveredBet(null);
     };
 
     return (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-bounce-short">
         <div
-          className="absolute rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px]"
-          style={{
-            width: 'clamp(1.25rem, 6vw, 2.25rem)',
-            height: 'clamp(1.25rem, 6vw, 2.25rem)'
-          }}
+          className="absolute rounded-full bg-black/60 translate-y-0.5 translate-x-0.5 blur-[1px] w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9"
         ></div>
         <div
-          className="relative flex items-center justify-center pointer-events-auto cursor-pointer"
-          style={{
-            width: 'clamp(1.5rem, 6vw, 2.75rem)',
-            height: 'clamp(1.5rem, 6vw, 2.75rem)'
-          }}
+          className="relative flex items-center justify-center pointer-events-auto cursor-pointer w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-11 xl:h-11"
           onMouseEnter={handleChipMouseEnter}
           onMouseMove={handleChipMouseMove}
           onMouseLeave={handleChipMouseLeave}
         >
           <img src={chipImage} alt={`${amount} chip`} className="w-full h-full object-contain z-10" />
           <span
-            className="absolute font-bold text-white drop-shadow-md z-20 pointer-events-none"
-            style={{ fontSize: 'clamp(0.5rem, 2vw, 0.625rem)' }}
+            className="absolute font-bold text-white drop-shadow-md z-20 pointer-events-none text-[0.5rem] sm:text-[0.55rem] md:text-[0.6rem] lg:text-[0.625rem]"
           >
             {formatAmount(amount)}
           </span>
@@ -205,7 +210,7 @@ export const BettingTable: React.FC<Props> = ({
       {/* Floating Tooltip */}
       {hoveredBet && (
         <div
-          className="fixed z-[100] pointer-events-none bg-black/90 border border-neo-gold/50 rounded-lg p-2 md:p-3 shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md animate-in fade-in zoom-in duration-200"
+          className="fixed z-[100] pointer-events-none bg-black/90 border-2 border-yellow-500 rounded-lg p-2 md:p-3 shadow-[0_0_20px_rgba(226,182,89,0.5)] backdrop-blur-md animate-in fade-in zoom-in duration-200"
           style={{
             left: hoveredBet.x + 20,
             top: hoveredBet.y - 40,
@@ -235,10 +240,11 @@ export const BettingTable: React.FC<Props> = ({
         </div>
       )}
 
+
       {/* Chip Hover Tooltip */}
       {hoveredChip && typeof document !== 'undefined' && ReactDOM.createPortal(
         <div
-          className="fixed z-[9999] pointer-events-none bg-gradient-to-br from-neo-gold/20 to-black/95 border-2 border-neo-gold rounded-lg p-2 shadow-[0_0_25px_rgba(226,182,89,0.4)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
+          className="fixed z-[9999] pointer-events-none bg-gradient-to-br from-neo-gold/20 to-black/95 border-2 border-yellow-500 rounded-lg p-2 shadow-[0_0_25px_rgba(226,182,89,0.4)] backdrop-blur-md animate-in fade-in zoom-in duration-150"
           style={{
             left: hoveredChip.x + 15,
             top: hoveredChip.y - 70,
