@@ -65,7 +65,7 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
 
                 {/* Game Phase Indicator / Status Text inside Drawer */}
                 <div className="p-6 text-center border-t border-white/10 bg-black/30 backdrop-blur-md">
-                    <div className="text-neo-gold font-bold tracking-widest uppercase text-sm mb-1">
+                    <div className="text-yellow-500 font-bold tracking-widest uppercase text-sm mb-1">
                         {gamePhase === GamePhase.SPINNING ? 'SPINNING...' :
                             gamePhase === GamePhase.WAITING_FOR_BETS ? 'PLACE BETS' :
                                 gamePhase.replace(/_/g, ' ')}
@@ -99,7 +99,7 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                     >
                         <div className="flex flex-col items-center gap-2">
                             <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-neo-gold transition-colors" />
-                            <ChevronRight size={16} className="text-neo-gold" />
+                            <ChevronRight size={16} className="text-yellow-500" />
                             <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-neo-gold transition-colors" />
                         </div>
                     </motion.button>

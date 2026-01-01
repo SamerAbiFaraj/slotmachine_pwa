@@ -269,7 +269,7 @@ export const BettingTable: React.FC<Props> = ({
               fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
             }}
           >
-            <div className="text-neo-gold uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
+            <div className="text-yellow-500 uppercase tracking-wider mb-1 font-bold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>
               Current Bet Info
             </div>
             <div className="flex flex-col gap-0.5 md:gap-1">
@@ -285,7 +285,7 @@ export const BettingTable: React.FC<Props> = ({
               </div>
               <div className="mt-1 pt-1 border-t border-white/10 flex justify-between gap-4 md:gap-8">
                 <span className="text-gray-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>Payout:</span>
-                <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
+                <span className="text-yellow-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)' }}>{hoveredBet.payoutRatio}:1</span>
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ export const BettingTable: React.FC<Props> = ({
             fontSize: 'clamp(0.625rem, 2vw, 0.6875rem)'
           }}
         >
-          <div className="text-neo-gold uppercase tracking-widest mb-1 font-bold drop-shadow-md" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>
+          <div className="text-yellow-500 uppercase tracking-widest mb-1 font-bold drop-shadow-md" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>
             💰 Chip Info
           </div>
           <div className="flex flex-col gap-0.5">
@@ -319,7 +319,7 @@ export const BettingTable: React.FC<Props> = ({
             </div>
             <div className="mt-0.5 pt-0.5 border-t border-yellow-500/30 flex justify-between gap-4">
               <span className="text-gray-400" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>{hoveredChip.payoutRatio}:1</span>
-              <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>⚡</span>
+              <span className="text-yellow-500" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>⚡</span>
             </div>
           </div>
         </div>,
@@ -455,7 +455,7 @@ export const BettingTable: React.FC<Props> = ({
                   onMouseEnter={(e) => handleMouseEnter(e, BetType.DOZEN, nums, PAYOUTS.DOZEN)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={() => setHoveredBet(null)}
-                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer font-bold text-neo-gold border-r border-yellow-500/20 last:border-0 transition-colors"
+                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer font-bold text-yellow-500 border-r border-yellow-500/20 last:border-0 transition-colors"
                   style={{ fontSize: 'clamp(1rem, 2.5vw, 1.5rem)' }}
                 >
                   <span className="hidden sm:inline">{label}</span>
@@ -484,7 +484,7 @@ export const BettingTable: React.FC<Props> = ({
                 className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-yellow-500/20 last:border-0 transition-colors"
               >
                 <span
-                  className="rotate-360 whitespace-nowrap font-bold text-neo-gold"
+                  className="rotate-360 whitespace-nowrap font-bold text-yellow-500"
                   style={{ fontSize: 'clamp(1rem, 2.5vw, 1.5rem)' }}
                 >
                   2 TO 1
@@ -538,7 +538,7 @@ export const BettingTable: React.FC<Props> = ({
               ></div>
             ) : (
               <span
-                className="font-bold text-neo-gold uppercase"
+                className="font-bold text-yellow-500 uppercase"
                 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.5rem)' }}
               >
                 {item.label}

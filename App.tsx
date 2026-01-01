@@ -264,7 +264,7 @@ const App: React.FC = () => {
             <div className="mobile-ui fixed top-2 right-2 z-[60] flex gap-2">
                 <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold"
+                    className="p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-yellow-500"
                 >
                     <User className="w-5 h-5" />
                 </button>
@@ -327,7 +327,7 @@ const App: React.FC = () => {
                     onClick={() => setIsChipsOpen(!isChipsOpen)}
                     className="flex items-center gap-2 px-6 py-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-xl"
                 >
-                    <Coins className="w-5 h-5 text-neo-gold" />
+                    <Coins className="w-5 h-5 text-yellow-500" />
                     <span className="text-xs font-bold text-white uppercase tracking-widest px-2">Chips</span>
                 </button>
             </div>
@@ -364,7 +364,7 @@ const App: React.FC = () => {
                                 <GameHeader user={user} stats={stats} balance={balance} phase={phase} timeLeft={timeLeft} />
                                 <button
                                     onClick={() => setIsProfileOpen(false)}
-                                    className="absolute -bottom-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold hover:text-white"
+                                    className="absolute -bottom-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-yellow-500 hover:text-white"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -392,7 +392,7 @@ const App: React.FC = () => {
                             <div className="relative">
                                 <button
                                     onClick={() => setIsChipsOpen(false)}
-                                    className="absolute -top-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-neo-gold hover:text-white"
+                                    className="absolute -top-10 left-1/2 -translate-x-1/2 p-2 bg-neo-bg/90 backdrop-blur-md rounded-full border border-neo-gold/30 shadow-lg text-yellow-500 hover:text-white"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -436,7 +436,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-neo-gold animate-pulse"></span>
                     <span className="
-                        text-[10px] uppercase font-bold text-neo-gold 
+                        text-[10px] uppercase font-bold text-yellow-500 
                         [writing-mode:vertical-rl] tracking-widest rotate-180
                         group-hover:text-white transition-colors
                     ">

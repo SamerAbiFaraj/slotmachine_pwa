@@ -76,7 +76,7 @@ export const SlideOutPanel: React.FC<Props> = ({ isOpen, onClose, history, leade
                     <div className="space-y-3">
                         <div className="flex items-center justify-between px-2">
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent Spins</span>
-                            <span className="text-[10px] text-neo-gold bg-neo-gold/10 px-2 py-0.5 rounded-full border border-neo-gold/20">Last 20</span>
+                            <span className="text-[10px] text-yellow-500 bg-neo-gold/10 px-2 py-0.5 rounded-full border border-neo-gold/20">Last 20</span>
                         </div>
                         <div className="glass-panel p-4 rounded-xl">
                             <HistoryPanel history={history.slice(0, 20)} />

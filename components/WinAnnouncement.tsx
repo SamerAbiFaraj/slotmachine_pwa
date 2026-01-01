@@ -159,7 +159,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
 
                                     {/* Animal Name */}
                                     {animalInfo && (
-                                        <div className="text-neo-gold font-display font-black uppercase tracking-[0.2em] text-[2.2vh] md:text-sm text-center leading-tight flex-shrink-0">
+                                        <div className="text-yellow-500 font-display font-black uppercase tracking-[0.2em] text-[2.2vh] md:text-sm text-center leading-tight flex-shrink-0">
                                             {animalInfo.animal}
                                         </div>
                                     )}
@@ -183,11 +183,11 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                 <div className="bg-[#020617] px-8 py-2 md:py-3 rounded-full flex flex-col items-center relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-                                    <div className="text-neo-gold text-[1vh] md:text-[10px] uppercase font-black tracking-[0.2em] mb-0.5">
+                                    <div className="text-yellow-500 text-[1vh] md:text-[10px] uppercase font-black tracking-[0.2em] mb-0.5">
                                         Total Payout
                                     </div>
                                     <div className="text-[3.5vh] md:text-4xl font-black text-white font-display flex items-center gap-1">
-                                        <span className="text-neo-gold">$</span>
+                                        <span className="text-yellow-500">$</span>
                                         {totalWin.toLocaleString()}
                                     </div>
                                 </div>

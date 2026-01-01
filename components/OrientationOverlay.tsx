@@ -44,14 +44,14 @@ export const OrientationOverlay: React.FC = () => {
                         }}
                         className="mb-8"
                     >
-                        <Smartphone className="w-24 h-24 text-neo-gold" strokeWidth={1.5} />
+                        <Smartphone className="w-24 h-24 text-yellow-500" strokeWidth={1.5} />
                     </motion.div>
 
                     <h2 className="font-display font-bold text-3xl text-white mb-4 tracking-wider uppercase">
                         Rotate Device
                     </h2>
                     <p className="text-gray-400 max-w-xs leading-relaxed">
-                        For the best experience, please rotate your device to <span className="text-neo-gold font-bold">Landscape View</span>.
+                        For the best experience, please rotate your device to <span className="text-yellow-500 font-bold">Landscape View</span>.
                     </p>
 
                     <div className="mt-12 w-16 h-1 bg-white/10 rounded-full overflow-hidden">

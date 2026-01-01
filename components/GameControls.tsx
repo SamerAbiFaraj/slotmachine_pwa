@@ -110,8 +110,8 @@ export const GameControls: React.FC<Props> = ({
 
                {/* Save/Load - Compact */}
                <div className="flex flex-col gap-0.5 ml-1 shrink-0">
-                  <button onClick={onSaveLayout} className="text-[8px] md:text-[9px] text-neo-gold hover:text-white uppercase font-bold text-left px-1.5">Save</button>
-                  <button onClick={onLoadLayout} className="text-[8px] md:text-[9px] text-neo-gold hover:text-white uppercase font-bold text-left px-1.5">Load</button>
+                  <button onClick={onSaveLayout} className="text-[8px] md:text-[9px] text-yellow-500 hover:text-white uppercase font-bold text-left px-1.5">Save</button>
+                  <button onClick={onLoadLayout} className="text-[8px] md:text-[9px] text-yellow-500 hover:text-white uppercase font-bold text-left px-1.5">Load</button>
                </div>
             </div>
 

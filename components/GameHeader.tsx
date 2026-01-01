@@ -40,7 +40,7 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
                 <div className="flex flex-col">
                     <span className="font-display font-bold text-lg md:text-xl lg:text-2xl landscape:text-sm tracking-widest text-white leading-none">ROYALE</span>
                     <div className="flex items-center gap-2 landscape:hidden">
-                        <span className="text-[9px] md:text-[10px] lg:text-xs text-neo-gold uppercase tracking-[0.3em]">Neo Glass</span>
+                        <span className="text-[9px] md:text-[10px] lg:text-xs text-yellow-500 uppercase tracking-[0.3em]">Neo Glass</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ export const GameHeader: React.FC<Props> = ({ user, stats, balance, phase, timeL
                     <span className="
                         font-display font-bold 
                         text-sm md:text-lg lg:text-2xl landscape:text-xs
-                        text-neo-gold drop-shadow-sm
+                        text-yellow-500 drop-shadow-sm
                     ">
                         ${balance.toLocaleString()}
                     </span>
