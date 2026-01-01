@@ -213,8 +213,7 @@ export const BettingTable: React.FC<Props> = ({
         // Calculate tooltip dimensions (approximate)
         const tooltipWidth = 200; // approximate width of tooltip
         const tooltipHeight = 120; // approximate height of tooltip
-        const offset = 20; // offset from cursor
-        const chipSelectorHeight = 100; // height of bottom chip selector bar (adjust based on your actual height)
+        const chipSelectorHeight = 100; // height of bottom chip selector bar
 
         // Get viewport dimensions
         const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
@@ -222,6 +221,9 @@ export const BettingTable: React.FC<Props> = ({
 
         // Check if we're on md breakpoint or larger (768px+)
         const isMdOrLarger = viewportWidth >= 768;
+
+        // Adjust offset based on screen size (closer on mobile)
+        const offset = isMdOrLarger ? 20 : 10;
 
         // Adjust effective viewport height to account for chip selector on md+
         const effectiveViewportHeight = isMdOrLarger ? viewportHeight - chipSelectorHeight : viewportHeight;
@@ -232,9 +234,29 @@ export const BettingTable: React.FC<Props> = ({
         // Check if tooltip would overflow on the bottom (accounting for chip selector)
         const wouldOverflowBottom = hoveredBet.y + tooltipHeight > effectiveViewportHeight;
 
-        // Calculate position
+        // Check if tooltip would overflow on the top
+        const wouldOverflowTop = hoveredBet.y - tooltipHeight - offset < 0;
+
+        // Calculate horizontal position
         let left = wouldOverflowRight ? hoveredBet.x - tooltipWidth - offset : hoveredBet.x + offset;
-        let top = wouldOverflowBottom ? hoveredBet.y - tooltipHeight - offset : hoveredBet.y - 40;
+
+        // Calculate vertical position with top/bottom overflow detection
+        let top;
+        let transform;
+
+        if (wouldOverflowTop) {
+          // Position below cursor if it would overflow at top
+          top = hoveredBet.y + offset;
+          transform = 'translate(0, 0)';
+        } else if (wouldOverflowBottom) {
+          // Position above cursor if it would overflow at bottom
+          top = hoveredBet.y - tooltipHeight - offset;
+          transform = 'translate(0, 0)';
+        } else {
+          // Normal position (centered vertically on cursor)
+          top = hoveredBet.y - 40;
+          transform = 'translate(0, -50%)';
+        }
 
         return (
           <div
@@ -242,7 +264,7 @@ export const BettingTable: React.FC<Props> = ({
             style={{
               left: left,
               top: top,
-              transform: wouldOverflowBottom ? 'translate(0, 0)' : 'translate(0, -50%)',
+              transform: transform,
               fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
             }}
           >
