@@ -34,7 +34,7 @@ export const GameControls: React.FC<Props> = ({
          className={`
             glass-button px-2 md:px-3 py-2 md:py-2.5 rounded-lg flex items-center justify-center gap-1 md:gap-1.5 transition-all
             ${active
-               ? 'bg-neo-gold text-black border-neo-gold shadow-[0_0_15px_rgba(226,182,89,0.5)]'
+               ? 'bg-yellow-500text-black border-neo-gold shadow-[0_0_15px_rgba(226,182,89,0.5)]'
                : 'text-gray-300 hover:text-white hover:bg-white/10'
             }
             disabled:opacity-40 disabled:cursor-not-allowed

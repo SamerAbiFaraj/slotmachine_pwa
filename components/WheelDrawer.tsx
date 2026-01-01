@@ -98,9 +98,9 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                         aria-label="Open Roulette Wheel"
                     >
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-neo-gold transition-colors" />
+                            <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-yellow-500transition-colors" />
                             <ChevronRight size={16} className="text-yellow-500" />
-                            <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-neo-gold transition-colors" />
+                            <div className="w-1 h-8 rounded-full bg-neo-gold/50 group-hover:bg-yellow-500transition-colors" />
                         </div>
                     </motion.button>
                 )}

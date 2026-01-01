@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAnimalByNumber } from '../animalMapping';
 
@@ -12,47 +12,26 @@ interface WinAnnouncementProps {
 export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber, isOpen, gamePhase, totalWin = 0 }) => {
     const [show, setShow] = useState(false);
     const isWin = totalWin > 0;
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    // ✅ CLEAN EXIT: Ensure component unmounts properly
     useEffect(() => {
         if (winningNumber && isOpen && gamePhase === 'RESULT_DISPLAY') {
             setShow(true);
             const timer = setTimeout(() => setShow(false), 5000);
             return () => clearTimeout(timer);
-        } else {
-            // ✅ Always hide when not in RESULT_DISPLAY
+        } else if (gamePhase !== 'RESULT_DISPLAY') {
             setShow(false);
         }
     }, [winningNumber, isOpen, gamePhase]);
 
-    // 3D Tilt Effect
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!containerRef.current || !isWin) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateY = ((x - centerX) / centerX) * 5; // Max 5deg tilt
-        const rotateX = ((centerY - y) / centerY) * 5;
-
-        containerRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    };
-
-    const handleMouseLeave = () => {
-        if (containerRef.current) {
-            containerRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-        }
-    };
-
+    // Generate diverse particles
     const particles = useMemo(() => {
-        return [...Array(50)].map((_, i) => ({
+        return [...Array(60)].map((_, i) => ({
             id: i,
             left: `${Math.random() * 100}%`,
-            delay: Math.random() * 1.5,
-            duration: 3 + Math.random() * 2,
-            size: Math.random() * 6 + 4,
+            delay: Math.random() * 2,
+            duration: 2 + Math.random() * 2,
+            size: Math.random() * 8 + 4,
+            rotation: Math.random() * 360,
             color: [
                 '#FFD700', // Gold
                 '#FDB931', // Yellow-Orange
@@ -61,9 +40,9 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                 '#10b981', // Green
             ][Math.floor(Math.random() * 5)],
             shape: Math.random() > 0.5 ? 'square' : 'circle',
-            isSparkle: Math.random() > 0.85
+            isSparkle: Math.random() > 0.8
         }));
-    }, [show]); // 👈 recompute only when show changes
+    }, []);
 
     const animalInfo = useMemo(() => winningNumber ? getAnimalByNumber(winningNumber) : null, [winningNumber]);
 
@@ -75,45 +54,38 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 0.3 } }}
-                        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                     />
 
-                    {/* CONFETTI */}
-                    {isWin && (
-                        <div className="absolute inset-0 z-[301]">
-                            {particles.map((p) => (
-                                <div
-                                    key={p.id}
-                                    className={`absolute top-[-5vh] animate-confetti ${p.shape === 'circle' ? 'rounded-full' : 'rounded-sm'
-                                        }`}
-                                    style={{
-                                        left: p.left,
-                                        width: `${p.size}px`,
-                                        height: `${p.size}px`,
-                                        backgroundColor: p.color,
-                                        animationDelay: `${p.delay}s`,
-                                        animationDuration: `${p.duration}s`,
-                                        opacity: p.isSparkle ? 0.95 : 0.75,
-                                        boxShadow: p.isSparkle ? `0 0 8px ${p.color}` : 'none',
-                                        willChange: 'transform',
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    {/* DIVERSE CONFETTI & SPARKLES */}
+                    {isWin && particles.map((p) => (
+                        <div
+                            key={p.id}
+                            className={`
+                                absolute top-[-5vh] animate-confetti
+                                ${p.shape === 'circle' ? 'rounded-full' : 'rounded-sm'}
+                                ${p.isSparkle ? 'z-20 blur-[1px] brightness-150' : 'z-10'}
+                            `}
+                            style={{
+                                left: p.left,
+                                width: `${p.size}px`,
+                                height: `${p.size}px`,
+                                backgroundColor: p.color,
+                                animationDelay: `${p.delay}s`,
+                                animationDuration: `${p.duration}s`,
+                                opacity: p.isSparkle ? 0.9 : 0.7,
+                                boxShadow: p.isSparkle ? `0 0 10px ${p.color}` : 'none'
+                            }}
+                        />
+                    ))}
 
-                    {/* WIN CARD WITH 3D TILT */}
                     <motion.div
                         initial={{ scale: 0.5, opacity: 0, y: 50 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 1.2, opacity: 0, y: 20, transition: { duration: 0.3 } }}
+                        exit={{ scale: 1.5, opacity: 0 }}
                         transition={{ type: "spring", stiffness: 260, damping: 15 }}
-                        className="relative flex flex-col items-center gap-[1vh] md:gap-4 z-[302] pointer-events-auto"
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={handleMouseLeave}
-                        ref={containerRef}
-                        style={{ transformStyle: 'preserve-3d', transition: 'transform 0.1s ease' }}
+                        className="relative flex flex-col items-center gap-[1vh] md:gap-4"
                     >
                         {/* Ambient Glows */}
                         <div className="absolute inset-0 -z-10">
@@ -136,7 +108,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                     bg-gradient-to-b from-white via-neo-gold to-yellow-800
                                     bg-clip-text text-transparent
                                     drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)]
-                                    relative
+                                    animate-tilt-shake relative
                                 ">
                                     Big Win!
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent background-size-[200%] animate-shine bg-clip-text pointer-events-none" />
@@ -146,6 +118,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
 
                         {/* Main Info Card */}
                         <div className="relative group p-[1.5vh]">
+                            {/* Rotating Ring */}
                             <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -160,10 +133,11 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                 flex flex-col items-center justify-center
                                 shadow-[0_0_80px_rgba(226,182,89,0.4),inset_0_0_40px_rgba(0,0,0,0.8)]
                                 backdrop-blur-2xl overflow-hidden
-                                transform-style-3d
                             ">
                                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
+
                                 <div className="flex flex-col items-center justify-center h-full w-full py-1 gap-[0.5vh]">
+                                    {/* Animal Image */}
                                     {animalInfo && (
                                         <motion.img
                                             initial={{ scale: 0, rotate: -20 }}
@@ -173,6 +147,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                             className="h-[8vh] max-h-16 object-contain drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] flex-shrink-0"
                                         />
                                     )}
+
                                     <div className={`
                                         text-[10vh] md:text-[6rem] font-black font-display leading-[0.9] flex-shrink-0
                                         ${['1', '3', '5', '7', '9', '12', '14', '16', '18', '19', '21', '23', '25', '27', '30', '32', '34', '36'].includes(winningNumber) ? 'text-neo-red' :
@@ -181,6 +156,8 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                     `}>
                                         {winningNumber}
                                     </div>
+
+                                    {/* Animal Name */}
                                     {animalInfo && (
                                         <div className="text-yellow-500 font-display font-black uppercase tracking-[0.2em] text-[2.2vh] md:text-sm text-center leading-tight flex-shrink-0">
                                             {animalInfo.animal}
@@ -205,6 +182,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                             >
                                 <div className="bg-[#020617] px-8 py-2 md:py-3 rounded-full flex flex-col items-center relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
                                     <div className="text-yellow-500 text-[1vh] md:text-[10px] uppercase font-black tracking-[0.2em] mb-0.5">
                                         Total Payout
                                     </div>

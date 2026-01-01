@@ -434,7 +434,7 @@ const App: React.FC = () => {
                 "
             >
                 <div className="flex flex-col items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-neo-gold animate-pulse"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500animate-pulse"></span>
                     <span className="
                         text-[10px] uppercase font-bold text-yellow-500 
                         [writing-mode:vertical-rl] tracking-widest rotate-180

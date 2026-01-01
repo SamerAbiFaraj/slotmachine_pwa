@@ -81,7 +81,7 @@ export const InstallPrompt: React.FC = () => {
                 <div className="absolute inset-0 rounded-full bg-neo-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <div className="
-                    w-8 h-8 rounded-lg bg-neo-gold 
+                    w-8 h-8 rounded-lg bg-yellow-500
                     flex items-center justify-center 
                     text-black font-bold shadow-sm
                 ">
@@ -93,7 +93,7 @@ export const InstallPrompt: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-start">
-                    <span className="text-neo-gold font-bold text-sm uppercase tracking-wider">Install App</span>
+                    <span className="text-yellow-500 font-bold text-sm uppercase tracking-wider">Install App</span>
                     <span className="text-xs text-gray-400">Add to Home Screen</span>
                 </div>
             </button>
