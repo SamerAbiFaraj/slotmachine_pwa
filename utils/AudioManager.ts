@@ -5,19 +5,27 @@ class AudioManager {
     private dropBuffer: AudioBuffer | null = null;
     private spinSource: AudioBufferSourceNode | null = null;
     private isLoaded = false;
+    private hasUserInteraction = false;
 
     async init() {
-        // Only create AudioContext on user interaction (required by browsers)
+        // Create AudioContext only once
         if (!this.audioContext) {
             this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
         }
 
+        // If already loaded, skip
+        if (this.isLoaded) return;
+
         try {
-            // Load both sounds in parallel
+            // ✅ CORRECT PATH: /sounds/ (not ./public/sounds/)
             const [spinRes, dropRes] = await Promise.all([
-                fetch('./public/sounds/ball_spin.mp3'),
-                fetch('./public/sounds/ball_drop.mp3')
+                fetch('/sounds/ball_spin.mp3'),
+                fetch('/sounds/ball_drop.mp3')
             ]);
+
+            if (!spinRes.ok || !dropRes.ok) {
+                throw new Error('Sound files not found');
+            }
 
             const [spinArray, dropArray] = await Promise.all([
                 spinRes.arrayBuffer(),
@@ -30,15 +38,29 @@ class AudioManager {
             ]);
 
             this.isLoaded = true;
+            console.log('AudioManager: Sounds loaded successfully');
         } catch (e) {
-            console.warn("Audio failed to load:", e);
+            console.warn('AudioManager: Failed to load sounds', e);
         }
     }
 
-    playSpin() {
-        if (!this.isLoaded || !this.audioContext || !this.spinBuffer) return;
+    // 👇 Call this on first user interaction (e.g., click anywhere)
+    async resumeContext() {
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            await this.audioContext.resume();
+        }
+        this.hasUserInteraction = true; // 👈 CRITICAL!
+    }
 
-        // Stop previous spin if playing
+    playSpin() {
+        // Ensure user has interacted
+        if (!this.hasUserInteraction) return;
+
+        if (!this.isLoaded || !this.audioContext || !this.spinBuffer) {
+            return;
+        }
+
+        // Stop previous spin
         if (this.spinSource) {
             this.spinSource.stop();
         }
@@ -50,8 +72,14 @@ class AudioManager {
         this.spinSource.start();
     }
 
+
+
     stopSpinAndPlayDrop() {
-        if (!this.isLoaded || !this.audioContext || !this.dropBuffer) return;
+        if (!this.hasUserInteraction) return;
+
+        if (!this.isLoaded || !this.audioContext || !this.dropBuffer) {
+            return;
+        }
 
         // Stop spin
         if (this.spinSource) {
@@ -59,7 +87,6 @@ class AudioManager {
             this.spinSource = null;
         }
 
-        // Play drop sound immediately
         const dropSource = this.audioContext.createBufferSource();
         dropSource.buffer = this.dropBuffer;
         dropSource.connect(this.audioContext.destination);

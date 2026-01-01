@@ -114,12 +114,14 @@ const App: React.FC = () => {
 
             // Ball spinning and stopping sound effect
             // When spin starts (e.g., in simulation callback)
+            // In your simulation.subscribeState callback:
             if (newPhase === GamePhase.SPINNING) {
+                console.log('▶️ Attempting to play spin sound');
                 audioManager.playSpin();
             }
 
-            // When result is revealed
             if (newPhase === GamePhase.RESULT_DISPLAY && result) {
+                console.log('⏹️ Attempting to play drop sound');
                 audioManager.stopSpinAndPlayDrop();
             }
 
@@ -130,15 +132,42 @@ const App: React.FC = () => {
     }, [autoPlayActive]);
 
     // Ball spinning and stopping sound effect
+    // REPLACE your current audio useEffect with this:
+    // App.tsx
     useEffect(() => {
-        // Initialize audio on first user interaction (e.g., place bet)
-        const initAudio = () => {
-            audioManager.init();
-            window.removeEventListener('click', initAudio);
-        };
-        window.addEventListener('click', initAudio);
+        let initialized = false;
 
-        return () => window.removeEventListener('click', initAudio);
+        const initAudio = async () => {
+            if (initialized) return;
+
+            try {
+                await audioManager.init();
+                await audioManager.resumeContext?.(); // Optional chaining in case method missing
+                initialized = true;
+                console.log('✅ Audio initialized and resumed');
+            } catch (e) {
+                console.warn('🔇 Audio init failed:', e);
+            }
+        };
+
+        // Initialize on first interaction
+        const handleInteraction = () => {
+            initAudio();
+            window.removeEventListener('click', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
+            window.removeEventListener('keydown', handleInteraction);
+        };
+
+        // Listen for ANY user interaction
+        window.addEventListener('click', handleInteraction, { once: true });
+        window.addEventListener('touchstart', handleInteraction, { once: true });
+        window.addEventListener('keydown', handleInteraction, { once: true });
+
+        return () => {
+            window.removeEventListener('click', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
+            window.removeEventListener('keydown', handleInteraction);
+        };
     }, []);
 
 
