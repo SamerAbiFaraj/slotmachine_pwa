@@ -116,12 +116,12 @@ const App: React.FC = () => {
             // When spin starts (e.g., in simulation callback)
             // In your simulation.subscribeState callback:
             if (newPhase === GamePhase.SPINNING) {
-                console.log('▶️ Attempting to play spin sound');
+                //console.log('▶️ Attempting to play spin sound');
                 audioManager.playSpin();
             }
 
             if (newPhase === GamePhase.RESULT_DISPLAY && result) {
-                console.log('⏹️ Attempting to play drop sound');
+                //console.log('⏹️ Attempting to play drop sound');
                 audioManager.stopSpinAndPlayDrop();
             }
 

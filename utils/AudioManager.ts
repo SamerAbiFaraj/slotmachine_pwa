@@ -19,8 +19,8 @@ class AudioManager {
         try {
             // ✅ CORRECT PATH: /sounds/ (not ./public/sounds/)
             const [spinRes, dropRes] = await Promise.all([
-                fetch('/sounds/ball_spin.mp3'),
-                fetch('/sounds/ball_drop.mp3')
+                fetch('/sounds/Ball_Spin.mp3'),
+                fetch('/sounds/Ball_Drop.mp3')
             ]);
 
             if (!spinRes.ok || !dropRes.ok) {
