@@ -15,8 +15,8 @@ class AudioManager {
         try {
             // Load both sounds in parallel
             const [spinRes, dropRes] = await Promise.all([
-                fetch('/sounds/ball_spin.mp3'),
-                fetch('/sounds/ball_drop.mp3')
+                fetch('./public/sounds/ball_spin.mp3'),
+                fetch('./public/sounds/ball_drop.mp3')
             ]);
 
             const [spinArray, dropArray] = await Promise.all([
