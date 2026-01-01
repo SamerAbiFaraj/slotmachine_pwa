@@ -112,6 +112,8 @@ const App: React.FC = () => {
                 }
             }
 
+
+
             // Ball spinning and stopping sound effect
             // When spin starts (e.g., in simulation callback)
             // In your simulation.subscribeState callback:
@@ -142,7 +144,12 @@ const App: React.FC = () => {
 
             try {
                 await audioManager.init();
-                await audioManager.resumeContext?.(); // Optional chaining in case method missing
+
+                // ✅ FORCE call resumeContext (no optional chaining)
+                if (audioManager.resumeContext) {
+                    await audioManager.resumeContext(); // 👈 this sets hasUserInteraction = true
+                }
+
                 initialized = true;
                 console.log('✅ Audio initialized and resumed');
             } catch (e) {
@@ -153,9 +160,6 @@ const App: React.FC = () => {
         // Initialize on first interaction
         const handleInteraction = () => {
             initAudio();
-            window.removeEventListener('click', handleInteraction);
-            window.removeEventListener('touchstart', handleInteraction);
-            window.removeEventListener('keydown', handleInteraction);
         };
 
         // Listen for ANY user interaction
@@ -185,6 +189,11 @@ const App: React.FC = () => {
     }, [phase]);
 
     const handlePlaceBet = useCallback((type: BetType, numbers: string[], payoutRatio: number) => {
+
+        if (audioManager.isReady) {
+            audioManager.playChipPlace();
+        }
+
         if (balance - totalBetAmount < selectedChip) {
             setNotification({ msg: "Insufficient Balance", type: 'error' });
             setTimeout(() => setNotification(null), 2000);
@@ -270,6 +279,7 @@ const App: React.FC = () => {
         setLastWin(totalWin);
 
         if (totalWin > 0) {
+            audioManager.playWinSound();
             setBalance(prev => prev + totalWin);
             setNotification({ msg: `WIN: $${totalWin.toLocaleString()}`, type: 'success' });
         } else {
