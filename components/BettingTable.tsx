@@ -5,6 +5,7 @@ import { getNumberColor, RED_NUMBERS, BLACK_NUMBERS, PAYOUTS } from '../constant
 import { getAnimalImagePath } from '../animalMapping';
 import { chipMapping, chipValues } from '../chipMapping';
 
+
 interface Props {
   currentBets: PlacedBet[];
   selectedChip: Chip;
@@ -143,7 +144,7 @@ export const BettingTable: React.FC<Props> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
         className={`
-          relative aspect-[3/4] flex flex-col items-center justify-center border border-neo-gold/20
+          relative aspect-[3/4] flex flex-col items-center justify-center border border-yellow-500/20
           transition-all duration-200 cursor-pointer group overflow-hidden
           hover:bg-neo-gold/10 hover:shadow-[inset_0_0_20px_rgba(226,182,89,0.2)]
           ${isHighlighted ? 'bg-neo-gold/40' : 'bg-transparent'}
@@ -316,7 +317,7 @@ export const BettingTable: React.FC<Props> = ({
                 ${((getBetAmount(hoveredChip.type, hoveredChip.numbers) || 0) * hoveredChip.payoutRatio).toLocaleString()}
               </span>
             </div>
-            <div className="mt-0.5 pt-0.5 border-t border-neo-gold/30 flex justify-between gap-4">
+            <div className="mt-0.5 pt-0.5 border-t border-yellow-500/30 flex justify-between gap-4">
               <span className="text-gray-400" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>{hoveredChip.payoutRatio}:1</span>
               <span className="text-neo-gold" style={{ fontSize: 'clamp(0.5rem, 1.5vw, 0.5625rem)' }}>⚡</span>
             </div>
@@ -325,12 +326,14 @@ export const BettingTable: React.FC<Props> = ({
         document.body
       )}
 
+
+
       {/* MAIN TABLE GRID WRAPPER */}
-      <div className="relative z-10 flex flex-1 rounded overflow-hidden border border-neo-gold/30 md:border-2 shadow-lg bg-black/20 min-h-0">
+      <div className="relative z-10 flex flex-1 rounded overflow-hidden border border-yellow-500/30 md:border-2 shadow-lg bg-black/20 min-h-0">
 
         {/* ZERO and DOUBLE ZERO (LEFT COLUMN) */}
         <div
-          className="flex flex-col border-r border-neo-gold/30 relative"
+          className="flex flex-col border-r border-yellow-500/30 relative"
           style={{ width: 'clamp(3rem, 12vw, 6rem)' }}
         >
           <div
@@ -338,7 +341,7 @@ export const BettingTable: React.FC<Props> = ({
             onMouseEnter={(e) => handleMouseEnter(e, BetType.ZERO, ["0"], PAYOUTS.STRAIGHT)}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setHoveredBet(null)}
-            className="flex-1 flex flex-col items-center justify-center border-b border-neo-gold/30 text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
+            className="flex-1 flex flex-col items-center justify-center border-b border-yellow-500/30 text-green-500 font-display font-bold hover:bg-green-900/30 cursor-pointer relative"
           >
             {getAnimalImagePath("0") && (
               <img
@@ -393,40 +396,54 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* MAIN NUMBERS GRID (MIDDLE) */}
         <div className="flex-1 relative flex flex-col">
-          <div className="grid grid-cols-12 relative">
-            {[3, 2, 1].map((row) => (
-              <React.Fragment key={row}>
-                {Array.from({ length: 12 }, (_, colIndex) => {
-                  const num = (colIndex * 3 + row).toString();
-                  const nextInCol = row > 1 ? (colIndex * 3 + row - 1).toString() : null;
-                  const nextInRow = colIndex < 11 ? ((colIndex + 1) * 3 + row).toString() : null;
-                  const diag = (row > 1 && colIndex < 11) ? ((colIndex + 1) * 3 + row - 1).toString() : null;
+          <div className="relative overflow-hidden"> {/* 👈 ADD THIS */}
+            <div className="grid grid-cols-12 relative">
+              {[3, 2, 1].map((row) => (
+                <React.Fragment key={row}>
+                  {Array.from({ length: 12 }, (_, colIndex) => {
+                    const num = (colIndex * 3 + row).toString();
+                    const nextInCol = row > 1 ? (colIndex * 3 + row - 1).toString() : null;
+                    const nextInRow = colIndex < 11 ? ((colIndex + 1) * 3 + row).toString() : null;
+                    const diag = (row > 1 && colIndex < 11) ? ((colIndex + 1) * 3 + row - 1).toString() : null;
+                    // console.log(colIndex, row);
+                    return (
 
-                  return (
-                    <div key={num} className="relative">
-                      {renderCell(num)}
+                      <div key={num} className="relative">
+                        {renderCell(num)}
 
-                      {/* Split Vertical */}
-                      {nextInCol && renderBetHotspot(BetType.SPLIT, [num, nextInCol], PAYOUTS.SPLIT, "absolute bottom-[-10px] left-0 right-0 h-5 z-40")}
+                        {/* Split Vertical */}
+                        {nextInCol && renderBetHotspot(BetType.SPLIT, [num, nextInCol], PAYOUTS.SPLIT, "absolute bottom-[-10px] left-0 right-0 h-5 z-40")}
 
-                      {/* Split Horizontal */}
-                      {nextInRow && renderBetHotspot(BetType.SPLIT, [num, nextInRow], PAYOUTS.SPLIT, "absolute right-[-10px] top-0 bottom-0 w-5 z-40")}
+                        {/* Split Horizontal - Only if not crossing dozen boundaries */}
+                        {nextInRow && renderBetHotspot(BetType.SPLIT, [num, nextInRow], PAYOUTS.SPLIT, "absolute right-[-10px] top-0 bottom-0 w-5 z-40")}
 
-                      {/* Corner */}
-                      {nextInCol && nextInRow && diag && renderBetHotspot(BetType.CORNER, [num, nextInCol, nextInRow, diag], PAYOUTS.CORNER, "absolute right-[-8px] md:right-[-10px] bottom-[-8px] md:bottom-[-10px] w-4 h-4 md:w-5 md:h-5 rounded-full z-50 bg-white/5 border border-white/10")}
+                        {/* Corner - Only render if NOT on bottom row (row 1) */}
+                        {nextInCol && nextInRow && diag && row !== 1 && renderBetHotspot(BetType.CORNER, [num, nextInCol, nextInRow, diag], PAYOUTS.CORNER, "absolute right-[-8px] md:right-[-10px] bottom-[-8px] md:bottom-[-10px] w-4 h-4 md:w-5 md:h-5 rounded-full z-50 bg-white/5 border border-white/10")}
 
-                      {/* Street */}
-                      {row === 1 && renderBetHotspot(BetType.STREET, [(colIndex * 3 + 1).toString(), (colIndex * 3 + 2).toString(), (colIndex * 3 + 3).toString()], PAYOUTS.STREET, "absolute bottom-[-15px] md:bottom-[-20px] left-0 right-0 h-3 md:h-4 bg-white/5 rounded-t")}
-                    </div>
-                  );
-                })}
-              </React.Fragment>
-            ))}
+                        {/* Street */}
+                        {/* Street - valid for every column (0 to 11) */}
+                        {/* Street - one per column (12 total) */}
+                        {row === 1 && renderBetHotspot(
+                          BetType.STREET,
+                          [
+                            (colIndex * 3 + 1).toString(),
+                            (colIndex * 3 + 2).toString(),
+                            (colIndex * 3 + 3).toString()
+                          ],
+                          PAYOUTS.STREET,
+                          "absolute bottom-[-15px] md:bottom-[-20px] left-0 right-0 h-3 md:h-4 bg-white/5 rounded-t"
+                        )}
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
 
           {/* DOZENS */}
           <div
-            className="grid grid-cols-3 border-t border-neo-gold/30"
+            className="grid grid-cols-3 border-t border-yellow-500/30"
             style={{ height: 'clamp(3.5rem, 8vw, 5rem)' }}
           >
             {['1st 12', '2nd 12', '3rd 12'].map((label, idx) => {
@@ -438,7 +455,7 @@ export const BettingTable: React.FC<Props> = ({
                   onMouseEnter={(e) => handleMouseEnter(e, BetType.DOZEN, nums, PAYOUTS.DOZEN)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={() => setHoveredBet(null)}
-                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer font-bold text-neo-gold border-r border-neo-gold/20 last:border-0 transition-colors"
+                  className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer font-bold text-neo-gold border-r border-yellow-500/20 last:border-0 transition-colors"
                   style={{ fontSize: 'clamp(1rem, 2.5vw, 1.5rem)' }}
                 >
                   <span className="hidden sm:inline">{label}</span>
@@ -452,7 +469,7 @@ export const BettingTable: React.FC<Props> = ({
 
         {/* COLUMNS (RIGHT) */}
         <div
-          className="flex flex-col border-l border-neo-gold/30"
+          className="flex flex-col border-l border-yellow-500/30"
           style={{ width: 'clamp(3rem, 12vw, 6rem)' }}
         >
           {[3, 2, 1].map(row => {
@@ -464,7 +481,7 @@ export const BettingTable: React.FC<Props> = ({
                 onMouseEnter={(e) => handleMouseEnter(e, BetType.COLUMN, nums, PAYOUTS.COLUMN)}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={() => setHoveredBet(null)}
-                className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-neo-gold/20 last:border-0 transition-colors"
+                className="relative flex-1 flex items-center justify-center bg-transparent hover:bg-white/5 cursor-pointer border-b border-yellow-500/20 last:border-0 transition-colors"
               >
                 <span
                   className="rotate-360 whitespace-nowrap font-bold text-neo-gold"
@@ -477,7 +494,7 @@ export const BettingTable: React.FC<Props> = ({
             );
           })}
           {/* <div
-            className="border-t border-neo-gold/20"
+            className="border-t border-yellow-500/20"
             style={{ height: 'clamp(3rem, 7vw, 4.5rem)' }}
           ></div> */}
         </div>
@@ -507,7 +524,7 @@ export const BettingTable: React.FC<Props> = ({
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setHoveredBet(null)}
             className={`
-              relative border border-neo-gold/20 flex items-center justify-center cursor-pointer transition-colors
+              relative border border-yellow-500/20 flex items-center justify-center cursor-pointer transition-colors
               ${item.special === 'red' ? 'hover:bg-red-900/40' : item.special === 'black' ? 'hover:bg-gray-800/40' : 'hover:bg-white/5'}
             `}
           >

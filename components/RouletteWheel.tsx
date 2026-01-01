@@ -525,6 +525,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                                 style={{
                                                     filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4))'
                                                 }}
+                                                transform={`rotate(-30 ${numberX} ${numberY})`}
                                             />
 
                                             <text
@@ -536,6 +537,7 @@ export const RouletteWheel: React.FC<Props> = ({ phase, winningNumber, onBetPlac
                                                 fill={color === 'green' ? '#006622' : color === 'red' ? '#990000' : '#000'}
                                                 className="select-none"
                                                 style={{ fontFamily: 'Arial, sans-serif' }}
+                                                transform={`rotate(-30 ${numberX} ${numberY})`}
                                             >
                                                 {number}
                                             </text>
