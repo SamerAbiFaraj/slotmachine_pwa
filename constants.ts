@@ -28,8 +28,8 @@ export const AVAILABLE_CHIPS: Chip[] = [
 ];
 
 export const GAME_CONFIG = {
-    BETTING_DURATION_SEC: 120,
-    SPIN_DURATION_MS: 10000,
+    BETTING_DURATION_SEC: 15,
+    SPIN_DURATION_MS: 8000,
     RESULT_DURATION_MS: 5000,
     CURRENCY: 'USD',
     BOT_NAMES: ['HighRoller99', 'CryptoKing', 'VegasDave', 'LuckyLady', 'WhaleWatcher', 'ChipStacker', 'RoulettePro', 'SpeedBet']

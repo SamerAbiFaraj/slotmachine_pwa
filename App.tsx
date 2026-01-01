@@ -20,6 +20,7 @@ import { User, Coins, X } from 'lucide-react';
 import { SlideOutPanel } from './components/SlideOutPanel';
 import { InstallPrompt } from './components/InstallPrompt';
 import { WinAnnouncement } from './components/WinAnnouncement';
+import { audioManager } from './utils/AudioManager'
 
 // ✅ IMPORT CHIP MAPPING FOR USE IN GameControls
 import { chipMapping } from './chipMapping';
@@ -110,11 +111,38 @@ const App: React.FC = () => {
                     if (betsRef.current.length > 0) lastBetsRef.current = [...betsRef.current];
                 }
             }
+
+            // Ball spinning and stopping sound effect
+            // When spin starts (e.g., in simulation callback)
+            if (newPhase === GamePhase.SPINNING) {
+                audioManager.playSpin();
+            }
+
+            // When result is revealed
+            if (newPhase === GamePhase.RESULT_DISPLAY && result) {
+                audioManager.stopSpinAndPlayDrop();
+            }
+
         });
 
         const unsubLeaderboard = simulation.subscribeLeaderboard(setLeaderboard);
         return () => { unsubState(); unsubLeaderboard(); };
     }, [autoPlayActive]);
+
+    // Ball spinning and stopping sound effect
+    useEffect(() => {
+        // Initialize audio on first user interaction (e.g., place bet)
+        const initAudio = () => {
+            audioManager.init();
+            window.removeEventListener('click', initAudio);
+        };
+        window.addEventListener('click', initAudio);
+
+        return () => window.removeEventListener('click', initAudio);
+    }, []);
+
+
+
 
     // --- Drawer Logic ---
     useEffect(() => {
