@@ -14,6 +14,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "animejs": "^4.2.2",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",
     "howler": "^2.2.4",
@@ -23,6 +24,7 @@
     "react-roulette-pro": "^3.2.3",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.182.0",
     "zustand": "^5.0.9"
   },

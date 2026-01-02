@@ -8,6 +8,22 @@ class AudioManager {
     private spinSource: AudioBufferSourceNode | null = null;
     private isLoaded = false;
     private hasUserInteraction = false;
+    private isMuted = false;
+
+    setMuted(muted: boolean) {
+        this.isMuted = muted;
+        if (muted && this.spinSource) {
+            this.spinSource.stop();
+            this.spinSource = null;
+        }
+        if (this.audioContext) {
+            if (muted) {
+                this.audioContext.suspend();
+            } else {
+                this.audioContext.resume();
+            }
+        }
+    }
 
     async init() {
         if (!this.audioContext) {
@@ -65,7 +81,7 @@ class AudioManager {
     }
 
     playSpin() {
-        if (!this.hasUserInteraction || !this.isLoaded || !this.spinBuffer) return;
+        if (this.isMuted || !this.hasUserInteraction || !this.isLoaded || !this.spinBuffer) return;
         if (this.spinSource) this.spinSource.stop();
         this.spinSource = this.audioContext.createBufferSource();
         this.spinSource.buffer = this.spinBuffer;
@@ -75,7 +91,7 @@ class AudioManager {
     }
 
     stopSpinAndPlayDrop() {
-        if (!this.hasUserInteraction || !this.isLoaded || !this.dropBuffer) return;
+        if (this.isMuted || !this.hasUserInteraction || !this.isLoaded || !this.dropBuffer) return;
         if (this.spinSource) {
             this.spinSource.stop();
             this.spinSource = null;
@@ -87,6 +103,7 @@ class AudioManager {
     }
 
     playWinSound() {
+        if (this.isMuted) return;
         if (!this.hasUserInteraction) {
             console.warn('🔇 Win sound blocked: no user interaction');
             return;
@@ -111,6 +128,7 @@ class AudioManager {
 
     playChipPlace() {
         //if (!this.hasUserInteraction || !this.chipBuffer) return;
+        if (this.isMuted) return;
         if (!this.hasUserInteraction) {
             console.warn('🔇 Chip place sound blocked: no user interaction');
             return;

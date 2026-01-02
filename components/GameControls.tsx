@@ -1,4 +1,5 @@
 import React from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { Chip, GamePhase } from '../types';
 import { AVAILABLE_CHIPS } from '../constants-orginal';
 import { chipMapping } from '../chipMapping';
@@ -19,11 +20,14 @@ interface Props {
    onToggleAutoPlay: () => void;
    onSaveLayout: () => void;
    onLoadLayout: () => void;
+   isMuted: boolean;
+   onToggleMute: () => void;
 }
 
 export const GameControls: React.FC<Props> = ({
    selectedChip, onSelectChip, onClear, onUndo, gamePhase, totalBet,
-   autoPlayActive, onToggleAutoPlay, onSaveLayout, onLoadLayout
+   autoPlayActive, onToggleAutoPlay, onSaveLayout, onLoadLayout,
+   isMuted, onToggleMute
 }) => {
    const isBetting = gamePhase === GamePhase.WAITING_FOR_BETS;
 
@@ -51,6 +55,12 @@ export const GameControls: React.FC<Props> = ({
 
             {/* Pro Tools (Left) - REMOVED RACETRACK */}
             <div className="flex gap-1.5 shrink-0">
+               <ActionBtn
+                  label={isMuted ? "Unmute" : "Mute"}
+                  onClick={onToggleMute}
+                  active={!isMuted} // Highlight when sound is ON
+                  icon={isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+               />
                <ActionBtn
                   label="Auto"
                   onClick={onToggleAutoPlay}

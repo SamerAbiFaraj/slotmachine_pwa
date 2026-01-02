@@ -54,6 +54,7 @@ const App: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Wheel Drawer State
     const [isProfileOpen, setIsProfileOpen] = useState(false); // Mobile Top Drawer
     const [isChipsOpen, setIsChipsOpen] = useState(false); // Mobile Bottom Drawer
+    const [isMuted, setIsMuted] = useState(false); // Sound State
 
     // --- Refs ---
     const betsRef = useRef<PlacedBet[]>([]);
@@ -173,6 +174,11 @@ const App: React.FC = () => {
             window.removeEventListener('keydown', handleInteraction);
         };
     }, []);
+
+    // Sync Mute State
+    useEffect(() => {
+        audioManager.setMuted(isMuted);
+    }, [isMuted]);
 
 
 
@@ -357,6 +363,8 @@ const App: React.FC = () => {
                     onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
                     onSaveLayout={handleSaveLayout}
                     onLoadLayout={handleLoadLayout}
+                    isMuted={isMuted}
+                    onToggleMute={() => setIsMuted(!isMuted)}
                 />
             </footer>
 
@@ -451,6 +459,8 @@ const App: React.FC = () => {
                                     onToggleAutoPlay={() => setAutoPlayActive(!autoPlayActive)}
                                     onSaveLayout={handleSaveLayout}
                                     onLoadLayout={handleLoadLayout}
+                                    isMuted={isMuted}
+                                    onToggleMute={() => setIsMuted(!isMuted)}
                                 />
                             </div>
                         </motion.div>
