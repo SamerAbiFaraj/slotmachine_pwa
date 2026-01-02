@@ -23,7 +23,8 @@
     --text-2xl: clamp(1.4rem, 3.5vw, 1.9rem);
 
     /* Component sizing */
-    --wheel-size: min(85vmin, 680px);
+    /* Component sizing - INCREASED SIZE */
+    --wheel-size: min(95vmin, 700px);
     --chip-size: clamp(2rem, 8vw, 3.5rem);
     --table-padding: clamp(0.75rem, 2vw, 2rem);
 
@@ -119,9 +120,9 @@ body,
     height: 100%;
 }
 
-@container (min-width: 768px) {
+@media (min-width: 768px) {
     :root {
-        --wheel-size: min(70vmin, 780px);
+        --wheel-size: min(90vmin, 900px);
     }
 }
 

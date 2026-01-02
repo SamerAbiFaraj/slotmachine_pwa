@@ -285,7 +285,7 @@ export const RouletteWheel: React.FC<Props> = ({
     const numberRadius = imageRadius - 65;
 
     return (
-        <div className="relative flex items-center justify-center p-2 w-full h-full">
+        <div className="relative flex items-center justify-center w-full h-full p-1 md:p-0">
             {/* Main Wheel Container */}
             <div
                 className="relative wheel-container"
