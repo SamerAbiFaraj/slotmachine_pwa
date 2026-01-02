@@ -24,7 +24,8 @@
 
     /* Component sizing */
     /* Component sizing - INCREASED SIZE */
-    --wheel-size: min(95vmin, 700px);
+    /* Component sizing - INCREASED SIZE */
+    --wheel-size: min(100vmin, 1000px);
     --chip-size: clamp(2rem, 8vw, 3.5rem);
     --table-padding: clamp(0.75rem, 2vw, 2rem);
 
