@@ -54,11 +54,11 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                 </button>
 
                 {/* Wheel Content */}
-                <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+                <div className="flex-1 flex items-center justify-center p-0 md:p-4 relative overflow-hidden">
                     {/* Background Glow - More subtle */}
                     <div className="absolute inset-0 bg-radial-gradient from-neo-green/5 to-transparent opacity-30 pointer-events-none" />
 
-                    <div className="relative w-full aspect-square max-h-[75vh] md:max-h-[90vh] flex items-center justify-center">
+                    <div className="relative w-full aspect-square max-h-[85vh] md:max-h-[90vh] flex items-center justify-center">
                         <RouletteWheel phase={gamePhase} winningNumber={winningNumber} />
                     </div>
                 </div>

@@ -86,7 +86,7 @@
     :root {
         --header-height: 45px;
         --footer-height: 60px;
-        --wheel-size: min(70vmin, 300px);
+        --wheel-size: 90vmin;
     }
 }
 
