@@ -39,7 +39,7 @@ export const WheelDrawer: React.FC<WheelDrawerProps> = ({
                 initial={{ x: '-100%' }}
                 animate={{ x: isOpen ? 0 : '-100%' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[85vw] bg-neo-bg/70 backdrop-blur-lg z-[200] shadow-2xl border-r border-neo-gold/20 flex flex-col"
+                className="fixed top-0 left-0 h-[100dvh] w-full md:w-[100vw] bg-neo-bg/70 backdrop-blur-lg z-[200] shadow-2xl border-r border-neo-gold/20 flex flex-col"
             >
                 {/* Close Button / Handle inside drawer */}
                 <button

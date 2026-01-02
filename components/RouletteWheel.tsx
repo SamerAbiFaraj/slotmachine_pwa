@@ -338,7 +338,7 @@ export const RouletteWheel: React.FC<Props> = ({
 
                 {/* Inner bowl (dark, glossy) */}
                 <div
-                    className="absolute inset-[20px] md:inset-[26px] rounded-full overflow-hidden"
+                    className="absolute inset-[10px] md:inset-[26px] rounded-full overflow-hidden"
                     style={{
                         background: `
               radial-gradient(circle at 35% 25%,
@@ -358,7 +358,7 @@ export const RouletteWheel: React.FC<Props> = ({
                 >
                     {/* Rotating wheel pockets */}
                     <div
-                        className="absolute inset-[28px] md:inset-[34px] rounded-full"
+                        className="absolute inset-[14px] md:inset-[34px] rounded-full"
                         style={{
                             background: `
                 radial-gradient(circle at 30% 20%,
@@ -683,7 +683,7 @@ export const RouletteWheel: React.FC<Props> = ({
 
                 {/* Reflection / gloss on bowl */}
                 <div
-                    className="absolute inset-[32px] md:inset-[50px] rounded-full pointer-events-none z-30"
+                    className="absolute inset-[16px] md:inset-[50px] rounded-full pointer-events-none z-30"
                     style={{
                         background: `
               radial-gradient(circle at 22% 18%,
