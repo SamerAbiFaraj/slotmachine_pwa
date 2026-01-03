@@ -138,24 +138,42 @@ export const RouletteWheel: React.FC<Props> = ({
     winningNumber,
     onBetPlaced,
 }) => {
-    const [wheelRotation, setWheelRotation] = useState(0);
-    const [ballRotation, setBallRotation] = useState(0);
-    const [ballRadius, setBallRadius] = useState(49);
-    const [ballOpacity, setBallOpacity] = useState(0);
-    const [hoveredNumber, setHoveredNumber] = useState<string | null>(null);
-    const [isSpinning, setIsSpinning] = useState(false);
-    const [lastWinningNumber, setLastWinningNumber] = useState<string | null>(null);
-    const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
-    const [alignmentDebug, setAlignmentDebug] = useState<string>('');
-    const [spinDirection, setSpinDirection] = useState<'clockwise' | 'counterclockwise'>(
-        'clockwise'
-    );
+    // Refs for direct DOM manipulation (Performance optimization)
+    const wheelRef = useRef<HTMLDivElement>(null);
+    const ballRef = useRef<HTMLDivElement>(null);
+    const ballInnerRef = useRef<HTMLDivElement>(null);
 
+    // Mutable state for animation loop
+    const currentWheelRotation = useRef(0);
     const requestRef = useRef<number>(0);
     const startTimeRef = useRef<number>(0);
 
+    const [hoveredNumber, setHoveredNumber] = useState<string | null>(null);
+    const [isSpinning, setIsSpinning] = useState(false);
+    const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
+
+    // Keep track of spin direction for history
+    const [spinDirection, setSpinDirection] = useState<'clockwise' | 'counterclockwise'>('clockwise');
+
     const getColor = (number: string): 'red' | 'black' | 'green' => {
         return getNumberColor(number);
+    };
+
+    // Helper to safely set styles
+    const updateWheelStyle = (rotation: number) => {
+        if (wheelRef.current) {
+            wheelRef.current.style.transform = `rotate(${rotation}deg)`;
+        }
+    };
+
+    const updateBallStyle = (rotation: number, radius: number, opacity: number) => {
+        if (ballRef.current) {
+            ballRef.current.style.transform = `rotate(${rotation}deg)`;
+            ballRef.current.style.opacity = opacity.toString();
+        }
+        if (ballInnerRef.current) {
+            ballInnerRef.current.style.top = `${50 - radius}%`;
+        }
     };
 
     // Idle animation / spin sequence trigger
@@ -164,19 +182,18 @@ export const RouletteWheel: React.FC<Props> = ({
             cancelAnimationFrame(requestRef.current);
             setIsSpinning(false);
 
+            // Hide ball during betting
+            updateBallStyle(0, 49, 0);
+
             const idleSpin = () => {
-                setWheelRotation((prev) => {
-                    const next = prev + 0.015;
-                    return next >= 360 ? next - 360 : next;
-                });
+                currentWheelRotation.current = (currentWheelRotation.current + 0.02) % 360;
+                updateWheelStyle(currentWheelRotation.current);
                 requestRef.current = requestAnimationFrame(idleSpin);
             };
 
             requestRef.current = requestAnimationFrame(idleSpin);
-            setBallOpacity(0);
         } else if (phase === GamePhase.SPINNING && winningNumber) {
             setIsSpinning(true);
-            setLastWinningNumber(winningNumber);
             const dir = Math.random() > 0.5 ? 'clockwise' : 'counterclockwise';
             setSpinDirection(dir);
             cancelAnimationFrame(requestRef.current);
@@ -191,7 +208,8 @@ export const RouletteWheel: React.FC<Props> = ({
         direction: 'clockwise' | 'counterclockwise'
     ) => {
         startTimeRef.current = performance.now();
-        setBallOpacity(1);
+        // Show ball
+        updateBallStyle(0, 49, 1);
 
         const targetIndex = WHEEL_ORDER.indexOf(targetNumber);
         if (targetIndex === -1) {
@@ -202,13 +220,15 @@ export const RouletteWheel: React.FC<Props> = ({
         const anglePerPocket = 360 / POCKET_COUNT;
         const targetPocketAngle = (targetIndex + 0.5) * anglePerPocket;
 
-        const startWheelAngle = wheelRotation % 360;
+        // Current rotation from ref
+        const startWheelAngle = currentWheelRotation.current % 360;
         const wheelIsClockwise = direction === 'clockwise';
         const wheelDirMultiplier = wheelIsClockwise ? 1 : -1;
 
         const wheelExtraRotations = 5;
         const totalWheelRotation = 360 * wheelExtraRotations * wheelDirMultiplier;
-        const finalWheelAngle = startWheelAngle + totalWheelRotation;
+
+        // No "teleporting" - animate from current visual angle
 
         const ballDirMultiplier = -wheelDirMultiplier;
         const totalBallAngle = calculateAngleTraveled(
@@ -216,8 +236,12 @@ export const RouletteWheel: React.FC<Props> = ({
             PHYSICS_CONFIG
         );
 
+        // Calculate exact landing spot
+        const finalWheelAngle = startWheelAngle + totalWheelRotation;
         const desiredFinalBallAngle =
             finalWheelAngle + targetPocketAngle + BALL_LANDING_POSITION;
+
+        // Back-calculate ball start to land exactly at desired spot
         const ballStartAngle = desiredFinalBallAngle - totalBallAngle * ballDirMultiplier;
 
         const rng = new SeededRandom(targetIndex * 1000 + (Date.now() % 1000));
@@ -226,15 +250,24 @@ export const RouletteWheel: React.FC<Props> = ({
             const elapsed = time - startTimeRef.current;
             const progress = Math.min(elapsed / PHYSICS_CONFIG.totalDuration, 1);
 
+            // 1. Animate Wheel
             const wheelEase = 1 - Math.pow(1 - progress, 3);
             const currentWheelAngle = startWheelAngle + totalWheelRotation * wheelEase;
-            setWheelRotation(currentWheelAngle);
 
+            // Sync ref for next idle loop start
+            if (progress < 1) {
+                currentWheelRotation.current = currentWheelAngle;
+                updateWheelStyle(currentWheelAngle);
+            } else {
+                // Snap to final exact angle to avoid drift
+                currentWheelRotation.current = finalWheelAngle;
+                updateWheelStyle(finalWheelAngle);
+            }
+
+            // 2. Animate Ball
             let ballAngleTraveled = calculateAngleTraveled(elapsed, PHYSICS_CONFIG);
-            let currentBallAngle =
-                ballStartAngle + ballAngleTraveled * ballDirMultiplier;
 
-            currentBallAngle =
+            let currentBallAngle =
                 applyDeflectorHit(
                     Math.abs(ballAngleTraveled),
                     elapsed,
@@ -253,16 +286,15 @@ export const RouletteWheel: React.FC<Props> = ({
 
             const currentBallRadius = calculateBallRadius(elapsed, PHYSICS_CONFIG);
 
-            setBallRotation(currentBallAngle);
-            setBallRadius(currentBallRadius);
+            updateBallStyle(currentBallAngle, currentBallRadius, 1);
 
             if (progress < 1) {
                 requestRef.current = requestAnimationFrame(animate);
             } else {
                 setIsSpinning(false);
                 setSelectedNumber(targetNumber);
-                setBallRotation(desiredFinalBallAngle);
-                setBallRadius(PHYSICS_CONFIG.pocketRadius);
+                // Ensure final state is mathematically perfect
+                updateBallStyle(desiredFinalBallAngle, PHYSICS_CONFIG.pocketRadius, 1);
             }
         };
 
@@ -361,28 +393,28 @@ export const RouletteWheel: React.FC<Props> = ({
                         className="absolute inset-[14px] md:inset-[34px] rounded-full"
                         style={{
                             background: `
-                radial-gradient(circle at 30% 20%,
-                  rgba(255,255,255,0.09) 0%,
-                  transparent 40%
-                ),
-                radial-gradient(circle at center,
-                  #111111 0%,
-                  #1a1a1a 35%,
-                  #050505 70%
-                )
-              `,
+                 radial-gradient(circle at 30% 20%,
+                   rgba(255,255,255,0.09) 0%,
+                   transparent 40%
+                 ),
+                 radial-gradient(circle at center,
+                   #111111 0%,
+                   #1a1a1a 35%,
+                   #050505 70%
+                 )
+               `,
                             boxShadow: `
-                inset 0 0 22px rgba(0,0,0,0.85),
-                0 0 18px rgba(0,0,0,0.6)
-              `,
+                 inset 0 0 22px rgba(0,0,0,0.85),
+                 0 0 18px rgba(0,0,0,0.6)
+               `,
                         }}
                     >
                         <div
+                            ref={wheelRef}
                             className="absolute inset-[18px]"
                             style={{
-                                transform: `rotate(${wheelRotation}deg)`,
-                                transition: isSpinning ? 'none' : 'transform 0.05s linear',
                                 transformStyle: 'preserve-3d',
+                                // Initial State if needed, but updated via ref
                             }}
                         >
                             <svg
@@ -613,17 +645,19 @@ export const RouletteWheel: React.FC<Props> = ({
 
                 {/* Ball */}
                 <div
+                    ref={ballRef}
                     className="absolute inset-0 pointer-events-none z-20"
                     style={{
-                        transform: `rotate(${ballRotation}deg)`,
-                        opacity: ballOpacity,
+                        // Initial opacity 0, updated via ref
+                        opacity: 0,
                         transition: 'opacity 0.3s',
                     }}
                 >
                     <div
+                        ref={ballInnerRef}
                         className="absolute left-1/2"
                         style={{
-                            top: `${50 - ballRadius}%`,
+                            top: `${50 - 49}%`, // Initial Radius
                             transform: 'translate(-50%, -50%)',
                             width: '3.5%',
                             aspectRatio: '1/1',
