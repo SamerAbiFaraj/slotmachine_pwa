@@ -4,6 +4,7 @@ import { BetType, Chip, PlacedBet, GamePhase, QuantumMultiplier } from '../types
 import { getNumberColor, RED_NUMBERS, BLACK_NUMBERS, PAYOUTS } from '../constants-orginal';
 import { getAnimalImagePath } from '../animalMapping';
 import { chipMapping, chipValues } from '../chipMapping';
+import { LightningBolt } from './LightningBolt';
 
 interface Props {
   currentBets: PlacedBet[];
@@ -34,7 +35,44 @@ export const BettingTable: React.FC<Props> = ({
 }) => {
   const [hoveredBet, setHoveredBet] = useState<HoveredBetInfo | null>(null);
   const [hoveredChip, setHoveredChip] = useState<HoveredBetInfo | null>(null);
+  const [strikes, setStrikes] = useState<{ start: { x: number, y: number }, end: { x: number, y: number }, id: string }[]>([]);
+  const tableRef = React.useRef<HTMLDivElement>(null);
   const isInteractable = gamePhase === GamePhase.WAITING_FOR_BETS;
+
+  // Watch for new multipliers and trigger lightning
+  React.useEffect(() => {
+    if (quantumMultipliers.length > 0 && tableRef.current) {
+      const newStrikes: typeof strikes = [];
+
+      quantumMultipliers.forEach(q => {
+        // Find the cell element
+        const cell = document.getElementById(`cell-${q.number}`);
+        if (cell) {
+          const rect = cell.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+
+          // Start from somewhere top center-ish of the screen or random
+          const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 400;
+          const startY = -50;
+
+          newStrikes.push({
+            start: { x: startX, y: startY },
+            end: { x: centerX, y: centerY },
+            id: Math.random().toString()
+          });
+        }
+      });
+
+      if (newStrikes.length > 0) {
+        setStrikes(prev => [...prev, ...newStrikes]);
+      }
+    }
+  }, [quantumMultipliers]);
+
+  const removeStrike = (id: string) => {
+    setStrikes(prev => prev.filter(s => s.id !== id));
+  };
 
   const handleBet = (type: BetType, numbers: string[], payout: number) => {
     if (!isInteractable) return;
@@ -177,6 +215,7 @@ export const BettingTable: React.FC<Props> = ({
         }
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredBet(null)}
+        id={`cell-${numStr}`} // ID for lightning targeting
         className={`
           relative aspect-[3/4] flex flex-col items-center justify-center
           rounded-md border border-casino-gold/30
@@ -282,7 +321,17 @@ export const BettingTable: React.FC<Props> = ({
         bg-[#3C1912]
       "
       style={{ padding: 'clamp(0.35rem, 1.5vw, 1.65rem)' }}
+      ref={tableRef}
     >
+      {strikes.map(s => (
+        <LightningBolt
+          key={s.id}
+          startPos={s.start}
+          endPos={s.end}
+          onComplete={() => removeStrike(s.id)}
+        />
+      ))}
+
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.75)_100%)] pointer-events-none" />
 
       {/* Floating Bet Tooltip */}
@@ -500,6 +549,7 @@ export const BettingTable: React.FC<Props> = ({
               bg-[var(--neo-green)]/88 hover:bg-[var(--neo-green)]/98
               cursor-pointer relative
             "
+            id="cell-0"
           >
             {getAnimalImagePath('0') && (
               <img
@@ -545,6 +595,7 @@ export const BettingTable: React.FC<Props> = ({
               bg-[var(--neo-green)]/88 hover:bg-[var(--neo-green)]/98
               cursor-pointer relative
             "
+            id="cell-00"
           >
             {getAnimalImagePath('00') && (
               <img

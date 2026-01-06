@@ -7,11 +7,13 @@ interface WinAnnouncementProps {
     isOpen: boolean;
     gamePhase: import('../types').GamePhase;
     totalWin?: number;
+    multiplier?: number;
 }
 
-export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber, isOpen, gamePhase, totalWin = 0 }) => {
+export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber, isOpen, gamePhase, totalWin = 0, multiplier }) => {
     const [show, setShow] = useState(false);
     const isWin = totalWin > 0;
+    const isMultiplierWin = isWin && !!multiplier;
     const containerRef = useRef<HTMLDivElement>(null);
 
     // ✅ CLEAN EXIT: Ensure component unmounts properly
@@ -54,7 +56,13 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
             delay: Math.random() * 1.5,
             duration: 3 + Math.random() * 2,
             size: Math.random() * 6 + 4,
-            color: [
+            color: isMultiplierWin ? [
+                '#60a5fa', // Blue 400
+                '#c084fc', // Purple 400
+                '#e879f9', // Fuchsia 400
+                '#ffffff', // White
+                '#38bdf8'  // Sky 400
+            ][Math.floor(Math.random() * 5)] : [
                 '#FFD700', // Gold
                 '#FDB931', // Yellow-Orange
                 '#FFFFFF', // White Sparkle
@@ -64,7 +72,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
             shape: Math.random() > 0.5 ? 'square' : 'circle',
             isSparkle: Math.random() > 0.85
         }));
-    }, [show]); // 👈 recompute only when show changes
+    }, [show, isMultiplierWin]); // 👈 recompute only when show changes
 
     const animalInfo = useMemo(() => winningNumber ? getAnimalByNumber(winningNumber) : null, [winningNumber]);
 
@@ -118,13 +126,13 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                     >
                         {/* Ambient Glows */}
                         <div className="absolute inset-0 -z-10">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vh] h-[30vh] bg-neo-gold/30 rounded-full blur-[100px] animate-glow-pulse" />
+                            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vh] h-[30vh] ${isMultiplierWin ? 'bg-purple-500/40' : 'bg-neo-gold/30'} rounded-full blur-[100px] animate-glow-pulse`} />
                             {isWin && (
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vh] h-[50vh] bg-yellow-500/20 rounded-full blur-[120px] animate-pulse" />
+                                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vh] h-[50vh] ${isMultiplierWin ? 'bg-blue-500/30' : 'bg-yellow-500/20'} rounded-full blur-[120px] animate-pulse`} />
                             )}
                         </div>
 
-                        {/* BIG WIN HEADER */}
+                        {/* BIG WIN / LIGHTNING WIN HEADER */}
                         {isWin && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20, scale: 0.8 }}
@@ -132,16 +140,22 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                 transition={{ delay: 0.3, type: "spring" }}
                                 className="flex flex-col items-center mb-[-1vh] z-20"
                             >
-                                <div className="
-                                    text-[8vh] md:text-8xl font-black italic tracking-tighter uppercase
-                                    bg-gradient-to-b from-white via-neo-gold to-yellow-800
+                                <div className={`
+                                    text-[6vh] md:text-7xl font-black italic tracking-tighter uppercase
+                                    bg-gradient-to-b ${isMultiplierWin ? 'from-white via-blue-400 to-purple-600' : 'from-white via-neo-gold to-yellow-800'}
                                     bg-clip-text text-transparent
                                     drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)]
                                     relative
-                                ">
-                                    Big Win!
+                                    text-center
+                                `}>
+                                    {isMultiplierWin ? 'Lightning Win!' : 'Big Win!'}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent background-size-[200%] animate-shine bg-clip-text pointer-events-none" />
                                 </div>
+                                {isMultiplierWin && (
+                                    <div className="text-4xl md:text-5xl font-black text-white drop-shadow-[0_0_10px_rgba(147,51,234,0.8)] animate-bounce mt-2">
+                                        ⚡ {multiplier}x ⚡
+                                    </div>
+                                )}
                             </motion.div>
                         )}
 
@@ -153,16 +167,16 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                 className="absolute inset-0 border-[2px] border-dashed border-neo-gold/30 rounded-[3vh] scale-105"
                             />
 
-                            <div className="
+                            <div className={`
                                 relative 
                                 w-[34vh] h-[34vh] max-w-[18rem] max-h-[18rem] rounded-[4vh]
                                 bg-gradient-to-br from-[#1e293b] via-[#020617] to-[#020617]
-                                border-[3px] border-neo-gold/60
+                                border-[3px] ${isMultiplierWin ? 'border-purple-400/80' : 'border-neo-gold/60'}
                                 flex flex-col items-center justify-center
                                 shadow-[0_0_80px_rgba(226,182,89,0.4),inset_0_0_40px_rgba(0,0,0,0.8)]
                                 backdrop-blur-2xl overflow-hidden
                                 transform-style-3d
-                            ">
+                            `}>
                                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
                                 <div className="flex flex-col items-center justify-center h-full w-full py-1 gap-[0.5vh]">
                                     {animalInfo && (
@@ -199,7 +213,7 @@ export const WinAnnouncement: React.FC<WinAnnouncementProps> = ({ winningNumber,
                                 transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
                                 className="
                                     relative
-                                    bg-gradient-to-r from-yellow-600 via-neo-gold to-yellow-600
+                                    bg-gradient-to-r ${isMultiplierWin ? 'from-purple-600 via-blue-400 to-purple-600' : 'from-yellow-600 via-neo-gold to-yellow-600'}
                                     p-[2px] rounded-full
                                     shadow-[0_8px_20px_rgba(226,182,89,0.3)]
                                 "

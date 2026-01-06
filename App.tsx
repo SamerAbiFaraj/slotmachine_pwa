@@ -20,6 +20,7 @@ import { User, Coins, X } from 'lucide-react';
 import { SlideOutPanel } from './components/SlideOutPanel';
 import { InstallPrompt } from './components/InstallPrompt';
 import { WinAnnouncement } from './components/WinAnnouncement';
+import { DailyBonusWheel } from './components/DailyBonusWheel';
 import { audioManager } from './utils/AudioManager'
 
 // ✅ IMPORT CHIP MAPPING FOR USE IN GameControls
@@ -55,6 +56,7 @@ const App: React.FC = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false); // Mobile Top Drawer
     const [isChipsOpen, setIsChipsOpen] = useState(false); // Mobile Bottom Drawer
     const [isMuted, setIsMuted] = useState(false); // Sound State
+    const [showDailyBonus, setShowDailyBonus] = useState(false); // Daily Bonus State
 
     // --- Refs ---
     const betsRef = useRef<PlacedBet[]>([]);
@@ -174,6 +176,28 @@ const App: React.FC = () => {
             window.removeEventListener('keydown', handleInteraction);
         };
     }, []);
+
+
+    // --- Daily Bonus Logic ---
+    useEffect(() => {
+        const lastClaim = localStorage.getItem('last_daily_bonus');
+        const now = Date.now();
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+        if (!lastClaim || now - parseInt(lastClaim) > ONE_DAY_MS) {
+            // Delay slightly to let the app load visually first
+            setTimeout(() => {
+                setShowDailyBonus(true);
+            }, 1500);
+        }
+    }, []);
+
+    const handleBonusComplete = (reward: number) => {
+        setBalance(prev => prev + reward);
+        setNotification({ msg: `DAILY BONUS: +$${reward}`, type: 'success' });
+        localStorage.setItem('last_daily_bonus', Date.now().toString());
+        setShowDailyBonus(false);
+    };
 
     // Sync Mute State
     useEffect(() => {
@@ -388,7 +412,13 @@ const App: React.FC = () => {
                 timeLeft={timeLeft}
             />
 
-            <WinAnnouncement winningNumber={winningNumber} isOpen={isDrawerOpen} gamePhase={phase} totalWin={lastWin} />
+            <WinAnnouncement
+                winningNumber={winningNumber}
+                isOpen={isDrawerOpen}
+                gamePhase={phase}
+                totalWin={lastWin}
+                multiplier={quantumMultipliers.find(q => q.number === winningNumber)?.multiplier}
+            />
 
             <AnimatePresence>
                 {/* Profile Drawer (Top) */}
@@ -504,6 +534,13 @@ const App: React.FC = () => {
             />
 
             <InstallPrompt />
+
+            {showDailyBonus && (
+                <DailyBonusWheel
+                    onComplete={handleBonusComplete}
+                    onClose={() => setShowDailyBonus(false)}
+                />
+            )}
 
             {/* Toast Notification System */}
             {notification && (

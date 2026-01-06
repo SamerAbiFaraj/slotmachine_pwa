@@ -11,6 +11,15 @@ interface Props {
     currentRoundId: string;
 }
 
+// Helper to determine color (could be imported but duplicating for speed/independence)
+const getNumberColor = (num: string) => {
+    if (num === '0' || num === '00') return 'green';
+    const n = parseInt(num);
+    // Red numbers: 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36
+    if ([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36].includes(n)) return 'red';
+    return 'black';
+};
+
 export const SlideOutPanel: React.FC<Props> = ({ isOpen, onClose, history, leaderboard, currentRoundId }) => {
     const panelRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +38,49 @@ export const SlideOutPanel: React.FC<Props> = ({ isOpen, onClose, history, leade
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [isOpen, onClose]);
+
+    // --- Hot & Cold Analysis ---
+    // Count frequencies in the last 50-100 spins (using full history prop)
+    const frequencyMap = history.reduce((acc, num) => {
+        acc[num] = (acc[num] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    // Sort entries
+    const sortedNumbers = Object.entries(frequencyMap).sort((a, b) => b[1] - a[1]);
+
+    // Last 50 spins usually
+    // Hot: Top 3
+    // Cold: Bottom 3 (of the ones that have appeared? Or checking all numbers? 
+    // Usually "Cold" means "Hasn't appeared in a while" OR "Lowest frequency in current set")
+    // Simple approach: Lowest frequency in current history set.
+    const hotNumbers = sortedNumbers.slice(0, 4);
+    const coldNumbers = sortedNumbers.slice(-4).reverse();
+
+    // Helper render for stat balls
+    const renderStatBall = (num: string, freq: number, type: 'hot' | 'cold') => {
+        const color = getNumberColor(num);
+        let bgClass = 'bg-gray-800';
+        if (color === 'red') bgClass = 'bg-red-600';
+        else if (color === 'black') bgClass = 'bg-gray-900';
+        else if (color === 'green') bgClass = 'bg-green-600';
+
+        return (
+            <div key={num} className="flex flex-col items-center gap-1">
+                <div className={`
+                    w-8 h-8 rounded-full flex items-center justify-center 
+                    text-xs font-bold text-white shadow-lg border border-white/10
+                    ${bgClass}
+                    ${type === 'hot' ? 'ring-2 ring-orange-500/50' : 'ring-2 ring-blue-500/50'}
+                `}>
+                    {num}
+                </div>
+                <span className={`text-[10px] font-mono ${type === 'hot' ? 'text-orange-400' : 'text-blue-400'}`}>
+                    {freq}x
+                </span>
+            </div>
+        );
+    };
 
     return (
         <>
@@ -71,6 +123,34 @@ export const SlideOutPanel: React.FC<Props> = ({ isOpen, onClose, history, leade
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+
+                    {/* Hot & Cold Section */}
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between px-2">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Hot & Cold</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            {/* HOT */}
+                            <div className="glass-panel p-3 rounded-xl bg-gradient-to-br from-orange-900/20 to-transparent border-orange-500/20">
+                                <div className="flex items-center gap-1 mb-2 text-orange-400 text-xs font-bold uppercase">
+                                    <span>🔥 Hot</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    {hotNumbers.length > 0 ? hotNumbers.map(([num, freq]) => renderStatBall(num, freq, 'hot')) : <span className="text-xs text-white/30">No data</span>}
+                                </div>
+                            </div>
+
+                            {/* COLD */}
+                            <div className="glass-panel p-3 rounded-xl bg-gradient-to-br from-blue-900/20 to-transparent border-blue-500/20">
+                                <div className="flex items-center gap-1 mb-2 text-blue-400 text-xs font-bold uppercase">
+                                    <span>❄️ Cold</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    {coldNumbers.length > 0 ? coldNumbers.map(([num, freq]) => renderStatBall(num, freq, 'cold')) : <span className="text-xs text-white/30">No data</span>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* History Section */}
                     <div className="space-y-3">
